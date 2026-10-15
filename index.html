@@ -1,0 +1,624 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>My Gardrobe — Style and organise your clothes</title>
+<meta name="description" content="My Gardrobe — style and organise your clothes online.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&amp;family=Dancing+Script:wght@700&amp;display=swap">
+<style>
+body{margin:0;background:#F6F2EA}
+a{color:#2B2B2B}a:hover{color:#8B7D6B}
+*{box-sizing:border-box}
+@keyframes grRise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes grFade{from{opacity:0}to{opacity:1}}
+@keyframes grOut{from{opacity:1}to{opacity:0}}
+.gr-r0{animation:grFade .9s both}
+.gr-r1{animation:grRise .9s .15s ease-out both}
+.gr-r2{animation:grRise .9s .3s ease-out both}
+.gr-r3{animation:grRise .9s .45s ease-out both}
+.gr-r4{animation:grRise 1s .35s ease-out both}
+.gr-cta{transition:background .2s,transform .2s;cursor:pointer}
+.gr-cta:hover{background:#444444 !important;transform:translateY(-1px)}
+.gr-ghost{transition:background .2s,border-color .2s;cursor:pointer}
+.gr-ghost:hover{background:#FFFDF8 !important;border-color:#2B2B2B !important}
+.gr-cta:focus-visible,.gr-ghost:focus-visible,.gr-lang:focus-visible{outline:2px solid #444444;outline-offset:3px}
+.gr-lang{cursor:pointer;transition:color .2s}
+.gr-lang:hover{color:#8B7D6B !important}
+.gr-langopt:hover{background:#F6F2EA !important}
+.gr-langopt:focus-visible{outline:2px solid #444444;outline-offset:-2px}
+.gr-card{transition:transform .25s,border-color .25s}
+.gr-card:hover{transform:translateY(-4px);border-color:#B5A898 !important}
+/* Walk-in sequence */
+@keyframes grDoorL{0%{transform:rotateY(0)}100%{transform:rotateY(-105deg)}}
+@keyframes grDoorR{0%{transform:rotateY(0)}100%{transform:rotateY(105deg)}}
+@keyframes grDolly{from{transform:scale(1)}to{transform:scale(3.6)}}
+.gr-stage{animation:grFade .4s both}
+.gr-door-l{transform-origin:left center;animation:grDoorL 1.4s .45s cubic-bezier(.65,0,.25,1) both;backface-visibility:hidden}
+.gr-door-r{transform-origin:right center;animation:grDoorR 1.4s .45s cubic-bezier(.65,0,.25,1) both;backface-visibility:hidden}
+.gr-front{animation:grOut .5s 1.75s both}
+.gr-dolly{transform-origin:50% 50%;animation:grDolly 2.4s 1.6s cubic-bezier(.45,0,.3,1) both}
+.gr-bdoor-l{transform-origin:left center;animation:grDoorL 1.1s 3.75s cubic-bezier(.65,0,.25,1) both;backface-visibility:hidden}
+.gr-bdoor-r{transform-origin:right center;animation:grDoorR 1.1s 3.75s cubic-bezier(.65,0,.25,1) both;backface-visibility:hidden}
+.gr-flash{animation:grFade .6s 3.7s both}
+.gr-inside{animation:grFade .8s both}
+@media (prefers-reduced-motion: reduce){
+.gr-r0,.gr-r1,.gr-r2,.gr-r3,.gr-r4{animation:none}
+.gr-door-l,.gr-door-r,.gr-bdoor-l,.gr-bdoor-r{animation-duration:.4s}
+.gr-dolly{animation-duration:.6s}
+}
+</style>
+</head>
+<body>
+<template id="gr-template">
+<div dir="{{dir}}" style="font-family: 'Archivo', 'Helvetica Neue', sans-serif; font-weight: 400; font-size: 17px; line-height: 1.55; color: #2B2B2B; background: #F6F2EA; min-height: 100vh">
+
+<!-- HEADER -->
+<header style="position: absolute; top: 0; left: 0; right: 0; z-index: 10; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 20px clamp(20px, 5vw, 72px)">
+<div class="gr-r0" style="font-size: clamp(20px, 2.2vw, 28px); font-weight: 700; letter-spacing: .24em; margin-right: -.24em; text-transform: uppercase; color: #2B2B2B; white-space: nowrap">{{t.greeting}}</div>
+<nav aria-label="Language" style="position: relative; justify-self: end">
+<button class="gr-lang" onClick="{{toggleMenu}}" aria-haspopup="true" aria-expanded="{{menuOpen}}" style="display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 64px; min-height: 52px; padding: 4px; background: transparent; border: 0; color: #2B2B2B; font-family: 'Archivo', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase">
+<span style="display: flex; align-items: center; gap: 6px"><span style="font-size: 20px; line-height: 1; letter-spacing: 0">{{current.flag}}</span><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20M12 2c-3 3-4.4 6.4-4.4 10S9 19 12 22M12 2c3 3 4.4 6.4 4.4 10S15 19 12 22"></path></g></svg></span>
+<span>Language</span>
+</button>
+<sc-if value="{{menuOpen}}" hint-placeholder-val="{{false}}">
+<div style="position: absolute; right: 0; top: calc(100% + 8px); width: min(360px, 90vw); padding: 10px; background: #FFFDF8; border: 1px solid #DDD5C8; border-radius: 16px; box-shadow: 0 24px 48px -16px rgba(43,43,43,.3); z-index: 20; display: flex; flex-direction: column; gap: 8px">
+<label style="display: flex; align-items: center; gap: 8px; padding: 0 12px; min-height: 46px; border: 1px solid #DDD5C8; border-radius: 12px; background: #F6F2EA">
+<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="#6A635A" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></g></svg>
+<input type="search" value="{{q}}" onChange="{{onQ}}" placeholder="{{searchPh}}" aria-label="{{searchPh}}" style="flex: 1; min-width: 0; border: 0; outline: none; background: transparent; font-family: 'Archivo', sans-serif; font-size: 16px; color: #2B2B2B">
+</label>
+<div style="padding: 0 6px; font-size: 13px; color: #6A635A">{{langCountLabel}}</div>
+<ul style="margin: 0; padding: 0; list-style: none; max-height: min(420px, 58vh); overflow-y: auto; display: flex; flex-direction: column; gap: 2px">
+<sc-for list="{{langs}}" as="l" hint-placeholder-count="8">
+<li>
+<sc-if value="{{l.active}}" hint-placeholder-val="{{false}}">
+<button class="gr-langopt" aria-current="true" onClick="{{l.pick}}" style="width: 100%; min-height: 48px; display: flex; align-items: center; gap: 12px; padding: 6px 12px; background: #E6DFD4; border: 0; border-radius: 10px; color: #2B2B2B; font-family: 'Archivo', sans-serif; text-align: left; cursor: pointer"><span style="font-size: 22px; line-height: 1; width: 28px; text-align: center">{{l.flag}}</span><span style="flex: 1; min-width: 0; display: flex; flex-direction: column"><span style="font-size: 16px; font-weight: 700">{{l.native}}</span><span style="font-size: 12px; color: #6A635A">{{l.english}}</span></span><span style="font-size: 18px; font-weight: 700">✓</span></button>
+</sc-if>
+<sc-if value="{{l.inactive}}" hint-placeholder-val="{{true}}">
+<button class="gr-langopt" onClick="{{l.pick}}" style="width: 100%; min-height: 48px; display: flex; align-items: center; gap: 12px; padding: 6px 12px; background: transparent; border: 0; border-radius: 10px; color: #2B2B2B; font-family: 'Archivo', sans-serif; text-align: left; cursor: pointer"><span style="font-size: 22px; line-height: 1; width: 28px; text-align: center">{{l.flag}}</span><span style="flex: 1; min-width: 0; display: flex; flex-direction: column"><span style="font-size: 16px; font-weight: 600">{{l.native}}</span><span style="font-size: 12px; color: #6A635A">{{l.english}}</span></span></button>
+</sc-if>
+</li>
+</sc-for>
+</ul>
+</div>
+</sc-if>
+</nav>
+</header>
+
+<!-- HERO -->
+<section style="min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 48px; padding: 96px clamp(20px, 5vw, 72px) 72px">
+<!-- welcome + logo, centred -->
+<div class="gr-r0" style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 14px">
+<svg width="340" height="142" viewBox="0 0 240 100" role="img" aria-label="My Gardrobe" style="max-width: 82vw; height: auto"><g fill="none" stroke="#111111" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"><path d="M120 34v-6c0-3.4 2.4-5.2 5.2-6.6 2.8-1.4 5-3.6 5-7.4 0-4.8-3.8-8.2-8.6-8.2-4.4 0-7.8 2.8-8.6 6.6"></path><path d="M120 34C92 44 54 57 30 65.5c-9 3.2-11 10.6-3.4 14.5"></path><path d="M120 34c28 10 66 23 90 31.5 9 3.2 11 10.6 3.4 14.5"></path></g><g fill="none" stroke="#8E857A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M120 34v-6c0-3.4 2.4-5.2 5.2-6.6 2.8-1.4 5-3.6 5-7.4 0-4.8-3.8-8.2-8.6-8.2-4.4 0-7.8 2.8-8.6 6.6"></path><path d="M120 34C92 44 54 57 30 65.5c-9 3.2-11 10.6-3.4 14.5"></path><path d="M120 34c28 10 66 23 90 31.5 9 3.2 11 10.6 3.4 14.5"></path></g><text x="120" y="88" text-anchor="middle" textLength="166" lengthAdjust="spacingAndGlyphs" font-family="'Dancing Script', cursive" font-weight="700" font-size="31" fill="#8E857A" stroke="#111111" stroke-width=".7">My Gardrobe</text></svg>
+</div>
+<h1 class="gr-r1" style="margin: 0; align-self: center; text-align: left; white-space: nowrap; font-weight: 800; letter-spacing: -.035em; color: #111111">
+<span style="display: block; font-size: 8.6vw; line-height: .95">Style and organise</span>
+<span style="display: block; font-size: 8.6vw; line-height: .95; padding-left: 9vw">your clothes</span>
+</h1>
+<div class="gr-r3" style="display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 420px">
+<button class="gr-cta" onClick="{{start}}" style="width: 100%; min-height: 60px; padding: 0 32px; background: #2B2B2B; color: #F6F2EA; border: 0; border-radius: 999px; font-family: 'Archivo', sans-serif; font-size: 18px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 10px">
+<span>{{t.start}}</span>
+<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+</button>
+</div>
+
+</section>
+
+<!-- HOW IT WORKS -->
+<section style="padding: clamp(72px, 9vw, 120px) clamp(20px, 5vw, 72px); border-top: 1px solid #DDD5C8">
+<div style="max-width: 1240px; margin: 0 auto">
+<h2 style="margin: 0 0 44px; font-size: clamp(32px, 4vw, 52px); font-weight: 800; letter-spacing: -.03em; line-height: 1.05; color: #2B2B2B">{{t.howKicker}}</h2>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px">
+<sc-for list="{{steps}}" as="s" hint-placeholder-count="3">
+<div style="background: #FFFDF8; border: 1px solid #DDD5C8; border-radius: 22px; padding: 22px; display: flex; align-items: center; gap: 16px">
+<div style="flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 6px">
+<div style="width: 44px; height: 44px; border-radius: 50%; background: #2B2B2B; color: #F6F2EA; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 800; margin-bottom: 8px">{{s.n}}</div>
+<h3 style="margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -.02em; color: #2B2B2B">{{s.title}}</h3>
+<p style="margin: 0; font-size: 16px; color: #6A635A">{{s.text}}</p>
+</div>
+<img src="{{s.img}}" alt="" style="flex: 0 0 auto; width: 42%; max-width: 150px; height: auto; display: block">
+</div>
+</sc-for>
+</div>
+</div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" style="padding: clamp(72px, 9vw, 120px) clamp(20px, 5vw, 72px); border-top: 1px solid #DDD5C8">
+<div style="max-width: 1240px; margin: 0 auto; background: #2B2B2B; color: #F6F2EA; border-radius: 28px; padding: clamp(28px, 5vw, 56px); display: flex; flex-wrap: wrap; gap: 32px; justify-content: space-between; align-items: center">
+<h2 style="margin: 0; font-size: clamp(32px, 4vw, 48px); font-weight: 800; letter-spacing: -.03em; line-height: 1.05; color: #F6F2EA">{{t.contactKicker}}</h2>
+<div style="display: flex; flex-direction: column; align-items: flex-start; gap: 16px">
+<div style="display: flex; flex-wrap: wrap; gap: 10px">
+<sc-for list="{{contacts}}" as="c" hint-placeholder-count="4">
+<sc-if value="{{c.open}}" hint-placeholder-val="{{false}}">
+<button class="gr-cta" aria-expanded="true" onClick="{{c.toggle}}" style="min-height: 48px; padding: 0 20px; background: #C9BEB0; color: #2B2B2B; border: 0; border-radius: 999px; font-family: 'Archivo', sans-serif; font-size: 16px; font-weight: 700">{{c.label}}</button>
+</sc-if>
+<sc-if value="{{c.closed}}" hint-placeholder-val="{{true}}">
+<button class="gr-cta" aria-expanded="false" onClick="{{c.toggle}}" style="min-height: 48px; padding: 0 20px; background: #F6F2EA; color: #2B2B2B; border: 0; border-radius: 999px; font-family: 'Archivo', sans-serif; font-size: 16px; font-weight: 600">{{c.label}}</button>
+</sc-if>
+</sc-for>
+</div>
+<sc-if value="{{contactShown}}" hint-placeholder-val="{{false}}">
+<a href="{{contactHref}}" target="_blank" rel="noopener" style="font-size: clamp(20px, 2.4vw, 28px); font-weight: 700; color: #F6F2EA; text-decoration: underline; text-underline-offset: 5px">{{contactValue}}</a>
+</sc-if>
+</div>
+</div>
+</section>
+
+<footer style="padding: 28px clamp(20px, 5vw, 72px) 40px; display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: center; font-size: 14px; color: #7A7166">
+<div style="display: flex; align-items: center; gap: 18px; flex-wrap: wrap">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 2px">
+<svg width="140" height="58" viewBox="0 0 240 100" role="img" aria-label="My Gardrobe"><g fill="none" stroke="#111111" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"><path d="M120 34v-6c0-3.4 2.4-5.2 5.2-6.6 2.8-1.4 5-3.6 5-7.4 0-4.8-3.8-8.2-8.6-8.2-4.4 0-7.8 2.8-8.6 6.6"></path><path d="M120 34C92 44 54 57 30 65.5c-9 3.2-11 10.6-3.4 14.5"></path><path d="M120 34c28 10 66 23 90 31.5 9 3.2 11 10.6 3.4 14.5"></path></g><g fill="none" stroke="#8E857A" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M120 34v-6c0-3.4 2.4-5.2 5.2-6.6 2.8-1.4 5-3.6 5-7.4 0-4.8-3.8-8.2-8.6-8.2-4.4 0-7.8 2.8-8.6 6.6"></path><path d="M120 34C92 44 54 57 30 65.5c-9 3.2-11 10.6-3.4 14.5"></path><path d="M120 34c28 10 66 23 90 31.5 9 3.2 11 10.6 3.4 14.5"></path></g><text x="120" y="88" text-anchor="middle" textLength="166" lengthAdjust="spacingAndGlyphs" font-family="'Dancing Script', cursive" font-weight="700" font-size="31" fill="#8E857A" stroke="#111111" stroke-width=".7">My Gardrobe</text></svg>
+</div>
+<span style="font-style: italic; font-weight: 600; color: #6E6255">Style and organise your clothes.</span>
+</div>
+<span>{{t.footer}}</span>
+</footer>
+
+<!-- WALK-IN SEQUENCE -->
+<sc-if value="{{opening}}" hint-placeholder-val="{{false}}">
+<div class="gr-stage" role="dialog" aria-label="{{t.start}}" style="position: fixed; inset: 0; z-index: 50; background: #F6F2EA; overflow: hidden">
+
+<div class="gr-dolly" style="position: absolute; inset: 0">
+<svg viewBox="0 0 600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="position: absolute; inset: 0; width: 100%; height: 100%; display: block">
+<sc-for list="{{scene.shapes}}" as="p" hint-placeholder-count="300">
+<path d="{{p.d}}" fill="{{p.fill}}" stroke="{{p.stroke}}" stroke-width="{{p.sw}}" stroke-linecap="round" stroke-linejoin="round" transform="{{p.tf}}"></path>
+</sc-for>
+<ellipse cx="300" cy="500" rx="300" ry="460" fill="#FFF8EC" opacity=".12"></ellipse>
+</svg>
+</div>
+
+<!-- front doors -->
+<div class="gr-front" style="position: absolute; inset: 0; display: flex; perspective: 2200px">
+<div class="gr-door-l" style="flex: 1; background: #FFFDF8; border-right: 1px solid #CFC5B6; position: relative; padding: 5vh 4vw">
+<div style="height: 100%; border: 1px solid #DDD5C8; border-radius: 4px"></div>
+<div style="position: absolute; right: 18px; top: 46%; width: 5px; height: 110px; border-radius: 3px; background: #2B2B2B"></div>
+</div>
+<div class="gr-door-r" style="flex: 1; background: #FFFDF8; border-left: 1px solid #CFC5B6; position: relative; padding: 5vh 4vw">
+<div style="height: 100%; border: 1px solid #DDD5C8; border-radius: 4px"></div>
+<div style="position: absolute; left: 18px; top: 46%; width: 5px; height: 110px; border-radius: 3px; background: #2B2B2B"></div>
+</div>
+</div>
+<div class="gr-flash" style="position: absolute; inset: 0; background: #F6F2EA; pointer-events: none"></div>
+</div>
+</sc-if>
+
+<!-- DOWNLOAD THE APP -->
+<sc-if value="{{inside}}" hint-placeholder-val="{{false}}">
+<div class="gr-inside" role="dialog" aria-label="{{t.insideTitle}}" style="position: fixed; inset: 0; z-index: 60; background: #F6F2EA; color: #2B2B2B; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 32px; gap: 22px; overflow-y: auto">
+<svg width="300" height="125" viewBox="0 0 240 100" role="img" aria-label="My Gardrobe"><g fill="none" stroke="#111111" stroke-width="4.0" stroke-linecap="round" stroke-linejoin="round"><path d="M120 34v-6c0-3.4 2.4-5.2 5.2-6.6 2.8-1.4 5-3.6 5-7.4 0-4.8-3.8-8.2-8.6-8.2-4.4 0-7.8 2.8-8.6 6.6"></path><path d="M120 34C92 44 54 57 30 65.5c-9 3.2-11 10.6-3.4 14.5"></path><path d="M120 34c28 10 66 23 90 31.5 9 3.2 11 10.6 3.4 14.5"></path></g><g fill="none" stroke="#8E857A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M120 34v-6c0-3.4 2.4-5.2 5.2-6.6 2.8-1.4 5-3.6 5-7.4 0-4.8-3.8-8.2-8.6-8.2-4.4 0-7.8 2.8-8.6 6.6"></path><path d="M120 34C92 44 54 57 30 65.5c-9 3.2-11 10.6-3.4 14.5"></path><path d="M120 34c28 10 66 23 90 31.5 9 3.2 11 10.6 3.4 14.5"></path></g><text x="120" y="88" text-anchor="middle" textLength="166" lengthAdjust="spacingAndGlyphs" font-family="'Dancing Script', cursive" font-weight="700" font-size="31" fill="#8E857A" stroke="#111111" stroke-width=".7">My Gardrobe</text></svg>
+<h2 style="margin: 0; max-width: 680px; font-size: clamp(32px, 5vw, 56px); font-weight: 800; letter-spacing: -.03em; line-height: 1.05; color: #111111">{{t.insideTitle}}</h2>
+<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 4px">
+<a class="gr-cta" href="#" style="min-height: 62px; min-width: 210px; padding: 0 22px; background: #2B2B2B; color: #F6F2EA; border-radius: 16px; display: flex; align-items: center; gap: 12px; text-decoration: none; text-align: left">
+<svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2.5"></rect><path d="M11 18.5h2"></path></g></svg>
+<span style="display: flex; flex-direction: column; line-height: 1.15"><span style="font-size: 12px; font-weight: 500">Download on the</span><span style="font-size: 20px; font-weight: 700">App Store</span></span>
+</a>
+<a class="gr-cta" href="#" style="min-height: 62px; min-width: 210px; padding: 0 22px; background: #2B2B2B; color: #F6F2EA; border-radius: 16px; display: flex; align-items: center; gap: 12px; text-decoration: none; text-align: left">
+<svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3.5v17l14-8.5z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"></path></svg>
+<span style="display: flex; flex-direction: column; line-height: 1.15"><span style="font-size: 12px; font-weight: 500">Get it on</span><span style="font-size: 20px; font-weight: 700">Google Play</span></span>
+</a>
+</div>
+<button class="gr-ghost" onClick="{{back}}" style="margin-top: 8px; min-height: 50px; padding: 0 28px; background: transparent; color: #2B2B2B; border: 1px solid #B5A898; border-radius: 999px; font-family: 'Archivo', sans-serif; font-size: 16px; font-weight: 600">{{t.back}}</button>
+</div>
+</sc-if>
+
+</div>
+</template>
+<div id="app"></div>
+<script src="js/dc-mini.js"></script>
+<script>
+var GR_I18N = {
+  hu: {
+    greeting: 'Üdvözlünk',
+    heroTitle: 'A ruhatárad. Újragondolva.',
+    heroSub: 'Szkenneld be a ruháidat, és próbáld fel a legújabb trendeket a saját méreteiddel.',
+    start: 'Kezdjük',
+    signup: 'Regisztráció',
+    login: 'Belépés',
+    chip1: 'A te stílusod',
+    chip2: 'Trend',
+    aboutTitle: 'Mit tud a My Gardrobe?',
+    feats: [
+      ['Digitális ruhatár', 'Fotó, szkennelés vagy webshop.'],
+      ['Kategóriák', 'Szezon, szín, márka.'],
+      ['A te méreteid', 'Magasság, súly, alkat, méret.'],
+      ['Trendek', 'Magazinlookok a saját ruháidból.'],
+      ['Outfit-tervező', 'Szett minden alkalomra.'],
+      ['Ajánlások', 'Ami még hiányzik a szekrényedből.']
+    ],
+    howKicker: 'Így működik',
+    steps: [
+      ['Töltsd fel', 'Fotó, szken vagy webshop.'],
+      ['Add meg a méreteid', 'Pár adat, és kész.'],
+      ['Öltözz fel', 'Szettek, trendek, tippek.']
+    ],
+    contactKicker: 'Kapcsolat',
+    contactTitle: 'Kérdésed van?',
+    footer: '© 2026 My Gardrobe',
+    insideTitle: 'Üdv a ruhatáradban!',
+    insideSub: 'Az app a következő lépés.',
+    back: 'Vissza'
+  },
+  en: {
+    greeting: 'Welcome',
+    heroTitle: 'Your wardrobe. Restyled.',
+    heroSub: 'Scan your clothes and try on the latest trends — in your exact size.',
+    start: 'Get started',
+    signup: 'Sign up',
+    login: 'Log in',
+    chip1: 'Your style',
+    chip2: 'Trending',
+    aboutTitle: 'What My Gardrobe does',
+    feats: [
+      ['Digital wardrobe', 'Photo, scan or shop.'],
+      ['Categories', 'Season, colour, brand.'],
+      ['Your fit', 'Height, weight, shape, size.'],
+      ['Trends', 'Magazine looks from your own clothes.'],
+      ['Outfit planner', 'A look for every plan.'],
+      ['Smart picks', 'What your closet is missing.']
+    ],
+    howKicker: 'How it works',
+    steps: [
+      ['Upload', 'Photo, scan or shop.'],
+      ['Add your fit', 'A few details, done.'],
+      ['Get dressed', 'Looks, trends, tips.']
+    ],
+    contactKicker: 'Contact',
+    contactTitle: 'Questions?',
+    footer: '© 2026 My Gardrobe',
+    insideTitle: 'Welcome to your wardrobe',
+    insideSub: 'The app is our next step.',
+    back: 'Back'
+  },
+  de: {
+    greeting: 'Willkommen',
+    heroTitle: 'Deine Garderobe. Neu gestylt.',
+    heroSub: 'Scanne deine Kleidung und probiere die neuesten Trends — in deiner Größe.',
+    start: 'Los geht’s',
+    signup: 'Registrieren',
+    login: 'Anmelden',
+    chip1: 'Dein Stil',
+    chip2: 'Trend',
+    aboutTitle: 'Was My Gardrobe kann',
+    feats: [
+      ['Digitale Garderobe', 'Foto, Scan oder Shop.'],
+      ['Kategorien', 'Saison, Farbe, Marke.'],
+      ['Deine Passform', 'Größe, Gewicht, Figur, Maße.'],
+      ['Trends', 'Magazin-Looks aus deinen Teilen.'],
+      ['Outfit-Planer', 'Ein Look für jeden Plan.'],
+      ['Empfehlungen', 'Was deinem Schrank noch fehlt.']
+    ],
+    howKicker: 'So geht’s',
+    steps: [
+      ['Hochladen', 'Foto, Scan oder Shop.'],
+      ['Maße angeben', 'Ein paar Angaben, fertig.'],
+      ['Anziehen', 'Looks, Trends, Tipps.']
+    ],
+    contactKicker: 'Kontakt',
+    contactTitle: 'Fragen?',
+    footer: '© 2026 My Gardrobe',
+    insideTitle: 'Willkommen in deiner Garderobe',
+    insideSub: 'Die App ist unser nächster Schritt.',
+    back: 'Zurück'
+  }
+};
+Object.assign(GR_I18N, {
+  fr: { greeting: 'Bienvenue', start: 'Commencer', chip1: 'Ton style', chip2: 'Tendance', aboutTitle: 'Ce que fait My Gardrobe',
+    feats: [['Garde-robe digitale', 'Photo, scan ou boutique.'], ['Catégories', 'Saison, couleur, marque.'], ['Tes mesures', 'Hauteur, poids, silhouette, taille.'], ['Tendances', 'Les looks des magazines avec tes vêtements.'], ['Planificateur de tenues', 'Une tenue pour chaque occasion.'], ['Suggestions', 'Ce qui manque à ta garde-robe.']],
+    howKicker: 'Comment ça marche', steps: [['Importe', 'Photo, scan ou boutique.'], ['Indique tes mesures', 'Quelques infos, et c’est fait.'], ['Habille-toi', 'Looks, tendances, conseils.']],
+    contactKicker: 'Contact', contactTitle: 'Des questions ?', insideTitle: 'Bienvenue dans ta garde-robe', insideSub: 'L’application est notre prochaine étape.', back: 'Retour', search: 'Rechercher une langue' },
+  es: { greeting: 'Bienvenido', start: 'Empezar', chip1: 'Tu estilo', chip2: 'Tendencia', aboutTitle: 'Qué hace My Gardrobe',
+    feats: [['Armario digital', 'Foto, escaneo o tienda.'], ['Categorías', 'Temporada, color, marca.'], ['Tus medidas', 'Altura, peso, silueta, talla.'], ['Tendencias', 'Looks de revista con tu propia ropa.'], ['Planificador de looks', 'Un look para cada plan.'], ['Recomendaciones', 'Lo que le falta a tu armario.']],
+    howKicker: 'Cómo funciona', steps: [['Sube tu ropa', 'Foto, escaneo o tienda.'], ['Añade tus medidas', 'Unos datos y listo.'], ['Vístete', 'Looks, tendencias, consejos.']],
+    contactKicker: 'Contacto', contactTitle: '¿Tienes preguntas?', insideTitle: 'Bienvenido a tu armario', insideSub: 'La app es nuestro próximo paso.', back: 'Volver', search: 'Buscar idioma' },
+  it: { greeting: 'Benvenuto', start: 'Inizia', chip1: 'Il tuo stile', chip2: 'Di tendenza', aboutTitle: 'Cosa fa My Gardrobe',
+    feats: [['Guardaroba digitale', 'Foto, scansione o shop.'], ['Categorie', 'Stagione, colore, marca.'], ['Le tue misure', 'Altezza, peso, fisico, taglia.'], ['Tendenze', 'I look delle riviste con i tuoi capi.'], ['Pianificatore di outfit', 'Un look per ogni occasione.'], ['Consigli', 'Ciò che manca al tuo armadio.']],
+    howKicker: 'Come funziona', steps: [['Carica', 'Foto, scansione o shop.'], ['Inserisci le misure', 'Pochi dati, fatto.'], ['Vestiti', 'Look, tendenze, consigli.']],
+    contactKicker: 'Contatti', contactTitle: 'Hai domande?', insideTitle: 'Benvenuto nel tuo guardaroba', insideSub: 'L’app è il nostro prossimo passo.', back: 'Indietro', search: 'Cerca una lingua' },
+  pt: { greeting: 'Bem-vindo', start: 'Começar', chip1: 'Seu estilo', chip2: 'Tendência', aboutTitle: 'O que o My Gardrobe faz',
+    feats: [['Guarda-roupa digital', 'Foto, digitalização ou loja.'], ['Categorias', 'Estação, cor, marca.'], ['Suas medidas', 'Altura, peso, silhueta, tamanho.'], ['Tendências', 'Looks de revista com as suas roupas.'], ['Planejador de looks', 'Um look para cada ocasião.'], ['Sugestões', 'O que falta no seu guarda-roupa.']],
+    howKicker: 'Como funciona', steps: [['Envie', 'Foto, digitalização ou loja.'], ['Informe suas medidas', 'Poucos dados, pronto.'], ['Vista-se', 'Looks, tendências, dicas.']],
+    contactKicker: 'Contato', contactTitle: 'Tem perguntas?', insideTitle: 'Bem-vindo ao seu guarda-roupa', insideSub: 'O app é o nosso próximo passo.', back: 'Voltar', search: 'Pesquisar idioma' },
+  nl: { greeting: 'Welkom', start: 'Aan de slag', chip1: 'Jouw stijl', chip2: 'Trending', aboutTitle: 'Wat My Gardrobe doet',
+    feats: [['Digitale garderobe', 'Foto, scan of webshop.'], ['Categorieën', 'Seizoen, kleur, merk.'], ['Jouw maten', 'Lengte, gewicht, figuur, maat.'], ['Trends', 'Magazine-looks met je eigen kleding.'], ['Outfitplanner', 'Een look voor elke gelegenheid.'], ['Aanbevelingen', 'Wat je kast nog mist.']],
+    howKicker: 'Zo werkt het', steps: [['Uploaden', 'Foto, scan of webshop.'], ['Maten invullen', 'Een paar gegevens, klaar.'], ['Aankleden', 'Looks, trends, tips.']],
+    contactKicker: 'Contact', contactTitle: 'Vragen?', insideTitle: 'Welkom in je garderobe', insideSub: 'De app is onze volgende stap.', back: 'Terug', search: 'Taal zoeken' },
+  pl: { greeting: 'Witaj', start: 'Zaczynamy', chip1: 'Twój styl', chip2: 'Na topie', aboutTitle: 'Co potrafi My Gardrobe',
+    feats: [['Cyfrowa garderoba', 'Zdjęcie, skan lub sklep.'], ['Kategorie', 'Sezon, kolor, marka.'], ['Twoje wymiary', 'Wzrost, waga, sylwetka, rozmiar.'], ['Trendy', 'Stylizacje z magazynów z twoich ubrań.'], ['Planer stylizacji', 'Stylizacja na każdą okazję.'], ['Polecane', 'Czego brakuje w twojej szafie.']],
+    howKicker: 'Jak to działa', steps: [['Dodaj', 'Zdjęcie, skan lub sklep.'], ['Podaj wymiary', 'Kilka danych i gotowe.'], ['Ubierz się', 'Stylizacje, trendy, porady.']],
+    contactKicker: 'Kontakt', contactTitle: 'Masz pytania?', insideTitle: 'Witaj w swojej garderobie', insideSub: 'Aplikacja to nasz następny krok.', back: 'Wstecz', search: 'Szukaj języka' },
+  cs: { greeting: 'Vítej', start: 'Začít', chip1: 'Tvůj styl', chip2: 'Trend', aboutTitle: 'Co umí My Gardrobe',
+    feats: [['Digitální šatník', 'Fotka, sken nebo e-shop.'], ['Kategorie', 'Sezóna, barva, značka.'], ['Tvoje míry', 'Výška, váha, postava, velikost.'], ['Trendy', 'Looky z časopisů z tvého oblečení.'], ['Plánovač outfitů', 'Outfit na každou příležitost.'], ['Doporučení', 'Co ti ve skříni chybí.']],
+    howKicker: 'Jak to funguje', steps: [['Nahraj', 'Fotka, sken nebo e-shop.'], ['Zadej míry', 'Pár údajů a hotovo.'], ['Obleč se', 'Outfity, trendy, tipy.']],
+    contactKicker: 'Kontakt', contactTitle: 'Máš otázky?', insideTitle: 'Vítej ve svém šatníku', insideSub: 'Aplikace je náš další krok.', back: 'Zpět', search: 'Hledat jazyk' },
+  sv: { greeting: 'Välkommen', start: 'Kom igång', chip1: 'Din stil', chip2: 'Trendigt', aboutTitle: 'Det här gör My Gardrobe',
+    feats: [['Digital garderob', 'Foto, skanning eller butik.'], ['Kategorier', 'Säsong, färg, märke.'], ['Dina mått', 'Längd, vikt, kroppsform, storlek.'], ['Trender', 'Magasinlooks med dina egna kläder.'], ['Outfitplanerare', 'En look för varje tillfälle.'], ['Tips', 'Det som saknas i din garderob.']],
+    howKicker: 'Så funkar det', steps: [['Ladda upp', 'Foto, skanning eller butik.'], ['Ange dina mått', 'Några uppgifter, klart.'], ['Klä dig', 'Looks, trender, tips.']],
+    contactKicker: 'Kontakt', contactTitle: 'Frågor?', insideTitle: 'Välkommen till din garderob', insideSub: 'Appen är vårt nästa steg.', back: 'Tillbaka', search: 'Sök språk' },
+  da: { greeting: 'Velkommen', start: 'Kom i gang', chip1: 'Din stil', chip2: 'Trending', aboutTitle: 'Det kan My Gardrobe',
+    feats: [['Digital garderobe', 'Foto, scanning eller butik.'], ['Kategorier', 'Sæson, farve, mærke.'], ['Dine mål', 'Højde, vægt, kropsform, størrelse.'], ['Trends', 'Magasinlooks med dit eget tøj.'], ['Outfitplanlægger', 'Et look til enhver lejlighed.'], ['Anbefalinger', 'Det, din garderobe mangler.']],
+    howKicker: 'Sådan virker det', steps: [['Upload', 'Foto, scanning eller butik.'], ['Angiv dine mål', 'Et par oplysninger, færdig.'], ['Klæd dig på', 'Looks, trends, tips.']],
+    contactKicker: 'Kontakt', contactTitle: 'Spørgsmål?', insideTitle: 'Velkommen til din garderobe', insideSub: 'Appen er vores næste skridt.', back: 'Tilbage', search: 'Søg efter sprog' },
+  no: { greeting: 'Velkommen', start: 'Kom i gang', chip1: 'Din stil', chip2: 'Trendy', aboutTitle: 'Dette gjør My Gardrobe',
+    feats: [['Digital garderobe', 'Bilde, skanning eller butikk.'], ['Kategorier', 'Sesong, farge, merke.'], ['Dine mål', 'Høyde, vekt, kroppsform, størrelse.'], ['Trender', 'Magasinlooks med dine egne klær.'], ['Antrekksplanlegger', 'Et antrekk for enhver anledning.'], ['Anbefalinger', 'Det garderoben din mangler.']],
+    howKicker: 'Slik fungerer det', steps: [['Last opp', 'Bilde, skanning eller butikk.'], ['Legg inn målene', 'Noen få opplysninger, ferdig.'], ['Kle deg', 'Antrekk, trender, tips.']],
+    contactKicker: 'Kontakt', contactTitle: 'Spørsmål?', insideTitle: 'Velkommen til garderoben din', insideSub: 'Appen er vårt neste steg.', back: 'Tilbake', search: 'Søk etter språk' },
+  fi: { greeting: 'Tervetuloa', start: 'Aloita', chip1: 'Sinun tyylisi', chip2: 'Trendi', aboutTitle: 'Mitä My Gardrobe tekee',
+    feats: [['Digitaalinen vaatekaappi', 'Kuva, skannaus tai verkkokauppa.'], ['Kategoriat', 'Sesonki, väri, merkki.'], ['Sinun mittasi', 'Pituus, paino, vartalotyyppi, koko.'], ['Trendit', 'Lehtien lookit omista vaatteistasi.'], ['Asusuunnittelija', 'Asu joka tilanteeseen.'], ['Suositukset', 'Mitä vaatekaapistasi puuttuu.']],
+    howKicker: 'Näin se toimii', steps: [['Lataa', 'Kuva, skannaus tai verkkokauppa.'], ['Anna mittasi', 'Muutama tieto, valmista.'], ['Pukeudu', 'Asut, trendit, vinkit.']],
+    contactKicker: 'Yhteystiedot', contactTitle: 'Kysyttävää?', insideTitle: 'Tervetuloa vaatekaappiisi', insideSub: 'Sovellus on seuraava askeleemme.', back: 'Takaisin', search: 'Hae kieltä' },
+  ro: { greeting: 'Bun venit', start: 'Să începem', chip1: 'Stilul tău', chip2: 'În trend', aboutTitle: 'Ce face My Gardrobe',
+    feats: [['Garderobă digitală', 'Foto, scanare sau magazin.'], ['Categorii', 'Sezon, culoare, brand.'], ['Măsurile tale', 'Înălțime, greutate, siluetă, mărime.'], ['Tendințe', 'Ținute din reviste, din hainele tale.'], ['Planificator de ținute', 'O ținută pentru fiecare ocazie.'], ['Recomandări', 'Ce îi lipsește garderobei tale.']],
+    howKicker: 'Cum funcționează', steps: [['Încarcă', 'Foto, scanare sau magazin.'], ['Adaugă măsurile', 'Câteva date și gata.'], ['Îmbracă-te', 'Ținute, tendințe, sfaturi.']],
+    contactKicker: 'Contact', contactTitle: 'Ai întrebări?', insideTitle: 'Bun venit în garderoba ta', insideSub: 'Aplicația este următorul nostru pas.', back: 'Înapoi', search: 'Caută o limbă' },
+  el: { greeting: 'Καλώς ήρθες', start: 'Ξεκίνα', chip1: 'Το στιλ σου', chip2: 'Τάση', aboutTitle: 'Τι κάνει το My Gardrobe',
+    feats: [['Ψηφιακή γκαρνταρόμπα', 'Φωτογραφία, σάρωση ή κατάστημα.'], ['Κατηγορίες', 'Εποχή, χρώμα, μάρκα.'], ['Οι διαστάσεις σου', 'Ύψος, βάρος, σωματότυπος, μέγεθος.'], ['Τάσεις', 'Εμφανίσεις περιοδικών με τα δικά σου ρούχα.'], ['Σχεδιαστής ντυσίματος', 'Ένα σύνολο για κάθε περίσταση.'], ['Προτάσεις', 'Ό,τι λείπει από την ντουλάπα σου.']],
+    howKicker: 'Πώς λειτουργεί', steps: [['Ανέβασε', 'Φωτογραφία, σάρωση ή κατάστημα.'], ['Δώσε τις διαστάσεις σου', 'Λίγα στοιχεία και έτοιμο.'], ['Ντύσου', 'Σύνολα, τάσεις, συμβουλές.']],
+    contactKicker: 'Επικοινωνία', contactTitle: 'Έχεις ερωτήσεις;', insideTitle: 'Καλώς ήρθες στη γκαρνταρόμπα σου', insideSub: 'Η εφαρμογή είναι το επόμενο βήμα μας.', back: 'Πίσω', search: 'Αναζήτηση γλώσσας' }
+});
+GR_I18N.hu.search = 'Nyelv keresése';
+GR_I18N.en.search = 'Search languages';
+GR_I18N.de.search = 'Sprache suchen';
+
+// Google Translate language set: code|English name|country whose flag is shown ("-" = no single country)
+var GR_LANG_DATA = 'af|Afrikaans|ZA;sq|Albanian|AL;am|Amharic|ET;ar|Arabic|SA;hy|Armenian|AM;as|Assamese|IN;ay|Aymara|BO;az|Azerbaijani|AZ;bm|Bambara|ML;eu|Basque|ES;be|Belarusian|BY;bn|Bengali|BD;bho|Bhojpuri|IN;bs|Bosnian|BA;bg|Bulgarian|BG;ca|Catalan|AD;ceb|Cebuano|PH;ny|Chichewa|MW;zh-CN|Chinese (Simplified)|CN;zh-TW|Chinese (Traditional)|TW;co|Corsican|FR;hr|Croatian|HR;cs|Czech|CZ;da|Danish|DK;dv|Dhivehi|MV;doi|Dogri|IN;nl|Dutch|NL;en|English|GB;en-US|English (US)|US;eo|Esperanto|-;et|Estonian|EE;ee|Ewe|GH;fil|Filipino|PH;fi|Finnish|FI;fr|French|FR;fy|Frisian|NL;gl|Galician|ES;ka|Georgian|GE;de|German|DE;el|Greek|GR;gn|Guarani|PY;gu|Gujarati|IN;ht|Haitian Creole|HT;ha|Hausa|NG;haw|Hawaiian|US;he|Hebrew|IL;hi|Hindi|IN;hmn|Hmong|LA;hu|Hungarian|HU;is|Icelandic|IS;ig|Igbo|NG;ilo|Ilocano|PH;id|Indonesian|ID;ga|Irish|IE;it|Italian|IT;ja|Japanese|JP;jv|Javanese|ID;kn|Kannada|IN;kk|Kazakh|KZ;km|Khmer|KH;rw|Kinyarwanda|RW;gom|Konkani|IN;ko|Korean|KR;kri|Krio|SL;ku|Kurdish (Kurmanji)|TR;ckb|Kurdish (Sorani)|IQ;ky|Kyrgyz|KG;lo|Lao|LA;la|Latin|VA;lv|Latvian|LV;ln|Lingala|CD;lt|Lithuanian|LT;lg|Luganda|UG;lb|Luxembourgish|LU;mk|Macedonian|MK;mai|Maithili|IN;mg|Malagasy|MG;ms|Malay|MY;ml|Malayalam|IN;mt|Maltese|MT;mi|Maori|NZ;mr|Marathi|IN;mni-Mtei|Meiteilon (Manipuri)|IN;lus|Mizo|IN;mn|Mongolian|MN;my|Myanmar (Burmese)|MM;ne|Nepali|NP;no|Norwegian|NO;or|Odia (Oriya)|IN;om|Oromo|ET;ps|Pashto|AF;fa|Persian|IR;pl|Polish|PL;pt|Portuguese (Portugal)|PT;pt-BR|Portuguese (Brazil)|BR;pa|Punjabi (Gurmukhi)|IN;qu|Quechua|PE;ro|Romanian|RO;ru|Russian|RU;sm|Samoan|WS;sa|Sanskrit|IN;gd|Scots Gaelic|GB;nso|Sepedi|ZA;sr|Serbian|RS;st|Sesotho|LS;sn|Shona|ZW;sd|Sindhi|PK;si|Sinhala|LK;sk|Slovak|SK;sl|Slovenian|SI;so|Somali|SO;es|Spanish|ES;es-MX|Spanish (Latin America)|MX;su|Sundanese|ID;sw|Swahili|TZ;sv|Swedish|SE;tg|Tajik|TJ;ta|Tamil|IN;tt|Tatar|RU;te|Telugu|IN;th|Thai|TH;ti|Tigrinya|ER;ts|Tsonga|ZA;tr|Turkish|TR;tk|Turkmen|TM;ak|Twi|GH;uk|Ukrainian|UA;ur|Urdu|PK;ug|Uyghur|CN;uz|Uzbek|UZ;vi|Vietnamese|VN;cy|Welsh|GB;xh|Xhosa|ZA;yi|Yiddish|IL;yo|Yoruba|NG;zu|Zulu|ZA;'
+  + 'aa|Afar|DJ;ab|Abkhaz|GE;ace|Acehnese|ID;ach|Acholi|UG;alz|Alur|UG;av|Avar|RU;awa|Awadhi|IN;ban|Balinese|ID;bal|Baluchi|PK;ba|Bashkir|RU;bci|Baoulé|CI;btx|Batak Karo|ID;bts|Batak Simalungun|ID;bbc|Batak Toba|ID;bem|Bemba|ZM;bew|Betawi|ID;bik|Bikol|PH;br|Breton|FR;bua|Buryat|RU;yue|Cantonese|HK;ch|Chamorro|GU;ce|Chechen|RU;chk|Chuukese|FM;cv|Chuvash|RU;crh|Crimean Tatar|UA;prs|Dari|AF;din|Dinka|SS;dov|Dombe|ZW;dyu|Dyula|BF;dz|Dzongkha|BT;fo|Faroese|FO;fj|Fijian|FJ;fon|Fon|BJ;fr-CA|French (Canada)|CA;fur|Friulian|IT;ff|Fulani|SN;gaa|Ga|GH;cnh|Hakha Chin|MM;hil|Hiligaynon|PH;hrx|Hunsrik|BR;iba|Iban|MY;iu|Inuktut|CA;jam|Jamaican Patois|JM;kac|Jingpo|MM;kl|Kalaallisut|GL;kr|Kanuri|NG;ks|Kashmiri|IN;kha|Khasi|IN;cgg|Kiga|UG;kg|Kikongo|CD;ktu|Kituba|CD;trp|Kokborok|IN;kv|Komi|RU;lij|Ligurian|IT;li|Limburgish|NL;lmo|Lombard|IT;luo|Luo|KE;mad|Madurese|ID;mak|Makassar|ID;ms-Arab|Malay (Jawi)|BN;mam|Mam|GT;gv|Manx|IM;mh|Marshallese|MH;mwr|Marwadi|IN;mfe|Mauritian Creole|MU;chm|Meadow Mari|RU;min|Minang|ID;nhe|Nahuatl (Eastern Huasteca)|MX;ndc-ZW|Ndau|ZW;nr|Ndebele (South)|ZA;new|Nepalbhasa (Newari)|NP;nus|Nuer|SS;oc|Occitan|FR;os|Ossetian|RU;pam|Pampanga|PH;pag|Pangasinan|PH;pap|Papiamento|CW;pa-Arab|Punjabi (Shahmukhi)|PK;kek|Qeqchi|GT;rom|Romani|-;rn|Rundi|BI;se|Sami (North)|NO;sg|Sango|CF;sat|Santali|IN;crs|Seychellois Creole|SC;shn|Shan|MM;scn|Sicilian|IT;szl|Silesian|PL;ss|Swati|SZ;sus|Susu|GN;ty|Tahitian|PF;ber-Latn|Tamazight|MA;ber|Tamazight (Tifinagh)|MA;tet|Tetum|TL;bo|Tibetan|CN;tiv|Tiv|NG;tpi|Tok Pisin|PG;to|Tongan|TO;tn|Tswana|BW;tcy|Tulu|IN;tum|Tumbuka|MW;tyv|Tuvan|RU;udm|Udmurt|RU;ve|Venda|ZA;vec|Venetian|IT;war|Waray|PH;wo|Wolof|SN;sah|Yakut|RU;yua|Yucatec Maya|MX;zap|Zapotec|MX';
+
+function grFlag(cc) {
+  if (!cc || cc === '-') return '🌐';
+  return String.fromCodePoint(0x1F1E6 + cc.charCodeAt(0) - 65, 0x1F1E6 + cc.charCodeAt(1) - 65);
+}
+var GR_LANGS = GR_LANG_DATA.split(';').map(function (row) {
+  var p = row.split('|');
+  var native = p[1];
+  try {
+    var dn = new Intl.DisplayNames([p[0]], { type: 'language' }).of(p[0]);
+    if (dn && dn.toLowerCase() !== p[0].toLowerCase()) native = dn.charAt(0).toLocaleUpperCase(p[0]) + dn.slice(1);
+  } catch (e) {}
+  return { code: p[0], english: p[1], native: native, flag: grFlag(p[2]), hay: (p[0] + ' ' + p[1] + ' ' + native).toLowerCase() };
+});
+GR_LANGS.sort(function (a, b) { return a.english.localeCompare(b.english); });
+function grUiKey(code) {
+  var b = String(code).split('-')[0].toLowerCase();
+  if (b === 'nb' || b === 'nn') b = 'no';
+  return GR_I18N[b] ? b : 'en';
+}
+function grFindLang(code) {
+  var c = String(code || '').toLowerCase();
+  for (var i = 0; i < GR_LANGS.length; i++) if (GR_LANGS[i].code.toLowerCase() === c) return GR_LANGS[i].code;
+  var b = c.split('-')[0];
+  if (b === 'nb' || b === 'nn') b = 'no';
+  if (b === 'zh') return c.indexOf('tw') >= 0 || c.indexOf('hant') >= 0 || c.indexOf('hk') >= 0 ? 'zh-TW' : 'zh-CN';
+  for (var j = 0; j < GR_LANGS.length; j++) if (GR_LANGS[j].code.toLowerCase() === b) return GR_LANGS[j].code;
+  return null;
+}
+
+var GR_IMGS = [
+  'assets/wardrobe.svg',
+  'assets/swatches.svg',
+  'assets/mannequin.svg',
+  'assets/magazine.svg',
+  'assets/outfit.svg',
+  'assets/bags.svg'
+];
+var GR_PASTELS = ['#E2DACD', '#E6DFD4', '#D8CFC2', '#EFE9DF', '#DCD3C6', '#E9E2D6'];
+
+var GR_SCENE = (function () {
+  var C = { carcass: '#D9D1C3', edge: '#BFB4A3', inner: '#F4EFE7', led: '#FFFFFF', drawer: '#D7B5A2', drawerEdge: '#B5937E', knob: '#8B7D6B', floor: '#8A6A4E', plank: '#76583F', ceiling: '#EDE7DC', shelf: '#C9BFB0' };
+  var cloth = ['#2B2B2B', '#E6DFD4', '#8B7D6B', '#FFFDF8', '#5E554B', '#C9BEB0', '#3A3A3A', '#D8CFC2', '#A39684', '#B98E7E', '#6A635A', '#F1E3D3'];
+  var garments = {
+    coat: 'M-20 16l-8 8v104h56V24l-8-8z',
+    shirt: 'M-20 16l-14 12 8 14 8-5v51h36V37l8 5 8-14-14-12z',
+    dress: 'M-12 16l2 30-18 76h56l-18-76 2-30z',
+    pants: 'M-17 18v104h15l2-72 2 72h15V18z',
+    blazer: 'M-20 16l-10 8 4 64h52l4-64-10-8-20 26z'
+  };
+  var gOrder = ['coat', 'shirt', 'dress', 'blazer', 'pants', 'shirt', 'dress', 'coat', 'blazer', 'shirt'];
+  var items = {
+    bag: 'M-14 0l3-18h22l3 18z',
+    stack: 'M-18 0v-7h36v7zM-18 -7v-7h36v7zM-18 -14v-7h36v7z',
+    shoes: 'M-18 0c0-6 4-9 10-9l8 9zM2 0c0-6 4-9 10-9l8 9z',
+    box: 'M-16 0v-16h32v16z'
+  };
+  var out = [];
+  var n = 0;
+  function f1(v) { return v.toFixed(1); }
+  function push(d, fill, stroke, sw, tf) { out.push({ d: d, fill: fill || 'none', stroke: stroke || 'none', sw: sw || 0, tf: tf || 'matrix(1 0 0 1 0 0)' }); }
+  function wall(x, f) { var top = 1.75 * x; var h = 1000 - 3.5 * x; return { y: top + f * h, h: h }; }
+  function X(x, m) { return m ? 600 - x : x; }
+  function quad(xa, xb, fa, fb, m) {
+    var p = [[xa, wall(xa, fa).y], [xb, wall(xb, fa).y], [xb, wall(xb, fb).y], [xa, wall(xa, fb).y]];
+    return 'M' + p.map(function (q) { return f1(X(q[0], m)) + ' ' + f1(q[1]); }).join('L') + 'Z';
+  }
+  function line(xa, xb, f, m) { return 'M' + f1(X(xa, m)) + ' ' + f1(wall(xa, f).y) + 'L' + f1(X(xb, m)) + ' ' + f1(wall(xb, f).y); }
+  function tf(x, f, ku, kv, m) { var slope = 1.75 - 3.5 * f; return 'matrix(' + f1(m ? -ku : ku) + ' ' + (slope * ku).toFixed(3) + ' 0 ' + kv.toFixed(3) + ' ' + f1(X(x, m)) + ' ' + f1(wall(x, f).y) + ')'; }
+
+  // ceiling, floor, end wall background
+  push('M0 0H600L360 420H240Z', C.ceiling);
+  push('M0 1000H600L360 580H240Z', C.floor);
+  push('M260 580L100 1000M280 580L200 1000M300 580V1000M320 580L400 1000M340 580L500 1000', 'none', C.plank, 2);
+  push('M240 420H360V580H240Z', C.carcass, C.edge, 1);
+
+  // end wall built-in (front-facing)
+  [[244, 276], [324, 356]].forEach(function (c, ci) {
+    push('M' + c[0] + ' 424H' + c[1] + 'V520H' + c[0] + 'Z', C.inner);
+    push('M' + c[0] + ' 425.5H' + c[1], 'none', C.led, 1.4);
+    push('M' + (c[0] + 1) + ' 431H' + (c[1] - 1), 'none', '#5E554B', .8);
+    for (var g = 0; g < 5; g++) {
+      var gx = c[0] + 3 + g * 6, gh = 30 + ((g + ci) % 3) * 12;
+      push('M' + gx + ' 432h5v' + gh + 'h-5z', cloth[(g * 3 + ci) % cloth.length], '#2B2B2B', .3);
+    }
+    for (var d = 0; d < 3; d++) {
+      var dy = 523 + d * 18;
+      push('M' + (c[0] + 1) + ' ' + dy + 'H' + (c[1] - 1) + 'V' + (dy + 16) + 'H' + (c[0] + 1) + 'Z', C.drawer, C.drawerEdge, .6);
+      push('M' + ((c[0] + c[1]) / 2 - 3) + ' ' + (dy + 8) + 'h6', 'none', C.knob, 1);
+    }
+  });
+  push('M280 424H320V576H280Z', C.inner);
+  [446, 470, 494, 518, 542, 566].forEach(function (y, i) {
+    push('M280 ' + y + 'H320', 'none', C.shelf, 1.6);
+    push('M281 ' + (y + 1.6) + 'H319', 'none', C.led, 1);
+    if (i < 5) {
+      var it = i % 2 ? items.stack : items.bag;
+      push(it, cloth[(i * 5) % cloth.length], '#2B2B2B', 1.4, 'matrix(.3 0 0 .3 292 ' + y + ')');
+      push(i % 2 ? items.box : items.shoes, cloth[(i * 5 + 3) % cloth.length], '#2B2B2B', 1.4, 'matrix(.3 0 0 .3 309 ' + y + ')');
+    }
+  });
+
+  // side walls: modules from far to near
+  var cuts = [0, 54, 102, 142, 174, 199, 218, 231, 240];
+  var types = ['hang', 'shelves', 'hang', 'hang', 'shelves', 'hang', 'shelves', 'hang'];
+  for (var i = cuts.length - 2; i >= 0; i--) {
+    var x1 = cuts[i], x2 = cuts[i + 1], s = wall(x1, 0).h / 1000;
+    var g0 = Math.max(.6, 4 * s);
+    [false, true].forEach(function (m) {
+      var type = types[(i + (m ? 3 : 0)) % types.length];
+      push(quad(x1, x2, 0, 1, m), C.carcass, C.edge, Math.max(.5, 1.5 * s));
+      if (type === 'hang') {
+        push(quad(x1 + g0, x2 - g0, 0.03, 0.6, m), C.inner);
+        push(line(x1 + g0, x2 - g0, 0.1, m), 'none', C.shelf, 7 * s);
+        push(line(x1 + g0, x2 - g0, 0.113, m), 'none', C.led, 4 * s);
+        push(line(x1 + g0, x2 - g0, 0.15, m), 'none', '#2B2B2B', 2.4 * s);
+        // boxes on top shelf
+        var hb = wall((x1 + x2) / 2, 0.1).h;
+        push(items.box, cloth[(i * 7) % cloth.length], '#2B2B2B', 1.4, tf((x1 + x2) / 2, 0.1, (x2 - x1) / 70, hb / 900, m));
+        var cnt = 3, ku = (x2 - x1 - 2 * g0) / (cnt * 52);
+        for (var k = cnt - 1; k >= 0; k--) {
+          var gx = x1 + g0 + (k + 0.5) * (x2 - x1 - 2 * g0) / cnt;
+          var hh = wall(gx, 0.15).h, kv = 0.4 * hh / 128;
+          var gt = tf(gx, 0.15, ku, kv, m);
+          push('M0 0v6M-22 16L0 6l22 10', 'none', '#2B2B2B', 1.6, gt);
+          push(garments[gOrder[(i * 3 + k + (m ? 4 : 0)) % gOrder.length]], cloth[(i * 3 + k + (m ? 5 : 0)) % cloth.length], '#2B2B2B', 1.4, gt);
+        }
+        // drawers
+        for (var dI = 0; dI < 3; dI++) {
+          var fa = 0.63 + dI * 0.105, fb = fa + 0.095;
+          push(quad(x1 + g0, x2 - g0, fa, fb, m), C.drawer, C.drawerEdge, Math.max(.4, 1.2 * s));
+          var cx = (x1 + x2) / 2, w = (x2 - x1) * 0.18;
+          push(line(cx - w, cx + w, (fa + fb) / 2, m), 'none', C.knob, Math.max(.6, 3 * s));
+        }
+      } else {
+        push(quad(x1 + g0, x2 - g0, 0.03, 0.95, m), C.inner);
+        var lv = [0.1, 0.27, 0.44, 0.61, 0.78, 0.95];
+        lv.forEach(function (f, j) {
+          push(line(x1 + g0, x2 - g0, f, m), 'none', C.shelf, 7 * s);
+          if (j < lv.length - 1) push(line(x1 + g0, x2 - g0, f + 0.013, m), 'none', C.led, 4 * s);
+          if (j > 0) {
+            var kinds = j === 5 ? ['shoes', 'shoes'] : j === 4 ? ['shoes', 'box'] : j % 2 ? ['bag', 'stack'] : ['stack', 'bag'];
+            [0.3, 0.72].forEach(function (pos, q) {
+              var ix = x1 + g0 + pos * (x2 - x1 - 2 * g0);
+              var hi = wall(ix, f).h;
+              push(items[kinds[q]], cloth[(i * 5 + j * 3 + q + (m ? 2 : 0)) % cloth.length], '#2B2B2B', 1.4, tf(ix, f, (x2 - x1) / 90, hi / 760, m));
+            });
+          }
+        });
+      }
+      push('M' + f1(X(x1, m)) + ' ' + f1(wall(x1, 0).y) + 'L' + f1(X(x1, m)) + ' ' + f1(wall(x1, 1).y), 'none', C.edge, Math.max(.6, 5 * s));
+    });
+  }
+  // ceiling spots
+  [[300, 70, 9], [300, 200, 7], [300, 295, 5], [300, 358, 3.5], [300, 396, 2.4], [140, 120, 6], [460, 120, 6], [205, 300, 4], [395, 300, 4]].forEach(function (c) {
+    push('M' + (c[0] - c[2]) + ' ' + c[1] + 'a' + c[2] + ' ' + c[2] + ' 0 1 0 ' + (2 * c[2]) + ' 0a' + c[2] + ' ' + c[2] + ' 0 1 0 ' + (-2 * c[2]) + ' 0', '#FFFFFF');
+  });
+  return { shapes: out };
+})();
+
+var GR_TR_URL = 'i18n/translations.json';
+var GR_TR = {};
+var GR_TR_KEYS = ['greeting', 'start', 'chip1', 'chip2', 'aboutTitle', 'f0', 'f0t', 'f1', 'f1t', 'f2', 'f2t', 'f3', 'f3t', 'f4', 'f4t', 'f5', 'f5t', 'howKicker', 's0', 's0t', 's1', 's1t', 's2', 's2t', 'contactKicker', 'contactTitle', 'insideTitle', 'insideSub', 'back', 'search'];
+var GR_RTL = ['ar', 'he', 'fa', 'prs', 'ur', 'ps', 'sd', 'ug', 'yi', 'dv', 'ckb', 'pa-Arab', 'ms-Arab', 'bal', 'ks'];
+function grTexts(code) {
+  var base = Object.assign({}, GR_I18N.en);
+  var key = grUiKey(code);
+  if (key !== 'en' || String(code).split('-')[0] === 'en') return Object.assign(base, GR_I18N[key]);
+  var arr = GR_TR[code] || GR_TR[String(code).split('-')[0]];
+  if (!arr) return base;
+  var o = {};
+  GR_TR_KEYS.forEach(function (k, i) { o[k] = arr[i]; });
+  base.greeting = o.greeting; base.start = o.start; base.chip1 = o.chip1; base.chip2 = o.chip2; base.aboutTitle = o.aboutTitle;
+  base.feats = [[o.f0, o.f0t], [o.f1, o.f1t], [o.f2, o.f2t], [o.f3, o.f3t], [o.f4, o.f4t], [o.f5, o.f5t]];
+  base.howKicker = o.howKicker;
+  base.steps = [[o.s0, o.s0t], [o.s1, o.s1t], [o.s2, o.s2t]];
+  base.contactKicker = o.contactKicker; base.contactTitle = o.contactTitle;
+  base.insideTitle = o.insideTitle; base.insideSub = o.insideSub; base.back = o.back; base.search = o.search;
+  return base;
+}
+
+var GR_CONTACTS = [
+  { id: 'mail', label: 'E-mail', value: 'mygardrobe@gmail.com', href: 'mailto:mygardrobe@gmail.com' },
+  { id: 'tel', label: 'Tel.', value: '+43 660 123 4567', href: 'tel:+436601234567' },
+  { id: 'ig', label: 'Instagram', value: '@my.gardrobe', href: 'https://www.instagram.com/my.gardrobe/' },
+  { id: 'tt', label: 'TikTok', value: '@my.gardrobe', href: 'https://www.tiktok.com/@my.gardrobe' }
+];
+var GR_STEP_IMGS = ['assets/step-upload.svg', 'assets/step-coat.svg', 'assets/step-dress.svg'];
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { lang: 'en', phase: 'idle', menuOpen: false, q: '', contact: '' };
+  }
+  componentDidMount() {
+    var self0 = this;
+    try { fetch(GR_TR_URL).then(function (r) { return r.json(); }).then(function (d) { GR_TR = d || {}; self0.forceUpdate(); }).catch(function () {}); } catch (e) {}
+    var picked = null;
+    try { picked = grFindLang(window.localStorage.getItem('gr-lang')); } catch (e) {}
+    if (!picked) {
+      try {
+        var list = (navigator.languages && navigator.languages.length) ? navigator.languages : [navigator.language || 'en'];
+        for (var i = 0; i < list.length && !picked; i++) picked = grFindLang(list[i]);
+      } catch (e) {}
+    }
+    this.setLang(picked || 'en', false);
+  }
+  componentWillUnmount() { clearTimeout(this._t); }
+  setLang(code, remember) {
+    this.setState({ lang: code });
+    try { document.documentElement.lang = code; } catch (e) {}
+    if (remember) { try { window.localStorage.setItem('gr-lang', code); } catch (e) {} }
+  }
+  renderVals() {
+    var self = this;
+    var lang = this.state.lang;
+    var t = grTexts(lang);
+    var q = String(this.state.q || '').trim().toLowerCase();
+    var current = GR_LANGS.filter(function (l) { return l.code === lang; })[0] || GR_LANGS[0];
+    var shown = GR_LANGS.filter(function (l) { return !q || l.hay.indexOf(q) >= 0; });
+    return {
+      t: t,
+      dir: GR_RTL.indexOf(lang) >= 0 ? 'rtl' : 'ltr',
+      current: current,
+      q: this.state.q,
+      searchPh: t.search,
+      langCountLabel: shown.length + ' / ' + GR_LANGS.length,
+      onQ: function (e) { self.setState({ q: e && e.target ? e.target.value : '' }); },
+      menuOpen: !!this.state.menuOpen,
+      toggleMenu: function () { self.setState({ menuOpen: !self.state.menuOpen, q: '' }); },
+      langs: shown.map(function (l) {
+        return { flag: l.flag, native: l.native, english: l.english, active: l.code === lang, inactive: l.code !== lang, pick: function () { self.setLang(l.code, true); self.setState({ menuOpen: false, q: '' }); } };
+      }),
+      features: t.feats.map(function (f, i) { return { img: GR_IMGS[i], bg: GR_PASTELS[i], title: f[0], text: f[1] }; }),
+      steps: t.steps.map(function (s, i) { return { n: '0' + (i + 1), img: GR_STEP_IMGS[i], title: s[0], text: s[1] }; }),
+      contacts: GR_CONTACTS.map(function (c) {
+        var open = self.state.contact === c.id;
+        return { label: c.label, open: open, closed: !open, toggle: function () { self.setState({ contact: open ? '' : c.id }); } };
+      }),
+      contactShown: !!this.state.contact,
+      contactHref: (GR_CONTACTS.filter(function (c) { return c.id === self.state.contact; })[0] || {}).href || '#',
+      contactValue: (GR_CONTACTS.filter(function (c) { return c.id === self.state.contact; })[0] || {}).value || '',
+      scene: GR_SCENE,
+      opening: this.state.phase === 'opening',
+      inside: this.state.phase === 'inside',
+      start: function () {
+        clearTimeout(self._t);
+        self.setState({ phase: 'opening', menuOpen: false });
+        self._t = setTimeout(function () { self.setState({ phase: 'inside' }); }, 4400);
+      },
+      back: function () { clearTimeout(self._t); self.setState({ phase: 'idle' }); }
+    };
+  }
+}
+
+dcMount(Component, '#gr-template', '#app');
+</script>
+</body>
+</html>
