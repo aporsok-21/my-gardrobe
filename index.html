@@ -49,6 +49,34 @@ a{color:#2B2B2B}a:hover{color:#8B7D6B}
 .gr-greet:hover .gr-lt-in,.gr-greet.gr-shine .gr-lt-in{font-weight:900;transform:translateY(-1px);color:transparent;background-image:linear-gradient(105deg,#141414 0 42%,#8A8378 46%,#FFFFFF 49%,#FFF6DF 50%,#FFFFFF 51%,#8A8378 54%,#141414 58% 100%);filter:drop-shadow(0 0 .6px rgba(20,20,20,.75));background-size:320% 100%;-webkit-background-clip:text;background-clip:text;animation:grGlint 1.9s calc(var(--i) * .09s) ease-in-out infinite}
 .gr-greet:hover .gr-lt-in::after,.gr-greet.gr-shine .gr-lt-in::after{animation:grTwinkle 1.5s calc(var(--i) * .23s) ease-in-out infinite}
 .gr-greet:hover .gr-lt-in::before,.gr-greet.gr-shine .gr-lt-in::before{animation:grTwinkle 1.5s calc(var(--i) * .23s + .7s) ease-in-out infinite}
+/* Get started press */
+@keyframes grPress{0%{transform:scale(1)}35%{transform:scale(.95)}70%{transform:scale(1.02)}100%{transform:scale(1)}}
+@keyframes grArrow{0%{transform:translateX(0)}35%{transform:translateX(-4px)}100%{transform:translateX(44px);opacity:0}}
+@keyframes grRipple{to{transform:scale(45);opacity:0}}
+.gr-go{position:relative;overflow:hidden}
+.gr-go>span:not(.gr-ripple),.gr-go>svg{position:relative;z-index:1}
+.gr-go>svg{transition:transform .25s}
+.gr-go:hover>svg{transform:translateX(4px)}
+.gr-go:active{transform:scale(.97) !important}
+.gr-go.gr-pressed{animation:grPress .45s ease-out}
+.gr-go.gr-pressed>svg{animation:grArrow .45s ease-in forwards}
+.gr-ripple{position:absolute;width:20px;height:20px;margin:-10px 0 0 -10px;border-radius:50%;background:rgba(246,242,234,.3);transform:scale(0);animation:grRipple .55s ease-out forwards;pointer-events:none}
+/* Contact list */
+.gr-crow:last-child{border-bottom:0 !important}
+.gr-cicon{transition:transform .2s,background .2s}
+.gr-crow:hover .gr-cicon{transform:scale(1.08);background:#C9BEB0 !important}
+.gr-crow:hover .gr-cval{text-decoration:underline;text-underline-offset:4px}
+.gr-crow:focus-visible{outline:2px solid #F6F2EA;outline-offset:2px;border-radius:12px}
+/* How it works: drawings sketch themselves, numbers pop */
+.gr-js .gr-draw .gr-ln{stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 1.5s cubic-bezier(.45,0,.2,1)}
+.gr-js .gr-in .gr-draw .gr-ln,.gr-js .gr-seen .gr-draw .gr-ln{stroke-dashoffset:0}
+.gr-js .gr-num{transform:scale(0);transition:transform .55s .3s cubic-bezier(.34,1.7,.6,1)}
+.gr-js .gr-in .gr-num,.gr-js .gr-seen .gr-num{transform:none}
+/* Contact rows slide in one after another */
+.gr-js .gr-reveal .gr-crow{opacity:0;transform:translateX(-16px);transition:opacity .5s ease-out,transform .5s ease-out}
+.gr-js .gr-in .gr-crow,.gr-js .gr-seen .gr-crow{opacity:1;transform:none}
+.gr-js .gr-reveal .gr-crow:nth-child(1){transition-delay:.3s}.gr-js .gr-reveal .gr-crow:nth-child(2){transition-delay:.42s}.gr-js .gr-reveal .gr-crow:nth-child(3){transition-delay:.54s}.gr-js .gr-reveal .gr-crow:nth-child(4){transition-delay:.66s}
+.gr-js .gr-seen .gr-ln,.gr-js .gr-seen .gr-num,.gr-js .gr-seen .gr-crow{transition:none}
 /* Hanger swing */
 @keyframes grSwing{0%{transform:rotate(0)}14%{transform:rotate(7deg)}31%{transform:rotate(-5deg)}49%{transform:rotate(3.2deg)}67%{transform:rotate(-1.7deg)}84%{transform:rotate(.6deg)}100%{transform:rotate(0)}}
 .gr-hang{display:inline-block;transform-origin:50.7% 5.8%;animation:grSwing 2.6s .6s ease-in-out both}
@@ -80,6 +108,7 @@ a{color:#2B2B2B}a:hover{color:#8B7D6B}
 .gr-greet:hover .gr-lt-in::before,.gr-greet:hover .gr-lt-in::after,.gr-greet.gr-shine .gr-lt-in::before,.gr-greet.gr-shine .gr-lt-in::after{animation:none;opacity:.9;transform:none}
 .gr-hang,.gr-hang>svg,.gr-hang>svg.gr-swing,.gr-in-s{animation:none}
 .gr-js .gr-reveal{opacity:1;transform:none;transition:none}
+.gr-js .gr-draw .gr-ln,.gr-js .gr-num,.gr-js .gr-reveal .gr-crow{stroke-dashoffset:0;opacity:1;transform:none;transition:none}
 .gr-door-l,.gr-door-r,.gr-bdoor-l,.gr-bdoor-r{animation-duration:.4s}
 .gr-dolly{animation-duration:.6s}
 }
@@ -129,7 +158,7 @@ a{color:#2B2B2B}a:hover{color:#8B7D6B}
 <h1 class="gr-r1" style="margin: 6px 0 0; max-width: min(92vw, 18em); font-size: clamp(26px, calc(3.6vw + 10px), 56px); line-height: 1.08; font-weight: 800; letter-spacing: -.02em; text-wrap: balance; color: #2B2B2B">Style and organise your clothes</h1>
 </div>
 <div class="gr-r3" style="display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 420px">
-<button class="gr-cta" onClick="{{start}}" style="width: 100%; min-height: 60px; padding: 0 32px; background: #2B2B2B; color: #F6F2EA; border: 0; border-radius: 999px; font-family: 'Archivo', sans-serif; font-size: 18px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 10px">
+<button class="gr-cta gr-go" onClick="{{start}}" style="width: 100%; min-height: 60px; padding: 0 32px; background: #2B2B2B; color: #F6F2EA; border: 0; border-radius: 999px; font-family: 'Archivo', sans-serif; font-size: 18px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 10px">
 <span>{{t.start}}</span>
 <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
 </button>
@@ -145,11 +174,11 @@ a{color:#2B2B2B}a:hover{color:#8B7D6B}
 <sc-for list="{{steps}}" as="s" hint-placeholder-count="3">
 <div class="gr-reveal" style="background: #FFFDF8; border: 1px solid #DDD5C8; border-radius: 22px; padding: 22px; display: flex; align-items: center; gap: 16px">
 <div style="flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 6px">
-<div style="width: 44px; height: 44px; border-radius: 50%; background: #2B2B2B; color: #F6F2EA; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 800; margin-bottom: 8px">{{s.n}}</div>
+<div class="gr-num" style="width: 44px; height: 44px; border-radius: 50%; background: #2B2B2B; color: #F6F2EA; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 800; margin-bottom: 8px">{{s.n}}</div>
 <h3 style="margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -.02em; color: #2B2B2B">{{s.title}}</h3>
 <p style="margin: 0; font-size: 16px; color: #6A635A">{{s.text}}</p>
 </div>
-<img src="{{s.img}}" alt="" style="flex: 0 0 auto; width: 42%; max-width: 150px; height: auto; display: block">
+<img class="gr-art" src="{{s.img}}" alt="" style="flex: 0 0 auto; width: 42%; max-width: 150px; height: auto; display: block">
 </div>
 </sc-for>
 </div>
@@ -164,20 +193,13 @@ a{color:#2B2B2B}a:hover{color:#8B7D6B}
 </div>
 <div class="gr-reveal" style="max-width: 1240px; margin: 0 auto; background: #2B2B2B; color: #F6F2EA; border-radius: 28px; padding: clamp(28px, 5vw, 56px); display: flex; flex-wrap: wrap; gap: 32px; justify-content: space-between; align-items: center">
 <h2 style="margin: 0; font-size: clamp(32px, 4vw, 48px); font-weight: 800; letter-spacing: -.03em; line-height: 1.05; color: #F6F2EA">{{t.contactKicker}}</h2>
-<div style="display: flex; flex-direction: column; align-items: flex-start; gap: 16px">
-<div style="display: flex; flex-wrap: wrap; gap: 10px">
+<div style="display: flex; flex-direction: column; width: 100%; max-width: 480px">
 <sc-for list="{{contacts}}" as="c" hint-placeholder-count="4">
-<sc-if value="{{c.open}}" hint-placeholder-val="{{false}}">
-<button class="gr-cta" aria-expanded="true" onClick="{{c.toggle}}" style="min-height: 48px; padding: 0 20px; background: #C9BEB0; color: #2B2B2B; border: 0; border-radius: 999px; font-family: 'Archivo', sans-serif; font-size: 16px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px"><img src="{{c.icon}}" alt="" aria-hidden="true" style="width: 20px; height: 20px; display: block"><span>{{c.label}}</span></button>
-</sc-if>
-<sc-if value="{{c.closed}}" hint-placeholder-val="{{true}}">
-<button class="gr-cta" aria-expanded="false" onClick="{{c.toggle}}" style="min-height: 48px; padding: 0 20px; background: #F6F2EA; color: #2B2B2B; border: 0; border-radius: 999px; font-family: 'Archivo', sans-serif; font-size: 16px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px"><img src="{{c.icon}}" alt="" aria-hidden="true" style="width: 20px; height: 20px; display: block"><span>{{c.label}}</span></button>
-</sc-if>
+<a class="gr-crow" href="{{c.href}}" target="{{c.target}}" rel="noopener" style="display: flex; align-items: center; gap: 16px; padding: 14px 4px; border-bottom: 1px solid rgba(246, 242, 234, .14); color: #F6F2EA; text-decoration: none">
+<span class="gr-cicon" style="flex: 0 0 auto; width: 46px; height: 46px; border-radius: 50%; background: #F6F2EA; display: flex; align-items: center; justify-content: center"><img src="{{c.icon}}" alt="" aria-hidden="true" style="width: 21px; height: 21px; display: block"></span>
+<span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: #B5A898">{{c.label}}</span><span class="gr-cval" style="font-size: clamp(17px, 1.8vw, 21px); font-weight: 700; overflow-wrap: anywhere">{{c.value}}</span></span>
+</a>
 </sc-for>
-</div>
-<sc-if value="{{contactShown}}" hint-placeholder-val="{{false}}">
-<a href="{{contactHref}}" target="_blank" rel="noopener" style="font-size: clamp(20px, 2.4vw, 28px); font-weight: 700; color: #F6F2EA; text-decoration: underline; text-underline-offset: 5px">{{contactValue}}</a>
-</sc-if>
 </div>
 </div>
 </section>
@@ -709,7 +731,7 @@ function grGraphemes(text) {
 class Component extends DCLogic {
   constructor(props) {
     super(props);
-    this.state = { lang: 'en', phase: 'idle', menuOpen: false, q: '', contact: '' };
+    this.state = { lang: 'en', phase: 'idle', menuOpen: false, q: '' };
   }
   componentDidMount() {
     var self0 = this;
@@ -769,20 +791,34 @@ class Component extends DCLogic {
       features: t.feats.map(function (f, i) { return { img: GR_IMGS[i], bg: GR_PASTELS[i], title: f[0], text: f[1] }; }),
       steps: t.steps.map(function (s, i) { return { n: '0' + (i + 1), img: GR_STEP_IMGS[i], title: s[0], text: s[1] }; }),
       contacts: GR_CONTACTS.map(function (c) {
-        var open = self.state.contact === c.id;
-        return { label: c.label, icon: c.icon, open: open, closed: !open, toggle: function () { self.setState({ contact: open ? '' : c.id }); } };
+        return { label: c.label, icon: c.icon, value: c.value, href: c.href, target: /^https?:/.test(c.href) ? '_blank' : undefined };
       }),
-      contactShown: !!this.state.contact,
-      contactHref: (GR_CONTACTS.filter(function (c) { return c.id === self.state.contact; })[0] || {}).href || '#',
-      contactValue: (GR_CONTACTS.filter(function (c) { return c.id === self.state.contact; })[0] || {}).value || '',
       sceneBox: (function () { var a = 0.6; try { a = window.innerWidth / Math.max(1, window.innerHeight); } catch (e) {} return a > 0.6 ? (300 - 500 * a).toFixed(0) + ' 0 ' + (1000 * a).toFixed(0) + ' 1000' : '0 0 600 1000'; })(),
       scene: GR_SCENE,
       opening: this.state.phase === 'opening',
       inside: this.state.phase === 'inside',
-      start: function () {
+      start: function (e) {
+        if (self._going) return;
         clearTimeout(self._t);
-        self.setState({ phase: 'opening', menuOpen: false });
-        self._t = setTimeout(function () { self.setState({ phase: 'inside' }); }, 4400);
+        var go = function () {
+          self._going = false;
+          self.setState({ phase: 'opening', menuOpen: false });
+          self._t = setTimeout(function () { self.setState({ phase: 'inside' }); }, 4400);
+        };
+        var btn = e && e.currentTarget;
+        var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (!btn || still) return go();
+        // Let the button play its press, ripple and arrow before the walk-in starts.
+        self._going = true;
+        var r = btn.getBoundingClientRect();
+        var keyboard = !e.detail;
+        var rip = document.createElement('span');
+        rip.className = 'gr-ripple';
+        rip.style.left = (keyboard ? r.width / 2 : e.clientX - r.left) + 'px';
+        rip.style.top = (keyboard ? r.height / 2 : e.clientY - r.top) + 'px';
+        btn.appendChild(rip);
+        btn.classList.add('gr-pressed');
+        self._t = setTimeout(go, 450);
       },
       back: function () { clearTimeout(self._t); self.setState({ phase: 'idle' }); }
     };
@@ -812,7 +848,41 @@ dcMount(Component, '#gr-template', '#app');
         }
       });
     }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+    // Swap the How it works pictures for inline copies of the same SVGs so
+    // their strokes can be drawn on.
+    var arts = {};
+    Array.prototype.forEach.call(document.querySelectorAll('img.gr-art'), function (img) {
+      var src = img.getAttribute('src');
+      if (arts[src] !== undefined) return;
+      arts[src] = null;
+      fetch(src).then(function (r) { return r.text(); }).then(function (txt) {
+        var svg = new DOMParser().parseFromString(txt, 'image/svg+xml').documentElement;
+        if (svg.nodeName !== 'svg') return;
+        Array.prototype.forEach.call(svg.querySelectorAll('metadata'), function (m) { m.remove(); });
+        arts[src] = svg;
+        inlineArt();
+      }).catch(function () {});
+    });
+    var inlineArt = function () {
+      Array.prototype.forEach.call(app.querySelectorAll('img.gr-art'), function (img) {
+        var svg = arts[img.getAttribute('src')];
+        if (!svg) return;
+        var copy = svg.cloneNode(true);
+        copy.removeAttribute('width');
+        copy.removeAttribute('height');
+        copy.setAttribute('class', 'gr-draw');
+        copy.setAttribute('aria-hidden', 'true');
+        copy.setAttribute('style', img.getAttribute('style'));
+        Array.prototype.forEach.call(copy.querySelectorAll('path, circle, rect, line, polyline, polygon, ellipse'), function (el, i) {
+          el.setAttribute('pathLength', '1');
+          el.setAttribute('class', 'gr-ln');
+          el.style.transitionDelay = (0.15 + i * 0.05).toFixed(2) + 's';
+        });
+        img.replaceWith(copy);
+      });
+    };
     var hook = function () {
+      inlineArt();
       io.disconnect();
       Array.prototype.forEach.call(app.querySelectorAll('.gr-reveal'), function (el, i) {
         el.setAttribute('data-rk', i);
