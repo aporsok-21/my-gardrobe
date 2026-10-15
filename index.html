@@ -6,7 +6,7 @@
 <title>My Gardrobe — Style and organise your clothes</title>
 <meta name="description" content="My Gardrobe — style and organise your clothes online.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&amp;family=Dancing+Script:wght@700&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400..900&amp;family=Dancing+Script:wght@700&amp;display=swap">
 <style>
 body{margin:0;background:#F6F2EA}
 a{color:#2B2B2B}a:hover{color:#8B7D6B}
@@ -30,6 +30,25 @@ a{color:#2B2B2B}a:hover{color:#8B7D6B}
 .gr-langopt:focus-visible{outline:2px solid #444444;outline-offset:-2px}
 .gr-card{transition:transform .25s,border-color .25s}
 .gr-card:hover{transform:translateY(-4px);border-color:#B5A898 !important}
+/* Welcome: letters pop in one by one; hover or touch makes them bolder with white glints */
+.gr-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@keyframes grPop{0%{opacity:0;transform:translateY(.7em) scale(.4)}55%{opacity:1;transform:translateY(-.22em) scale(1.12)}78%{transform:translateY(.05em) scale(.97)}100%{opacity:1;transform:none}}
+@keyframes grGlint{0%{background-position:120% 0}60%,100%{background-position:-20% 0}}
+@keyframes grTwinkle{0%,100%{opacity:0;transform:scale(.2) rotate(0)}45%{opacity:1;transform:scale(1) rotate(45deg)}70%{opacity:.25;transform:scale(.5) rotate(70deg)}}
+.gr-greet{cursor:default;user-select:none;-webkit-tap-highlight-color:transparent}
+.gr-lt{display:inline-block;white-space:pre;animation:grPop .7s cubic-bezier(.3,1.5,.5,1) both}
+.gr-lt-done{animation:none}
+.gr-lt-in{position:relative;display:inline-block;font-weight:700;transition:font-weight .35s ease,transform .35s ease}
+.gr-lt-in::before,.gr-lt-in::after{content:'';position:absolute;pointer-events:none;background:#FFFFFF;opacity:0;clip-path:polygon(50% 0,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0 50%,39% 39%);filter:drop-shadow(0 0 1px rgba(176,141,87,.9))}
+.gr-lt-in::after{width:.42em;height:.42em;top:12%;left:18%}
+.gr-lt-in::before{width:.26em;height:.26em;top:58%;left:52%}
+.gr-lt:nth-child(3n+2) .gr-lt-in::after{top:44%;left:-4%}
+.gr-lt:nth-child(3n+2) .gr-lt-in::before{top:8%;left:62%}
+.gr-lt:nth-child(3n) .gr-lt-in::after{top:-6%;left:48%}
+.gr-lt:nth-child(3n) .gr-lt-in::before{top:64%;left:6%}
+.gr-greet:hover .gr-lt-in,.gr-greet.gr-shine .gr-lt-in{font-weight:900;transform:translateY(-1px);color:transparent;background-image:linear-gradient(105deg,#141414 0 42%,#8A8378 46%,#FFFFFF 49%,#FFF6DF 50%,#FFFFFF 51%,#8A8378 54%,#141414 58% 100%);filter:drop-shadow(0 0 .6px rgba(20,20,20,.75));background-size:320% 100%;-webkit-background-clip:text;background-clip:text;animation:grGlint 1.9s calc(var(--i) * .09s) ease-in-out infinite}
+.gr-greet:hover .gr-lt-in::after,.gr-greet.gr-shine .gr-lt-in::after{animation:grTwinkle 1.5s calc(var(--i) * .23s) ease-in-out infinite}
+.gr-greet:hover .gr-lt-in::before,.gr-greet.gr-shine .gr-lt-in::before{animation:grTwinkle 1.5s calc(var(--i) * .23s + .7s) ease-in-out infinite}
 /* Hanger swing */
 @keyframes grSwing{0%{transform:rotate(0)}14%{transform:rotate(7deg)}31%{transform:rotate(-5deg)}49%{transform:rotate(3.2deg)}67%{transform:rotate(-1.7deg)}84%{transform:rotate(.6deg)}100%{transform:rotate(0)}}
 .gr-hang{display:inline-block;transform-origin:50.7% 5.8%;animation:grSwing 2.6s .6s ease-in-out both}
@@ -57,6 +76,8 @@ a{color:#2B2B2B}a:hover{color:#8B7D6B}
 .gr-in-1{animation-delay:.15s}.gr-in-2{animation-delay:.4s}.gr-in-3{animation-delay:.7s}.gr-in-4{animation-delay:.85s}.gr-in-5{animation-delay:1.15s}
 @media (prefers-reduced-motion: reduce){
 .gr-r0,.gr-r1,.gr-r2,.gr-r3,.gr-r4{animation:none}
+.gr-lt,.gr-greet:hover .gr-lt-in,.gr-greet.gr-shine .gr-lt-in{animation:none}
+.gr-greet:hover .gr-lt-in::before,.gr-greet:hover .gr-lt-in::after,.gr-greet.gr-shine .gr-lt-in::before,.gr-greet.gr-shine .gr-lt-in::after{animation:none;opacity:.9;transform:none}
 .gr-hang,.gr-hang>svg,.gr-hang>svg.gr-swing,.gr-in-s{animation:none}
 .gr-js .gr-reveal{opacity:1;transform:none;transition:none}
 .gr-door-l,.gr-door-r,.gr-bdoor-l,.gr-bdoor-r{animation-duration:.4s}
@@ -70,10 +91,10 @@ a{color:#2B2B2B}a:hover{color:#8B7D6B}
 
 <!-- HEADER -->
 <header style="position: absolute; top: 0; left: 0; right: 0; z-index: 10; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 20px clamp(20px, 5vw, 72px)">
-<div class="gr-r0" style="font-size: clamp(20px, 2.2vw, 28px); font-weight: 700; letter-spacing: .24em; margin-right: -.24em; text-transform: uppercase; color: #2B2B2B; white-space: nowrap">{{t.greeting}}</div>
+<div class="gr-greet" onTouchstart="{{shine}}" style="font-size: clamp(20px, 2.2vw, 28px); font-weight: 700; letter-spacing: .24em; margin-right: -.24em; text-transform: uppercase; color: #2B2B2B; white-space: nowrap"><span class="gr-sr">{{t.greeting}}</span><span aria-hidden="true"><sc-for list="{{greet}}" as="g" hint-placeholder-count="7"><span class="{{g.cls}}" style="animation-delay: {{g.d}}s; --i: {{g.i}}"><span class="gr-lt-in">{{g.ch}}</span></span></sc-for></span></div>
 <nav aria-label="Language" style="position: relative; justify-self: end">
 <button class="gr-lang" onClick="{{toggleMenu}}" aria-haspopup="true" aria-expanded="{{menuOpen}}" style="display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 64px; min-height: 52px; padding: 4px; background: transparent; border: 0; color: #2B2B2B; font-family: 'Archivo', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase">
-<span style="display: flex; align-items: center; gap: 6px"><span style="font-size: 20px; line-height: 1; letter-spacing: 0">{{current.flag}}</span><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20M12 2c-3 3-4.4 6.4-4.4 10S9 19 12 22M12 2c3 3 4.4 6.4 4.4 10S15 19 12 22"></path></g></svg></span>
+<span style="display: flex; align-items: center; gap: 6px"><span style="font-size: 20px; line-height: 1; letter-spacing: 0">{{current.flag}}</span></span>
 <span>Language</span>
 </button>
 <sc-if value="{{menuOpen}}" hint-placeholder-val="{{false}}">
@@ -119,8 +140,8 @@ a{color:#2B2B2B}a:hover{color:#8B7D6B}
 <!-- HOW IT WORKS -->
 <section style="padding: clamp(72px, 9vw, 120px) clamp(20px, 5vw, 72px); border-top: 1px solid #DDD5C8">
 <div style="max-width: 1240px; margin: 0 auto">
-<h2 class="gr-reveal" style="margin: 0 0 44px; font-size: clamp(32px, 4vw, 52px); font-weight: 800; letter-spacing: -.03em; line-height: 1.05; color: #2B2B2B">{{t.howKicker}}</h2>
-<div class="gr-stagger" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px">
+<h2 class="gr-reveal" style="margin: 0 auto 44px; max-width: 860px; font-size: clamp(32px, 4vw, 52px); font-weight: 800; letter-spacing: -.03em; line-height: 1.05; color: #2B2B2B">{{t.howKicker}}</h2>
+<div class="gr-stagger" style="display: grid; grid-template-columns: 1fr; gap: 16px; max-width: 860px; margin: 0 auto">
 <sc-for list="{{steps}}" as="s" hint-placeholder-count="3">
 <div class="gr-reveal" style="background: #FFFDF8; border: 1px solid #DDD5C8; border-radius: 22px; padding: 22px; display: flex; align-items: center; gap: 16px">
 <div style="flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 6px">
@@ -674,6 +695,17 @@ var GR_CONTACTS = [
   { id: 'tt', icon: 'assets/icon-tiktok.svg', label: 'TikTok', value: '@my.gardrobe', href: 'https://www.tiktok.com/@my.gardrobe' }
 ];
 var GR_STEP_IMGS = ['assets/step-upload.svg', 'assets/step-coat.svg', 'assets/step-dress.svg'];
+// Splits text into letters for the Welcome pop-in. Scripts whose letters join (Arabic, Indic, ...) stay whole.
+function grGraphemes(text) {
+  text = String(text || '');
+  var splittable = true;
+  try { splittable = /^[\p{sc=Latin}\p{sc=Cyrillic}\p{sc=Greek}\p{sc=Armenian}\p{sc=Georgian}\p{sc=Han}\p{sc=Hiragana}\p{sc=Katakana}\p{sc=Hangul}\p{M}\p{P}\s]+$/u.test(text); } catch (e) {}
+  if (!splittable) return [text];
+  try {
+    if (window.Intl && Intl.Segmenter) return Array.from(new Intl.Segmenter(undefined, { granularity: 'grapheme' }).segment(text), function (x) { return x.segment; });
+  } catch (e) {}
+  return Array.from(text);
+}
 class Component extends DCLogic {
   constructor(props) {
     super(props);
@@ -705,8 +737,24 @@ class Component extends DCLogic {
     var q = String(this.state.q || '').trim().toLowerCase();
     var current = GR_LANGS.filter(function (l) { return l.code === lang; })[0] || GR_LANGS[0];
     var shown = GR_LANGS.filter(function (l) { return !q || l.hay.indexOf(q) >= 0; });
+    // Re-renders replace the DOM, so the letter pop-in keeps a start time and resumes with negative delays.
+    var now = Date.now();
+    if (this._greetText !== t.greeting) { this._greetText = t.greeting; this._greetT0 = now; }
+    var greetAge = (now - this._greetT0) / 1000;
+    var greetParts = grGraphemes(t.greeting);
+    var greetDone = greetAge > 0.3 + greetParts.length * 0.09 + 0.8;
     return {
       t: t,
+      greet: greetParts.map(function (ch, i) {
+        return { ch: ch, i: i, cls: greetDone ? 'gr-lt gr-lt-done' : 'gr-lt', d: (0.3 + i * 0.09 - greetAge).toFixed(3) };
+      }),
+      shine: function (e) {
+        var el = e && e.currentTarget;
+        if (!el) return;
+        el.classList.add('gr-shine');
+        clearTimeout(self._shineT);
+        self._shineT = setTimeout(function () { el.classList.remove('gr-shine'); }, 2600);
+      },
       dir: GR_RTL.indexOf(lang) >= 0 ? 'rtl' : 'ltr',
       current: current,
       q: this.state.q,
