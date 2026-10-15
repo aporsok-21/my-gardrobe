@@ -747,26 +747,33 @@ class Component extends DCLogic {
 
 dcMount(Component, '#gr-template', '#app');
 
-// Scroll reveals and hanger swing. The renderer rebuilds the DOM on every
-// state change, so remember what was already revealed and re-apply it.
+// Scroll reveals and hanger swing. Sections animate in every time they are
+// scrolled down to, and reset once they drop back below the screen. The
+// renderer rebuilds the DOM on every state change, so remember what is
+// currently shown and keep it shown without replaying.
 (function () {
   var app = document.getElementById('app');
   if ('IntersectionObserver' in window) {
     document.documentElement.classList.add('gr-js');
-    var seen = {};
+    var shown = {};
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {
-        if (!e.isIntersecting) return;
-        e.target.classList.add('gr-in');
-        seen[e.target.getAttribute('data-rk')] = true;
-        io.unobserve(e.target);
+        var el = e.target, rk = el.getAttribute('data-rk');
+        if (e.isIntersecting) {
+          el.classList.add('gr-in');
+          shown[rk] = true;
+        } else if (e.boundingClientRect.top > 0) {
+          el.classList.remove('gr-in', 'gr-seen');
+          delete shown[rk];
+        }
       });
     }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
     var hook = function () {
       io.disconnect();
       Array.prototype.forEach.call(app.querySelectorAll('.gr-reveal'), function (el, i) {
         el.setAttribute('data-rk', i);
-        if (seen[i]) el.classList.add('gr-seen'); else io.observe(el);
+        if (shown[i]) el.classList.add('gr-seen');
+        io.observe(el);
       });
     };
     new MutationObserver(hook).observe(app, { childList: true });
