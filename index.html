@@ -132,10 +132,10 @@ a{color:#2B2B2B}a:hover{color:#8B7D6B}
 <div style="display: flex; flex-wrap: wrap; gap: 10px">
 <sc-for list="{{contacts}}" as="c" hint-placeholder-count="4">
 <sc-if value="{{c.open}}" hint-placeholder-val="{{false}}">
-<button class="gr-cta" aria-expanded="true" onClick="{{c.toggle}}" style="min-height: 48px; padding: 0 20px; background: #C9BEB0; color: #2B2B2B; border: 0; border-radius: 999px; font-family: 'Archivo', sans-serif; font-size: 16px; font-weight: 700">{{c.label}}</button>
+<button class="gr-cta" aria-expanded="true" onClick="{{c.toggle}}" style="min-height: 48px; padding: 0 20px; background: #C9BEB0; color: #2B2B2B; border: 0; border-radius: 999px; font-family: 'Archivo', sans-serif; font-size: 16px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px"><img src="{{c.icon}}" alt="" aria-hidden="true" style="width: 20px; height: 20px; display: block"><span>{{c.label}}</span></button>
 </sc-if>
 <sc-if value="{{c.closed}}" hint-placeholder-val="{{true}}">
-<button class="gr-cta" aria-expanded="false" onClick="{{c.toggle}}" style="min-height: 48px; padding: 0 20px; background: #F6F2EA; color: #2B2B2B; border: 0; border-radius: 999px; font-family: 'Archivo', sans-serif; font-size: 16px; font-weight: 600">{{c.label}}</button>
+<button class="gr-cta" aria-expanded="false" onClick="{{c.toggle}}" style="min-height: 48px; padding: 0 20px; background: #F6F2EA; color: #2B2B2B; border: 0; border-radius: 999px; font-family: 'Archivo', sans-serif; font-size: 16px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px"><img src="{{c.icon}}" alt="" aria-hidden="true" style="width: 20px; height: 20px; display: block"><span>{{c.label}}</span></button>
 </sc-if>
 </sc-for>
 </div>
@@ -267,7 +267,7 @@ var GR_I18N = {
     contactKicker: 'Contact',
     contactTitle: 'Questions?',
     footer: '© 2026 My Gardrobe',
-    insideTitle: 'Welcome to your wardrobe',
+    insideTitle: 'Welcome to your Gardrobe',
     insideSub: 'The app is our next step.',
     back: 'Back'
   },
@@ -546,10 +546,10 @@ function grTexts(code) {
 }
 
 var GR_CONTACTS = [
-  { id: 'mail', label: 'E-mail', value: 'mygardrobe@gmail.com', href: 'mailto:mygardrobe@gmail.com' },
-  { id: 'tel', label: 'Tel.', value: '+43 660 123 4567', href: 'tel:+436601234567' },
-  { id: 'ig', label: 'Instagram', value: '@my.gardrobe', href: 'https://www.instagram.com/my.gardrobe/' },
-  { id: 'tt', label: 'TikTok', value: '@my.gardrobe', href: 'https://www.tiktok.com/@my.gardrobe' }
+  { id: 'mail', icon: 'assets/icon-mail.svg', label: 'E-mail', value: 'mygardrobe@gmail.com', href: 'mailto:mygardrobe@gmail.com' },
+  { id: 'tel', icon: 'assets/icon-tel.svg', label: 'Tel.', value: '+43 660 123 4567', href: 'tel:+436601234567' },
+  { id: 'ig', icon: 'assets/icon-instagram.svg', label: 'Instagram', value: '@my.gardrobe', href: 'https://www.instagram.com/my.gardrobe/' },
+  { id: 'tt', icon: 'assets/icon-tiktok.svg', label: 'TikTok', value: '@my.gardrobe', href: 'https://www.tiktok.com/@my.gardrobe' }
 ];
 var GR_STEP_IMGS = ['assets/step-upload.svg', 'assets/step-coat.svg', 'assets/step-dress.svg'];
 class Component extends DCLogic {
@@ -600,7 +600,7 @@ class Component extends DCLogic {
       steps: t.steps.map(function (s, i) { return { n: '0' + (i + 1), img: GR_STEP_IMGS[i], title: s[0], text: s[1] }; }),
       contacts: GR_CONTACTS.map(function (c) {
         var open = self.state.contact === c.id;
-        return { label: c.label, open: open, closed: !open, toggle: function () { self.setState({ contact: open ? '' : c.id }); } };
+        return { label: c.label, icon: c.icon, open: open, closed: !open, toggle: function () { self.setState({ contact: open ? '' : c.id }); } };
       }),
       contactShown: !!this.state.contact,
       contactHref: (GR_CONTACTS.filter(function (c) { return c.id === self.state.contact; })[0] || {}).href || '#',
