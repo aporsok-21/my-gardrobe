@@ -95,7 +95,8 @@ MG_STRINGS["hu"] = {
   skip: "Most kihagyom",
   notSure: "Nem tudom",
   shape: {"hourglass":"Homokóra","pear":"Körte","apple":"Alma","rectangle":"Téglalap","triangle":"Fordított háromszög"},
-  pick: {"outer":"Válassz kabátot","top":"Válassz felsőt","bottom":"Válassz nadrágot","shoes":"Válassz cipőt","bag":"Válassz táskát","hat":"Válassz kalapot","jewelry":"Válassz ékszert"},
+  pickNone: "Egyik sem",
+  pick: {"outer":"Válassz kabátot","top":"Válassz felsőt","bottom":"Válassz nadrágot","dress":"Válassz ruhát","shoes":"Válassz cipőt","bag":"Válassz táskát","hat":"Válassz kalapot","jewelry":"Válassz ékszert"},
   language: "Nyelv",
   searchLang: "Nyelvek keresése",
   temperature: "Hőmérséklet",
@@ -109,8 +110,8 @@ MG_STRINGS["hu"] = {
     hint: "Legalább 8 karakter", confirm: "Új jelszó még egyszer", show: "Jelszavak megjelenítése", save: "Új jelszó mentése",
     errCurrent: "Add meg a jelenlegi jelszavad.", errShort: "Az új jelszónak legalább 8 karakterből kell állnia.", errSame: "Az új jelszó nem lehet ugyanaz, mint a régi.",
     errMatch: "A két új jelszó nem egyezik.", done: "A jelszó megváltozott." },
-  cat: {"coats":"Kabátok","sweaters":"Pulóverek","tshirts":"Pólók","trousers":"Nadrágok","sweatpants":"Melegítőnadrágok","shoes":"Cipők","jewellery":"Ékszerek","bags":"Táskák","accessories":"Kiegészítők"},
-  n: {"coats":["kabát","kabát"],"sweaters":["pulóver","pulóver"],"tshirts":["póló","póló"],"trousers":["nadrág","nadrág"],"sweatpants":["melegítőnadrág","melegítőnadrág"],"shoes":["pár cipő","pár cipő"],"jewellery":["ékszer","ékszer"],"bags":["táska","táska"],"accessories":["kiegészítő","kiegészítő"]},
-  sub: {"Jackets":"Dzsekik","Trench coats":"Ballonkabátok","Elegant coats":"Elegáns kabátok","Fur coats":"Bundák","Leather coats":"Bőrkabátok","Winter coats":"Télikabátok","Ponchos":"Poncsók","Rain coats":"Esőkabátok","Elegant trousers":"Elegáns nadrágok","Everyday trousers":"Hétköznapi nadrágok","Comfy trousers":"Kényelmes nadrágok","Sneakers":"Sportcipők","Boots":"Csizmák","Sandals":"Szandálok","Heels":"Magassarkúk","Slippers":"Papucsok","Loafers":"Mokaszinok","Necklaces":"Nyakláncok","Bracelets":"Karkötők","Rings":"Gyűrűk","Earrings":"Fülbevalók","Backpacks":"Hátizsákok","Crossbody bags":"Oldaltáskák","Tote bags":"Shopper táskák","Clutches":"Borítéktáskák","Purses":"Pénztárcák","Hats":"Kalapok","Baseball caps":"Baseballsapkák","Scarves":"Sálak","Sunglasses":"Napszemüvegek","Key charms":"Kulcstartók"},
+  cat: {"coats":"Kabátok","sweaters":"Pulóverek","tshirts":"Pólók","dresses":"Ruhák","trousers":"Nadrágok","jeans":"Farmerek","shoes":"Cipők","jewellery":"Ékszerek","bags":"Táskák","accessories":"Kiegészítők"},
+  n: {"coats":["kabát","kabát"],"sweaters":["pulóver","pulóver"],"tshirts":["póló","póló"],"dresses":["ruha","ruha"],"trousers":["nadrág","nadrág"],"jeans":["farmer","farmer"],"shoes":["pár cipő","pár cipő"],"jewellery":["ékszer","ékszer"],"bags":["táska","táska"],"accessories":["kiegészítő","kiegészítő"]},
+  sub: {"Skinny jeans":"Skinny farmerek","Straight jeans":"Egyenes szárú farmerek","Wide-leg jeans":"Bő szárú farmerek","Mom jeans":"Mom farmerek","Everyday dresses":"Hétköznapi ruhák","Evening dresses":"Alkalmi ruhák","Maxi dresses":"Maxiruhák","Mini dresses":"Miniruhák","Jackets":"Dzsekik","Trench coats":"Ballonkabátok","Elegant coats":"Elegáns kabátok","Fur coats":"Bundák","Leather coats":"Bőrkabátok","Winter coats":"Télikabátok","Ponchos":"Poncsók","Rain coats":"Esőkabátok","Elegant trousers":"Elegáns nadrágok","Everyday trousers":"Hétköznapi nadrágok","Comfy trousers":"Kényelmes nadrágok","Sneakers":"Sportcipők","Boots":"Csizmák","Sandals":"Szandálok","Heels":"Magassarkúk","Slippers":"Papucsok","Loafers":"Mokaszinok","Necklaces":"Nyakláncok","Bracelets":"Karkötők","Rings":"Gyűrűk","Earrings":"Fülbevalók","Backpacks":"Hátizsákok","Crossbody bags":"Oldaltáskák","Tote bags":"Shopper táskák","Clutches":"Borítéktáskák","Purses":"Pénztárcák","Hats":"Kalapok","Baseball caps":"Baseballsapkák","Scarves":"Sálak","Sunglasses":"Napszemüvegek","Key charms":"Kulcstartók"},
   color: {"white":"Fehér","black":"Fekete","beige":"Bézs","brown":"Barna","grey":"Szürke","blue":"Kék","green":"Zöld","red":"Piros","pink":"Rózsaszín","yellow":"Sárga","gold":"Arany","silver":"Ezüst"}
 };

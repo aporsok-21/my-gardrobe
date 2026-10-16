@@ -101,7 +101,7 @@ h2{margin:0 0 12px;font-size:19px;font-weight:700;letter-spacing:-.02em}
 .home-top .wx-top .day{order:3;flex:1 0 100%;text-align:start;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .home-top .wx-top .day b{display:inline;margin-inline-end:6px}
 .look{position:relative;display:flex;gap:12px;align-items:stretch;padding:12px}
-.look .art{flex:1 1 56%;min-width:0;height:350px;border-radius:18px;background:#E9E2D6;display:flex;align-items:flex-end;justify-content:center;padding-top:6px;overflow:hidden}
+.look .art{flex:1 1 56%;min-width:0;height:390px;border-radius:18px;background:#E9E2D6;display:flex;align-items:flex-end;justify-content:center;padding-top:6px;overflow:hidden}
 .look .art svg{height:100%;width:auto}
 .look .edit{position:absolute;top:22px;inset-inline-start:22px;width:38px;height:38px}
 .look .edit:hover{border-color:var(--ink)}
@@ -112,8 +112,7 @@ h2{margin:0 0 12px;font-size:19px;font-weight:700;letter-spacing:-.02em}
 .flatlay button{position:relative;border:0;border-radius:12px;display:flex;align-items:center;justify-content:center;min-height:0;padding:0;transition:transform .2s,box-shadow .2s}
 .flatlay button:hover{box-shadow:0 0 0 1.5px var(--ink)}
 .flatlay button:active{transform:scale(.96)}
-.flatlay button:first-child{grid-row:span 2}
-.flatlay svg{width:64%;height:64%}
+.flatlay svg{width:58%;height:58%}
 .fdot{position:absolute;right:6px;bottom:6px;width:11px;height:11px;border-radius:50%;border:1.5px solid #FFFDF8;box-shadow:0 0 0 1px rgba(0,0,0,.15)}
 .combo .btn{min-height:40px;font-size:14px;padding:0 12px}
 .combo small{font-size:11px;font-weight:600;color:var(--muted);text-align:center;line-height:1.3}
@@ -292,7 +291,19 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
 .pickbar b{font-size:15px}
 .pickbar span{display:block;font-size:12px;opacity:.75}
 .pickbar .link{color:#F6F2EA;min-height:36px;padding:0 10px}
+.tile.none{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;aspect-ratio:1/1.32;border:1.5px dashed var(--hover);background:transparent;font:inherit;font-size:14px;font-weight:700;color:var(--ink);padding:0}
+.tile.none .nope{width:54px;height:54px;border-radius:50%;border:1.5px solid var(--ink);display:flex;align-items:center;justify-content:center}
+.tile.none .nope svg{width:24px;height:24px;stroke:var(--ink);stroke-width:2;fill:none;stroke-linecap:round}
 .tile.item{position:relative;cursor:pointer;transition:border-color .2s}
+/* My Gardrobe: three pieces per row */
+#category .grid,.grid.items3{grid-template-columns:repeat(3,1fr);gap:8px}
+#category .tile,.items3 .tile{border-radius:16px}
+#category .tile .meta,.items3 .tile .meta{padding:7px 8px 9px}
+#category .tile .meta b,.items3 .tile .meta b{font-size:12px;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#category .tile .meta span,.items3 .tile .meta span{display:block;font-size:10.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#category .tile.add,#category .tile.none{aspect-ratio:auto;min-height:120px;font-size:12px;gap:6px}
+#category .tile.add .plus,#category .tile.none .nope{width:40px;height:40px}
+#category .tile .badge{top:6px;right:6px;font-size:10px;padding:3px 7px}
 .tile.item.wearing{border-color:var(--ink)}
 .tile .badge{position:absolute;top:8px;inset-inline-end:8px;z-index:1;background:var(--ink);color:#F6F2EA;font-size:11px;font-weight:700;padding:4px 9px;border-radius:999px}
 
@@ -490,7 +501,6 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
       <button class="round back" id="cBack" aria-label="Back to My Gardrobe" data-t-aria="back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
       <div><span class="kicker" id="cCount"></span><h1 id="cTitle"></h1></div>
     </div>
-    <div class="pickbar" id="pickBar" hidden><div><b id="pickTitle">Choose a top</b><span data-t="tapToWear">Tap a piece to put it on your figure</span></div><button class="link" id="pickCancel" data-t="cancel">Cancel</button></div>
     <label class="search" id="cSearch"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input type="search" id="cQ" autocomplete="off"><button type="button" class="clear" aria-label="Clear search" data-t-aria="clearSearch"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></label>
     <div class="chips" id="cChips"></div>
     <div class="cbody">
@@ -773,8 +783,9 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
     { id: 'coats', name: 'Coats', one: 'coat', many: 'coats', icon: 'coat', subs: ['Jackets', 'Trench coats', 'Elegant coats', 'Fur coats', 'Leather coats', 'Winter coats', 'Ponchos', 'Rain coats'] },
     { id: 'sweaters', name: 'Sweaters', one: 'sweater', many: 'sweaters', icon: 'sweater', subs: [] },
     { id: 'tshirts', name: 'T-shirts', one: 'T-shirt', many: 'T-shirts', icon: 'tshirt', subs: [] },
+    { id: 'dresses', name: 'Dresses', one: 'dress', many: 'dresses', icon: 'dress', subs: ['Everyday dresses', 'Evening dresses', 'Maxi dresses', 'Mini dresses'] },
     { id: 'trousers', name: 'Trousers', one: 'pair of trousers', many: 'pairs of trousers', icon: 'trousers', subs: ['Elegant trousers', 'Everyday trousers', 'Comfy trousers'] },
-    { id: 'sweatpants', name: 'Sweatpants', one: 'pair of sweatpants', many: 'pairs of sweatpants', icon: 'sweatpants', subs: [] },
+    { id: 'jeans', name: 'Jeans', one: 'pair of jeans', many: 'pairs of jeans', icon: 'jeans', subs: ['Skinny jeans', 'Straight jeans', 'Wide-leg jeans', 'Mom jeans'] },
     { id: 'shoes', name: 'Shoes', one: 'pair of shoes', many: 'pairs of shoes', icon: 'shoe', subs: ['Sneakers', 'Boots', 'Sandals', 'Heels', 'Slippers', 'Loafers'] },
     { id: 'jewellery', name: 'Jewellery', one: 'piece of jewellery', many: 'pieces of jewellery', icon: 'necklace', subs: ['Necklaces', 'Bracelets', 'Rings', 'Earrings'] },
     { id: 'bags', name: 'Bags', one: 'bag', many: 'bags', icon: 'bag', subs: ['Backpacks', 'Crossbody bags', 'Tote bags', 'Clutches', 'Purses'] },
@@ -790,8 +801,9 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
     coat: ['M22 8L14 12L9 22L10 50H16L17 30L18 58H46L47 30L48 50H54L55 22L50 12L42 8L32 18Z', 'M32 18V58M28.5 30h0M28.5 38h0M28.5 46h0M22 8L27 22M42 8L37 22'],
     sweater: ['M22 10Q32 16 42 10L52 14L58 38L51 40L47 26V54H17V26L13 40L6 38L12 14Z', 'M17 49H47M51.5 35.5L57 34M12.5 35.5L7 34M24 11Q32 17 40 11'],
     tshirt: ['M22 10Q32 17 42 10L56 17L51 27L45 24V54H19V24L13 27L8 17Z', 'M24 11Q32 18 40 11'],
+    dress: ['M24 6L26 14Q32 18 38 14L40 6L44 8L42 24L40 28L52 58H12L24 28L22 24L20 8Z', 'M22 24Q32 28 42 24M26 14Q32 20 38 14'],
     trousers: ['M18 8H46L50 58H36L32 24L28 58H14Z', 'M18 14H46M32 14V24M40 18V22'],
-    sweatpants: ['M18 8H46L48 49L49 56H36L33 26H31L28 56H15L16 49Z', 'M16 49H28M36 49H48M18 13H46M30 13L29 19M34 13L35 19'],
+    jeans: ['M18 8H46L50 58H36L32 24L28 58H14Z', 'M18 14H46M32 14V24M22 14Q23 20 28 21M42 14Q41 20 36 21M15.5 51H27.5M36.5 51H48.5'],
     shoe: ['M8 44C8 36 12 30 16 28L26 26L32 32C38 36 48 38 54 40C58 41 58 48 54 48H10C8 48 8 46 8 44Z', 'M8 43.5H57M24 30L28 34M28 28L32 32'],
     necklace: ['M32 45L37 51L32 58L27 51Z', 'M14 10C14 34 24 44 32 45C40 44 50 34 50 10'],
     bag: ['M14 26H50L54 56H10Z', 'M24 26C24 14 40 14 40 26M14 34H50M30 34V38H34V34'],
@@ -810,10 +822,14 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
     ['tshirts', '', 'Basic tee', 'Uniqlo', 'white'], ['tshirts', '', 'Logo tee', 'Guess', 'black'], ['tshirts', '', 'Striped tee', 'Petit Bateau', 'blue'], ['tshirts', '', 'Linen tee', 'Arket', 'beige'],
     ['tshirts', '', 'Graphic tee', 'Zara', 'grey'], ['tshirts', '', 'Polo shirt', 'Lacoste', 'green'], ['tshirts', '', 'Crop tee', 'H&M', 'pink'],
     ['trousers', 'Elegant trousers', 'Pleated trousers', 'Max Mara', 'beige'], ['trousers', 'Elegant trousers', 'Tailored trousers', 'Hugo Boss', 'black'], ['trousers', 'Elegant trousers', 'Wide-leg trousers', 'Mango', 'white'],
-    ['trousers', 'Everyday trousers', 'Slim jeans', 'Guess', 'blue'], ['trousers', 'Everyday trousers', 'Straight jeans', "Levi's", 'blue'], ['trousers', 'Everyday trousers', 'Black jeans', 'Guess', 'black'], ['trousers', 'Everyday trousers', 'Chinos', 'Gap', 'beige'],
+    ['dresses', 'Everyday dresses', 'Linen shirt dress', 'Arket', 'white'], ['dresses', 'Everyday dresses', 'Wrap dress', 'Diane von Furstenberg', 'green'],
+    ['dresses', 'Evening dresses', 'Little black dress', 'Zara', 'black'], ['dresses', 'Evening dresses', 'Satin slip dress', 'Reformation', 'red'],
+    ['dresses', 'Maxi dresses', 'Floral maxi dress', 'Mango', 'pink'], ['dresses', 'Mini dresses', 'Knit mini dress', 'COS', 'beige'],
+    ['trousers', 'Everyday trousers', 'Chinos', 'Gap', 'beige'],
     ['trousers', 'Comfy trousers', 'Linen trousers', 'Zara', 'white'], ['trousers', 'Comfy trousers', 'Knit trousers', 'COS', 'grey'], ['trousers', 'Comfy trousers', 'Cargo trousers', 'Carhartt', 'green'],
-    ['sweatpants', '', 'Classic joggers', 'Nike', 'grey'], ['sweatpants', '', 'Fleece sweatpants', 'Adidas', 'black'], ['sweatpants', '', 'Wide sweatpants', 'Champion', 'beige'],
-    ['sweatpants', '', 'Lounge pants', 'Skims', 'brown'], ['sweatpants', '', 'Track pants', 'Puma', 'blue'],
+    ['jeans', 'Skinny jeans', 'Slim jeans', 'Guess', 'blue'], ['jeans', 'Skinny jeans', 'Black skinny jeans', 'Levi\'s', 'black'], ['jeans', 'Straight jeans', 'Straight jeans', "Levi's", 'blue'],
+    ['jeans', 'Straight jeans', 'Black jeans', 'Guess', 'black'], ['jeans', 'Wide-leg jeans', 'Wide-leg jeans', 'Mango', 'blue'], ['jeans', 'Wide-leg jeans', 'White wide jeans', 'Zara', 'white'],
+    ['jeans', 'Mom jeans', 'Light wash mom jeans', 'Levi\'s', 'blue'], ['jeans', 'Mom jeans', 'Grey mom jeans', 'Weekday', 'grey'],
     ['shoes', 'Sneakers', 'White sneakers', 'Veja', 'white'], ['shoes', 'Sneakers', 'Running sneakers', 'Nike', 'black'], ['shoes', 'Boots', 'Chelsea boots', 'Dr. Martens', 'black'], ['shoes', 'Boots', 'Knee-high boots', 'Stuart Weitzman', 'brown'],
     ['shoes', 'Sandals', 'Strappy sandals', 'Birkenstock', 'beige'], ['shoes', 'Heels', 'Black pumps', 'Jimmy Choo', 'black'], ['shoes', 'Heels', 'Red heels', 'Zara', 'red'],
     ['shoes', 'Slippers', 'Shearling slippers', 'UGG', 'beige'], ['shoes', 'Loafers', 'Leather loafers', 'Gucci', 'black'], ['shoes', 'Loafers', 'Suede loafers', "Tod's", 'brown'],
@@ -830,7 +846,7 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
   var W8 = window.mgWardrobe = {};
   var STORE = 'mg-items';
   var items = SAMPLE.map(function (r) { return { cat: r[0], sub: r[1], name: r[2], brand: r[3], color: r[4] }; });
-  try { items = items.concat(JSON.parse(localStorage.getItem(STORE) || '[]')); } catch (e) {}
+  try { items = items.concat(JSON.parse(localStorage.getItem(STORE) || '[]').map(function (it) { if (it.cat === 'sweatpants') { it.cat = 'trousers'; it.sub = 'Comfy trousers'; } return it; })); } catch (e) {}
 
   function catById(id) { return CATS.filter(function (c) { return c.id === id; })[0]; }
   function catName(c) { return MG.t('cat.' + c.id); }
@@ -897,7 +913,7 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
     });
     if (hits.length) html += '<div class="label">' + esc(MG.t('categories')) + '</div><div class="grid">' + hits.join('') + '</div>';
     var found = items.filter(function (it) { return matches(it, wQ); }).sort(bySort);
-    if (found.length) html += '<div class="label">' + esc(MG.t('clothes')) + '</div><div class="grid">' + found.map(itemTile).join('') + '</div>';
+    if (found.length) html += '<div class="label">' + esc(MG.t('clothes')) + '</div><div class="grid items3">' + found.map(itemTile).join('') + '</div>';
     if (!html) html = '<p class="empty">' + esc(MG.t('noMatchAll', { q: wQ.trim() })) + '</p>';
     wBody.innerHTML = html;
   }
@@ -947,7 +963,8 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
         html += '<section class="cgroup" data-color="' + g.color + '"><div class="chead"><span class="dot" style="background:' + col[2] + '"></span>' + esc(colorName(g.color)) + ' · ' + g.list.length + '</div><div class="grid">' + g.list.map(itemTile).join('') + '</div></section>';
       });
       if (!list.length) html += '<p class="empty">' + esc(tokens(cQ).length ? MG.t('noMatch', { q: cQ.trim() }) : MG.t('emptyHere')) + '</p>';
-      html += '<div class="grid addwrap"><button class="tile add" data-sub="' + esc(sub || '') + '"><span class="plus"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>' + esc(MG.t('add')) + '</button></div>';
+      var none = W8.picking ? '<button class="tile none" data-none><span class="nope"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M6.5 17.5l11-11"/></svg></span>' + esc(MG.t('pickNone')) + '</button>' : '';
+      html += '<div class="grid addwrap">' + none + '<button class="tile add" data-sub="' + esc(sub || '') + '"><span class="plus"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>' + esc(MG.t('add')) + '</button></div>';
       return '<div class="page" role="region" aria-label="' + esc(sub ? subName(sub) : MG.t('allOf', { cat: catName(cur).toLowerCase() })) + '">' + html + '</div>';
     }).join('');
     pager.scrollLeft = keep;
@@ -1060,10 +1077,10 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
   var fPhoto = document.getElementById('fPhoto'), fCamera = document.getElementById('fCamera'), fPreview = document.getElementById('fPreview');
   var fMenu = document.getElementById('fPhotoMenu'), fGoogle = document.getElementById('fGoogle'), fLink = document.getElementById('fLink'), fLinkMsg = document.getElementById('fLinkMsg');
   // Fit and size suggestions by kind of piece; people can still type their own
-  var FIT_OF = { coats: 'outer', sweaters: 'top', tshirts: 'top', trousers: 'bottom', sweatpants: 'bottom', shoes: 'shoes' };
+  var FIT_OF = { coats: 'outer', sweaters: 'top', tshirts: 'top', trousers: 'bottom', jeans: 'bottom', shoes: 'shoes' };
   var LETTERS = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL'], EU = ['32', '34', '36', '38', '40', '42', '44', '46'];
   var SIZES = { coats: LETTERS.concat(EU), sweaters: LETTERS.concat(EU), tshirts: LETTERS.concat(EU),
-    trousers: LETTERS.concat(EU, ['W24', 'W26', 'W28', 'W30', 'W32', 'W34', 'W36']), sweatpants: LETTERS.concat(EU),
+    trousers: LETTERS.concat(EU, ['W24', 'W26', 'W28', 'W30', 'W32', 'W34', 'W36']), jeans: ['W24', 'W25', 'W26', 'W27', 'W28', 'W29', 'W30', 'W31', 'W32', 'W33', 'W34', 'W36'].concat(EU),
     shoes: ['35', '36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46'] };
   var pick = { color: 'black', photo: '' };
   function labelForm() {
@@ -1215,6 +1232,7 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !sheet.hidden) closeSheet(); });
   pager.addEventListener('click', function (e) {
     var b = e.target.closest('.tile.add'); if (b) return openSheet(cur.id, b.dataset.sub || (cur.subs[0] || ''));
+    if (e.target.closest('.tile.none')) return W8.onNone && W8.onNone();
     var t = e.target.closest('.tile.item'); if (t && W8.onItem) W8.onItem(items[+t.dataset.i]);
   });
   fab.addEventListener('click', function () { openSheet('', ''); });
@@ -1529,8 +1547,11 @@ var GR_SCENE = (function () {
   ];
   var SKINS = ['#F4DDCB', '#E9C6A8', '#D6A47F', '#B57D55', '#8C5A3A', '#5F3C27'];
   var HAIRS = ['#1F1915', '#4A3328', '#7A5236', '#B5875A', '#DDC08A', '#A3472C', '#B8B2AB'];
-  var TYPES = ['bottom', 'top', 'outer', 'shoes', 'bag', 'hat', 'jewelry'];
-  var BODY_LAYERS = ['bottom', 'top', 'outer', 'shoes', 'bag'];
+  // jewellery: one of each kind at once (necklace, bracelet, ring, earrings)
+  var TYPES = ['bottom', 'top', 'dress', 'outer', 'shoes', 'bag', 'hat', 'jewelry', 'jewelry2', 'jewelry3', 'jewelry4'];
+  var JEWELS = ['jewelry', 'jewelry2', 'jewelry3', 'jewelry4'];
+  var JEWEL_OF = { Necklaces: 'jewelry', Bracelets: 'jewelry2', Rings: 'jewelry3', Earrings: 'jewelry4' };
+  var BODY_LAYERS = ['bottom', 'top', 'dress', 'outer', 'shoes', 'bag'];
   var DEFAULT = { gender: 'woman', height: 168, weight: 60, shape: null, skin: SKINS[1], hair: HAIRS[1], saved: false };
   var fig = Object.assign({}, DEFAULT);
   try { var stored = JSON.parse(localStorage.getItem('mg-figure')); if (stored) fig = Object.assign(fig, stored); } catch (e) {}
@@ -1711,6 +1732,15 @@ var GR_SCENE = (function () {
         if (it.style === 'tee') rib = 'M' + f1(X(-neck - 1.4)) + ' 40.6q' + f1(neck + 1.4) + ' 2.4 ' + f1(2 * neck + 2.8) + ' 0';
         return paint(d, c, '<path d="' + rib + '" fill="none" stroke="' + shade(c, -0.25) + '" stroke-width=".55"/>') + sl;
       },
+      dress: function (it) {
+        // fitted bodice, flared skirt; maxi to the ankle, mini above the knee, others to the knee
+        var c = it.color, n = (it.name || '').toLowerCase();
+        var hemY = /maxi/.test(n) ? 190 : /mini/.test(n) ? yCr + 18 : yKn + 4;
+        var neckTop = [P(0, lerp(44, 47, fem)), P(neck + 3, 41), P(S * 0.5, 42.6)];
+        var d = torsoPiece(0.8, neckTop, hemY, (hemY - hipY) * 0.16);
+        var waist = 'M' + f1(X(-bodyX(waistY) - 1)) + ' ' + f1(waistY) + 'Q60 ' + f1(waistY + 1.6) + ' ' + f1(X(bodyX(waistY) + 1)) + ' ' + f1(waistY);
+        return paint(d, c, '<path d="' + waist + '" fill="none" stroke="' + shade(c, -0.3) + '" stroke-width=".55"/>');
+      },
       outer: function (it) {
         var c = it.color, hemY = 158;
         var d = torsoPiece(2.6, [P(0, 38.4), P(neck + 2, 36.8)], hemY, 4.5);
@@ -1769,9 +1799,9 @@ var GR_SCENE = (function () {
           '<path d="M60 ' + f1(y1) + 'l1.4 2.2-1.4 2.4-1.4-2.4z" fill="' + c + '" stroke="' + d + '" stroke-width=".3"/>';
       }
     };
-    var acc = ['jewelry', 'hat'].map(function (t) {
+    var acc = ['jewelry', 'jewelry2', 'jewelry3', 'jewelry4', 'hat'].map(function (t) {
       var w = p['w_' + t];
-      return wearing[t] && w > 0.01 ? '<g opacity="' + f1(w * 100) / 100 + '">' + A[t](wearing[t]) + '</g>' : '';
+      return wearing[t] && w > 0.01 ? '<g opacity="' + f1(w * 100) / 100 + '">' + A[t.replace(/\d$/, '')](wearing[t]) + '</g>' : '';
     }).join('');
     var clothes = BODY_LAYERS.map(function (t) {
       var w = p['w_' + t];
@@ -1915,15 +1945,19 @@ var GR_SCENE = (function () {
   // ---- Dressing the figure from My Gardrobe (window.mgWardrobe comes from the wardrobe script)
   var W8 = window.mgWardrobe;
   // which figure slot each wardrobe category fills, and the category a slot opens
-  var SLOT_OF = { coats: 'outer', sweaters: 'top', tshirts: 'top', trousers: 'bottom', sweatpants: 'bottom', shoes: 'shoes', bags: 'bag', accessories: 'hat', jewellery: 'jewelry' };
+  var SLOT_OF = { coats: 'outer', sweaters: 'top', tshirts: 'top', dresses: 'dress', trousers: 'bottom', jeans: 'bottom', shoes: 'shoes', bags: 'bag', accessories: 'hat', jewellery: 'jewelry' };
+  // one tile per My Gardrobe category, in the same order as there
   var SLOTS = [
     { slot: 'outer', cat: 'coats', bg: '#E2DACD' },
     { slot: 'top', cat: 'sweaters', bg: '#EFE9DF' },
-    { slot: 'bottom', cat: 'trousers', bg: '#E6DFD4' },
-    { slot: 'shoes', cat: 'shoes', bg: '#E9E2D6' },
-    { slot: 'bag', cat: 'bags', bg: '#DCD3C6' },
-    { slot: 'hat', cat: 'accessories', sub: 'Hats', bg: '#EFE9DF' },
-    { slot: 'jewelry', cat: 'jewellery', bg: '#E2DACD' }
+    { slot: 'top', cat: 'tshirts', bg: '#E6DFD4' },
+    { slot: 'dress', cat: 'dresses', bg: '#E9E2D6' },
+    { slot: 'bottom', cat: 'trousers', bg: '#DCD3C6' },
+    { slot: 'bottom', cat: 'jeans', bg: '#E2DACD' },
+    { slot: 'shoes', cat: 'shoes', bg: '#EFE9DF' },
+    { slot: 'jewelry', cat: 'jewellery', bg: '#E6DFD4' },
+    { slot: 'bag', cat: 'bags', bg: '#E9E2D6' },
+    { slot: 'hat', cat: 'accessories', sub: 'Hats', bg: '#DCD3C6' }
   ];
   // An aesthetic look, rebuilt from your own pieces
   var COMBO = { outer: 'Classic trench coat', top: 'Cashmere crew neck', bottom: 'Straight jeans', shoes: 'Suede loafers', bag: 'Leather tote', hat: 'Wool fedora', jewelry: 'Gold chain' };
@@ -1946,18 +1980,25 @@ var GR_SCENE = (function () {
     var k = keyOf(it);
     if (!cache[k]) cache[k] = garment(it);    // same object each time, so the figure knows nothing changed
     outfit[slot] = cache[k];
+    // a dress takes the place of a top and trousers, and the other way round
+    if (slot === 'dress') { delete outfit.top; delete outfit.bottom; }
+    if (slot === 'top' || slot === 'bottom') delete outfit.dress;
   }
-  try { var saved = JSON.parse(localStorage.getItem('mg-outfit')) || {}; Object.keys(saved).forEach(function (sl) { var it = findKey(saved[sl]); if (it) wear(sl, it); }); } catch (e) {}
+  try { var saved = JSON.parse(localStorage.getItem('mg-outfit')) || {}; Object.keys(saved).forEach(function (sl) { var it = findKey(saved[sl]); if (it) wear(SLOT_OF[it.cat] === 'jewelry' ? jewelKey(it) : sl, it); }); } catch (e) {}
   function saveOutfit() {
     var keys = {}; Object.keys(outfit).forEach(function (sl) { keys[sl] = outfit[sl].key; });
     try { localStorage.setItem('mg-outfit', JSON.stringify(keys)); } catch (e) {}
   }
-  function isCombo() { return SLOTS.every(function (s) { return outfit[s.slot] && outfit[s.slot].name === COMBO[s.slot]; }); }
+  // each kind of jewellery has its own place, so a new necklace replaces the old one
+  function jewelKey(it) { return JEWEL_OF[it.sub] || 'jewelry'; }
+  function isCombo() { return !outfit.dress && SLOTS.every(function (s) { return !COMBO[s.slot] || (outfit[s.slot] && outfit[s.slot].name === COMBO[s.slot]); }); }
 
   function renderCombo() {
     $('flatlay').innerHTML = SLOTS.map(function (s) {
-      var w = outfit[s.slot], cat = W8.catById(s.cat);
-      return '<button style="background:' + s.bg + '" data-slot="' + s.slot + '" aria-label="' + MG.t('pick.' + s.slot) + '">' + W8.lineIcon(cat.icon) +
+      // the dot only shows on the tile of the category the worn piece comes from
+      var w = s.slot === 'jewelry' ? outfit.jewelry || outfit.jewelry2 || outfit.jewelry3 || outfit.jewelry4 : outfit[s.slot], cat = W8.catById(s.cat);
+      if (w && w.key.indexOf(s.cat + '|') !== 0) w = null;
+      return '<button style="background:' + s.bg + '" data-cat="' + s.cat + '" aria-label="' + MG.t('cat.' + s.cat) + '">' + W8.lineIcon(cat.icon) +
         (w ? '<i class="fdot" style="background:' + w.color + '"></i>' : '') + '</button>';
     }).join('');
     $('recreate').textContent = MG.t(isCombo() ? 'takeOff' : 'recreate');
@@ -1969,6 +2010,7 @@ var GR_SCENE = (function () {
   $('recreate').addEventListener('click', function () {
     var clear = isCombo();
     SLOTS.forEach(function (s) { wear(s.slot, clear ? null : findName(COMBO[s.slot])); });
+    delete outfit.jewelry2; delete outfit.jewelry3; delete outfit.jewelry4;
     refresh();
   });
 
@@ -1976,15 +2018,15 @@ var GR_SCENE = (function () {
   var picking = null;
   $('flatlay').addEventListener('click', function (e) {
     var b = e.target.closest('button'); if (!b) return;
-    picking = SLOTS.filter(function (s) { return s.slot === b.dataset.slot; })[0];
-    $('pickTitle').textContent = MG.t('pick.' + picking.slot);
-    $('pickBar').hidden = false;
+    picking = SLOTS.filter(function (s) { return s.cat === b.dataset.cat; })[0];
+    W8.picking = true;
     var cat = W8.catById(picking.cat);
     W8.openCat(picking.cat, picking.sub ? cat.subs.indexOf(picking.sub) + 1 : 0);
   });
-  function stopPicking() { picking = null; $('pickBar').hidden = true; }
+  function stopPicking() { if (!picking) return; picking = null; W8.picking = false; W8.refresh(); }
   W8.onItem = function (it) {
     var slot = SLOT_OF[it.cat]; if (!slot) return false;
+    if (slot === 'jewelry') slot = jewelKey(it);
     var takingOff = !picking && outfit[slot] && outfit[slot].key === keyOf(it);
     var warn = !takingOff && window.mgWeatherCheck && window.mgWeatherCheck(it);
     if (warn) { window.mgConfirm(warn, function () { putOn(it, slot); }); return true; }
@@ -1992,6 +2034,7 @@ var GR_SCENE = (function () {
     return true;
   };
   function putOn(it, slot) {
+    if (slot === 'jewelry') slot = jewelKey(it);
     if (picking) {
       wear(slot, it); stopPicking(); saveOutfit(); renderCombo(); W8.refresh();
       window.mgShow('home');
@@ -2001,15 +2044,25 @@ var GR_SCENE = (function () {
       refresh();
     }
   }
-  W8.isWorn = function (it) { var sl = SLOT_OF[it.cat]; return !!(sl && outfit[sl] && outfit[sl].key === keyOf(it)); };
-  $('pickCancel').addEventListener('click', function () { stopPicking(); window.mgShow('home'); });
+  W8.isWorn = function (it) {
+    var sl = SLOT_OF[it.cat], k = keyOf(it);
+    if (sl === 'jewelry') return JEWELS.some(function (j) { return outfit[j] && outfit[j].key === k; });
+    return !!(sl && outfit[sl] && outfit[sl].key === k);
+  };
+  // "None" tile at the bottom of the list: take that piece off the figure (e.g. no hat at all)
+  W8.onNone = function () {
+    var slot = picking && picking.slot; if (!slot) return;
+    if (slot === 'jewelry') JEWELS.forEach(function (j) { delete outfit[j]; }); else wear(slot, null);
+    stopPicking(); saveOutfit(); renderCombo(); W8.refresh();
+    window.mgShow('home');
+    setTimeout(showCard, 150);
+  };
   document.querySelectorAll('.tab').forEach(function (t) { t.addEventListener('click', stopPicking); });
   // came from Home to pick a piece: the back arrow goes back to Home, not My Gardrobe
   $('cBack').addEventListener('click', function () { if (picking) { stopPicking(); window.mgShow('home'); } });
 
   MG.onLang(function () {
     thumbsFor = null; syncControls(); renderCombo();
-    if (picking) $('pickTitle').textContent = MG.t('pick.' + picking.slot);
   });
   W8.openFigure = open;
   renderCombo(); W8.refresh();
