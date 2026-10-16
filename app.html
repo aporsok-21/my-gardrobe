@@ -94,10 +94,37 @@ h2{margin:0 0 12px;font-size:19px;font-weight:700;letter-spacing:-.02em}
 .fab{position:absolute;right:20px;bottom:96px;width:58px;height:58px;border-radius:50%;border:0;background:var(--ink);display:none;align-items:center;justify-content:center;box-shadow:0 10px 24px rgba(43,43,43,.3)}
 .fab svg{width:26px;height:26px;stroke:#F6F2EA;stroke-width:2;fill:none;stroke-linecap:round}
 .fab.show{display:flex}
+
+/* Intro: the walk-in closet from the website, played when the app opens */
+@keyframes grFade{from{opacity:0}to{opacity:1}}
+@keyframes grOut{from{opacity:1}to{opacity:0}}
+@keyframes grRise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes grDoorL{0%{transform:rotateY(0)}100%{transform:rotateY(-105deg)}}
+@keyframes grDoorR{0%{transform:rotateY(0)}100%{transform:rotateY(105deg)}}
+@keyframes grDolly{from{transform:scale(1)}to{transform:scale(3.6)}}
+.stage{position:absolute;inset:0;z-index:50;background:var(--bg);overflow:hidden}
+.stage[hidden]{display:none}
+.stage.leaving{animation:grOut .5s both}
+.gr-dolly{position:absolute;inset:0;transform-origin:50% 50%;animation:grDolly 2.4s 1.6s cubic-bezier(.45,0,.3,1) both}
+.gr-dolly svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.gr-front{position:absolute;inset:0;display:flex;perspective:2200px;animation:grOut .5s 1.75s both}
+.gr-door{flex:1;background:var(--surface);position:relative;padding:5% 6%;backface-visibility:hidden}
+.gr-door>i{display:block;height:100%;border:1px solid var(--border);border-radius:4px}
+.gr-door>b{position:absolute;top:46%;width:5px;height:90px;border-radius:3px;background:var(--ink)}
+.gr-door-l{border-right:1px solid #CFC5B6;transform-origin:left center;animation:grDoorL 1.4s .45s cubic-bezier(.65,0,.25,1) both}
+.gr-door-l>b{right:14px}
+.gr-door-r{border-left:1px solid #CFC5B6;transform-origin:right center;animation:grDoorR 1.4s .45s cubic-bezier(.65,0,.25,1) both}
+.gr-door-r>b{left:14px}
+.gr-flash{position:absolute;inset:0;background:var(--bg);pointer-events:none;animation:grFade .6s 3.7s both}
+@media (prefers-reduced-motion:reduce){.gr-dolly,.gr-front,.gr-door-l,.gr-door-r{animation-duration:.01s;animation-delay:0s}}
 </style>
 </head>
 <body>
 <div class="phone">
+
+
+  <!-- INTRO: the walk-in closet from the website plays on open -->
+  <div class="stage" id="stage" aria-hidden="true"></div>
 
   <!-- HOME -->
   <main class="screen active" id="home" aria-label="Home">
@@ -232,6 +259,243 @@ h2{margin:0 0 12px;font-size:19px;font-weight:700;letter-spacing:-.02em}
 
   var start = location.hash.slice(1);
   if (document.getElementById(start) && document.getElementById(start).classList.contains('screen')) show(start);
+})();
+</script>
+<script>
+var GR_SCENE = (function () {
+  // Luxury villa walk-in closet, true 3D projected onto a 600x1000 portrait view.
+  // Camera at (0, EYE, 0) looking down +z. Gradients (#gr*) live in the SVG <defs>.
+  var F = 300, H = 3.333, EYE = 1.667, D = 0.5, W = 1.45;
+  var INK = '#222222';
+  var C = { white: '#FCFBF8', back: 'url(#grBay)', shelfTop: '#FFFFFF', edge: '#F2EEE7', ceiling: '#F7F4EF', cove: '#FBF8F2', led: '#FFF1D2', brass: '#B08D57' };
+  var cloth = ['#F1E6D6', '#C19A6B', '#6F4E37', '#E2CFB4', '#8B5E3C', '#D2B48C', '#4B3621', '#B08968', '#A67B5B', '#EADBC6', '#7B5B43', '#9C7A5B'];
+  var garments = {
+    coat: 'M-18 14L-30 26L-28 128H28L30 26L18 14L8 18L0 40L-8 18Z',
+    shirt: 'M-18 14L-32 24L-26 40L-20 37L-20 92H20L20 37L26 40L32 24L18 14L6 18L0 26L-6 18Z',
+    dress: 'M-10 14L-6 16L0 22L6 16L10 14L13 44L10 52L30 124H-30L-10 52L-13 44Z',
+    pants: 'M-16 16H16L18 126H3L0 50L-3 126H-18Z',
+    blazer: 'M-18 14L-30 24L-27 96H27L30 24L18 14L6 18L0 54L-6 18Z'
+  };
+  var folds = {
+    coat: 'M0 40V128M-14 60L-15 126M14 62L15 126M-30 26L-20 60M30 26L20 60',
+    shirt: 'M0 26V92M-10 50V90M10 52V90M-20 40H20',
+    dress: 'M-10 52H10M-6 56L-15 122M6 56L15 122M0 54V124',
+    pants: 'M-16 26H16M-9 32V124M9 32V124',
+    blazer: 'M0 54V96M-12 30L-4 56M12 30L4 56M-22 70H-10M10 70H22'
+  };
+  var GSTROKE = '#4A3626';
+  var gOrder = ['coat', 'shirt', 'dress', 'blazer', 'pants', 'shirt', 'coat', 'dress', 'blazer', 'shirt', 'pants'];
+  var out = [];
+  function f1(v) { return v.toFixed(1); }
+  function P(x, y, z) { return [300 + F * x / z, 500 - F * (y - EYE) / z]; }
+  function poly(pts) { return 'M' + pts.map(function (p) { var q = P(p[0], p[1], p[2]); return f1(q[0]) + ' ' + f1(q[1]); }).join('L') + 'Z'; }
+  function seg(a, b) { var p = P(a[0], a[1], a[2]), q = P(b[0], b[1], b[2]); return 'M' + f1(p[0]) + ' ' + f1(p[1]) + 'L' + f1(q[0]) + ' ' + f1(q[1]); }
+  function ell(x, y, z, rx, ry) { var c = P(x, y, z), a = F * rx / z, b = F * ry / z; return 'M' + f1(c[0] - a) + ' ' + f1(c[1]) + 'a' + f1(a) + ' ' + f1(b) + ' 0 1 0 ' + f1(2 * a) + ' 0a' + f1(a) + ' ' + f1(b) + ' 0 1 0 ' + f1(-2 * a) + ' 0'; }
+  function sw(z) { return Math.max(0.2, 1.3 / z).toFixed(2); }
+  function push(d, fill, stroke, w, tf, op) { out.push({ d: d, fill: fill || 'none', stroke: stroke || 'none', sw: w || 0, tf: tf || 'matrix(1 0 0 1 0 0)', op: op == null ? 1 : op }); }
+  function planeTf(x0, y0, z, kx, ky) {
+    var p = P(x0, y0, z), s = F / z;
+    return 'matrix(' + (kx * s).toFixed(4) + ' 0 0 ' + (ky * s).toFixed(4) + ' ' + f1(p[0]) + ' ' + f1(p[1]) + ')';
+  }
+
+  var Z0 = 0.4, Z1 = 5.6;
+  // ---- room shell: ceiling with a lit cove, polished marble floor
+  push(poly([[-W, H, Z0], [W, H, Z0], [W, H, Z1], [-W, H, Z1]]), C.ceiling);
+  var cx = W - D - 0.08;
+  push(poly([[-cx, H, Z0], [cx, H, Z0], [cx, H, Z1], [-cx, H, Z1]]), C.cove);
+  push(seg([-cx, H, Z0], [-cx, H, Z1]) + seg([cx, H, Z0], [cx, H, Z1]), 'none', '#FFE3AE', 3, null, 0.9);
+  push(seg([-cx + 0.02, H, Z0], [-cx + 0.02, H, Z1]) + seg([cx - 0.02, H, Z0], [cx - 0.02, H, Z1]), 'none', '#FFFFFF', 1.2, null, 0.9);
+  push(poly([[-W, 0, Z0], [W, 0, Z0], [W, 0, Z1], [-W, 0, Z1]]), 'url(#grWood)');
+  // oak parquet: long boards running towards the end wall with staggered joints
+  var boards = '', joints = '', grain = '';
+  var bw = 0.16, nb = Math.ceil((2 * W) / bw);
+  for (var b = 0; b <= nb; b++) {
+    var x = -W + b * bw;
+    boards += seg([x, 0, Z0], [x, 0, Z1]);
+    var off = ((b * 7) % 5) * 0.23;
+    for (var z = Z0 + 0.25 + off; z < Z1; z += 1.15) joints += seg([x, 0, z], [x + bw, 0, z]);
+    if (b % 2 === 0) grain += seg([x + bw * 0.35, 0, Z0], [x + bw * 0.4, 0, Z1]);
+  }
+  push(boards, 'none', '#6E4E33', 1, null, 0.55);
+  push(joints, 'none', '#6E4E33', 1, null, 0.5);
+  push(grain, 'none', '#8A6646', 0.8, null, 0.35);
+  // soft sheen down the middle of the floor
+  push(poly([[-0.55, 0, Z0], [0.55, 0, Z0], [0.25, 0, Z1], [-0.25, 0, Z1]]), 'url(#grSheen)', 'none', 0, null, 0.6);
+
+  // ---- end wall: lit hanging bays and a full-height mirror with a brass frame
+  push(poly([[-W, 0, Z1], [W, 0, Z1], [W, H, Z1], [-W, H, Z1]]), C.white, INK, sw(Z1));
+  var cols = [[-0.94, -0.36, 'hang'], [-0.3, 0.3, 'mirror'], [0.36, 0.94, 'hang']];
+  cols.forEach(function (c, ci) {
+    if (c[2] === 'mirror') {
+      push(poly([[c[0], 0.12, Z1], [c[1], 0.12, Z1], [c[1], H - 0.5, Z1], [c[0], H - 0.5, Z1]]), 'url(#grMirror)', C.brass, 2);
+      push(poly([[c[0], H - 0.45, Z1], [c[1], H - 0.45, Z1], [c[1], H - 0.04, Z1], [c[0], H - 0.04, Z1]]), C.white, INK, sw(Z1));
+      push(seg([c[0] + 0.12, 0.4, Z1], [c[0] + 0.22, 2.6, Z1]) + seg([c[0] + 0.3, 0.3, Z1], [c[0] + 0.36, 1.6, Z1]), 'none', '#FFFFFF', 2, null, 0.5);
+      return;
+    }
+    push(poly([[c[0], 0.1, Z1], [c[1], 0.1, Z1], [c[1], H - 0.45, Z1], [c[0], H - 0.45, Z1]]), C.back, INK, sw(Z1));
+    push(poly([[c[0], H - 0.45, Z1], [c[1], H - 0.45, Z1], [c[1], H - 0.04, Z1], [c[0], H - 0.04, Z1]]), C.white, INK, sw(Z1));
+    push(seg([(c[0] + c[1]) / 2, H - 0.45, Z1], [(c[0] + c[1]) / 2, H - 0.04, Z1]), 'none', INK, sw(Z1) * 0.6);
+    push(poly([[c[0], H - 0.95, Z1], [c[1], H - 0.95, Z1], [c[1], H - 0.47, Z1], [c[0], H - 0.47, Z1]]), 'url(#grLed)');
+    push(seg([c[0] + 0.01, H - 0.47, Z1], [c[1] - 0.01, H - 0.47, Z1]), 'none', C.led, 2);
+    push(seg([c[0] + 0.03, 2.4, Z1], [c[1] - 0.03, 2.4, Z1]), 'none', C.brass, sw(Z1) * 2);
+    for (var g = 0; g < 5; g++) {
+      var gx = c[0] + 0.05 + g * 0.105, len = 0.8 + ((g + ci) % 3) * 0.25;
+      push(poly([[gx, 2.38, Z1], [gx + 0.09, 2.38, Z1], [gx + 0.09, 2.38 - len, Z1], [gx, 2.38 - len, Z1]]), cloth[(g * 3 + ci * 2) % cloth.length], INK, sw(Z1));
+      push(poly([[gx, 2.38, Z1], [gx + 0.09, 2.38, Z1], [gx + 0.09, 2.38 - len, Z1], [gx, 2.38 - len, Z1]]), 'url(#grShade)');
+    }
+    for (var d = 0; d < 2; d++) {
+      var y0 = 0.15 + d * 0.38;
+      push(poly([[c[0] + 0.03, y0, Z1], [c[1] - 0.03, y0, Z1], [c[1] - 0.03, y0 + 0.34, Z1], [c[0] + 0.03, y0 + 0.34, Z1]]), C.white, INK, sw(Z1));
+      push(seg([(c[0] + c[1]) / 2 - 0.08, y0 + 0.17, Z1], [(c[0] + c[1]) / 2 + 0.08, y0 + 0.17, Z1]), 'none', C.brass, sw(Z1) * 2);
+    }
+  });
+
+  // ---- side walls: modules from far to near
+  var zb = [5.1, 4.45, 3.8, 3.15, 2.5, 1.9, 1.3, Z0];
+  var typesL = ['hang', 'shelf', 'hang', 'hang', 'shelf', 'hang', 'hang'];
+  var typesR = ['shelf', 'hang', 'hang', 'shelf', 'hang', 'shelf', 'hang'];
+  [-1, 1].forEach(function (sgn) {
+    var w = sgn * W, f = sgn * (W - D);
+    push(poly([[w, 0, zb[0]], [w, H, zb[0]], [w, H, Z1], [w, 0, Z1]]), C.white, INK, sw(Z1));
+    push(poly([[f, 0, zb[0]], [f, H, zb[0]], [w, H, zb[0]], [w, 0, zb[0]]]), C.white, INK, sw(zb[0]));
+  });
+  for (var i = 0; i < zb.length - 1; i++) {
+    var zf = zb[i], zn = zb[i + 1];
+    [-1, 1].forEach(function (sgn) {
+      var type = (sgn < 0 ? typesL : typesR)[i];
+      var w = sgn * W, fr = sgn * (W - D);
+      var mid = sgn * (W - D / 2);
+      // lit back panel
+      push(poly([[w, 0, zn], [w, H, zn], [w, H, zf], [w, 0, zf]]), C.back, INK, sw(zf) * 0.5);
+      // soft reflection of the lit bay on the polished floor
+      push(poly([[fr, 0, zn], [fr - sgn * 0.35, 0, zn], [fr - sgn * 0.35, 0, zf], [fr, 0, zf]]), 'url(#grRefl)', 'none', 0, null, 0.55);
+      push(seg([fr - sgn * 0.01, 0, zn], [fr - sgn * 0.01, 0, zf]), 'none', '#000000', sw(zn) * 2.2, null, 0.18);
+      // ceiling storage with LED strip underneath
+      var ys = H - 0.45;
+      push(poly([[w, ys - 0.5, zn], [w, ys - 0.02, zn], [w, ys - 0.02, zf], [w, ys - 0.5, zf]]), 'url(#grLed)');
+      push(poly([[w, ys, zn], [fr, ys, zn], [fr, ys, zf], [w, ys, zf]]), C.edge, INK, sw(zf) * 0.7);
+      push(poly([[fr, ys, zn], [fr, ys + 0.04, zn], [fr, ys + 0.04, zf], [fr, ys, zf]]), C.white, INK, sw(zf) * 0.7);
+      push(seg([fr + sgn * 0.03, ys - 0.005, zn], [fr + sgn * 0.03, ys - 0.005, zf]), 'none', C.led, sw(zn) * 2.4);
+      var zm = (zf + zn) / 2;
+      push(poly([[fr, ys, zn], [fr, H, zn], [fr, H, zf], [fr, ys, zf]]), C.white, INK, sw(zf) * 0.7);
+      push(poly([[fr, ys, zn], [fr, H, zn], [fr, H, zf], [fr, ys, zf]]), 'url(#grPanel)', 'none', 0, null, 0.5);
+      push(seg([fr, ys + 0.02, zm], [fr, H - 0.02, zm]), 'none', INK, sw(zm) * 0.6);
+      push(seg([fr, ys + 0.06, zm - 0.06 * (zf - zn)], [fr, ys + 0.22, zm - 0.06 * (zf - zn)]) + seg([fr, ys + 0.06, zm + 0.06 * (zf - zn)], [fr, ys + 0.22, zm + 0.06 * (zf - zn)]), 'none', C.brass, sw(zm) * 1.8);
+      push(poly([[fr, 0, zn], [fr, 0.1, zn], [fr, 0.1, zf], [fr, 0, zf]]), '#ECE7DF', INK, sw(zf) * 0.7);
+      if (type === 'hang') {
+        push(seg([mid, 2.45, zn], [mid, 2.45, zf]), 'none', C.brass, sw(zf) * 2.4);
+        var n = Math.max(4, Math.round((zf - zn) / 0.075));
+        for (var k = 0; k < n; k++) {
+          var z = zf - (k + 0.5) * (zf - zn) / n;
+          var gname = gOrder[(i * 7 + k + (sgn > 0 ? 3 : 0)) % gOrder.length];
+          var kx = (D - 0.08) / 60, ky = (0.75 + ((k + i) % 3) * 0.18) / 128;
+          var tf = planeTf(mid, 2.45, z, sgn < 0 ? kx : -kx, ky);
+          var scale = (F / z) * ky;
+          push('M0 0v6M-22 16L0 6l22 10', 'none', C.brass, (Math.max(0.25, 1.6 / z) / scale).toFixed(3), tf);
+          push(garments[gname], cloth[(i * 7 + k * 5 + (sgn > 0 ? 2 : 0)) % cloth.length], GSTROKE, (Math.max(0.2, 0.9 / z) / scale).toFixed(3), tf);
+          push(folds[gname], 'none', '#2B1D12', (Math.max(0.2, 0.9 / z) / scale).toFixed(3), tf, 0.28);
+          push(garments[gname], 'url(#grShade)', 'none', 0, tf);
+        }
+        var top = 0.85;
+        push(poly([[w, top, zn], [fr, top, zn], [fr, top, zf], [w, top, zf]]), C.shelfTop, INK, sw(zf) * 0.7);
+        [[0.1, 0.47], [0.47, 0.85]].forEach(function (r) {
+          var q = [[fr, r[0] + 0.015, zn - 0.01], [fr, r[1] - 0.015, zn - 0.01], [fr, r[1] - 0.015, zf + 0.01], [fr, r[0] + 0.015, zf + 0.01]];
+          push(poly(q), C.white, INK, sw(zf) * 0.7);
+          push(poly(q), 'url(#grShade)', 'none', 0, null, 0.5);
+          var zc = (zf + zn) / 2;
+          push(seg([fr, (r[0] + r[1]) / 2, zc - 0.14 * (zf - zn)], [fr, (r[0] + r[1]) / 2, zc + 0.14 * (zf - zn)]), 'none', C.brass, sw(zn) * 2.2);
+        });
+      } else {
+        [0.1, 0.6, 1.1, 1.6, 2.1].forEach(function (y, j) {
+          // LED glow on the back panel above each shelf (light comes from the shelf above)
+          var above = j < 4 ? [0.6, 1.1, 1.6, 2.1][j] : ys;
+          push(poly([[w, above - 0.4, zn], [w, above - 0.02, zn], [w, above - 0.02, zf], [w, above - 0.4, zf]]), 'url(#grLed)');
+          push(poly([[w, y, zn], [fr, y, zn], [fr, y, zf], [w, y, zf]]), C.shelfTop, INK, sw(zf) * 0.7);
+          push(poly([[fr, y - 0.035, zn], [fr, y, zn], [fr, y, zf], [fr, y - 0.035, zf]]), C.white, INK, sw(zf) * 0.7);
+          if (j > 0) push(seg([fr + sgn * 0.03, y - 0.04, zn], [fr + sgn * 0.03, y - 0.04, zf]), 'none', C.led, sw(zn) * 2);
+          var span = zf - zn;
+          [0.72, 0.3].forEach(function (pos, q) {
+            var z = zn + pos * span;
+            var col = cloth[(i * 3 + j * 5 + q * 2 + (sgn > 0 ? 4 : 0)) % cloth.length];
+            var k2 = (D - 0.1) / 60, tf2 = planeTf(mid, y, z, sgn < 0 ? k2 : -k2, k2);
+            var lw = (Math.max(0.2, 0.9 / z) / ((F / z) * k2)).toFixed(3);
+            if (j === 0) {
+              // a pair of heels in profile
+              push('M-26 0C-26-8-18-12-8-12L0-4H8V-18H12V0ZM2 0C2-8 10-12 20-12L28-4H34V-18H38V0Z', col, GSTROKE, lw, tf2);
+            } else if (j % 2) {
+              // structured handbag with brass hardware
+              push('M-22 0L-18-26H18L22 0Z', col, GSTROKE, lw, tf2);
+              push('M-11-26C-11-40 11-40 11-26', 'none', C.brass, lw * 2.2, tf2);
+              push('M-4-18H4', 'none', C.brass, lw * 2.2, tf2);
+              push('M-22 0L-18-26H18L22 0Z', 'url(#grShade)', 'none', 0, tf2);
+            } else {
+              // folded knitwear stack
+              for (var l = 0; l < 3; l++) {
+                push('M-24 ' + (-l * 9) + 'h48v-8.4h-48z', cloth[(i * 3 + j * 5 + q * 2 + l * 4 + (sgn > 0 ? 4 : 0)) % cloth.length], GSTROKE, lw, tf2);
+              }
+            }
+          });
+        });
+      }
+      push(poly([[w, 0, zn], [fr, 0, zn], [fr, H, zn], [w, H, zn]]), C.white, INK, sw(zn) * 0.8);
+      push(poly([[w, 0, zn], [fr, 0, zn], [fr, H, zn], [w, H, zn]]), 'url(#grPanel)', 'none', 0, null, 0.6);
+      push(poly([[fr, 0, zn], [fr, H, zn], [fr, H, zn + 0.035], [fr, 0, zn + 0.035]]), C.edge, INK, sw(zn) * 0.6);
+    });
+  }
+
+  // ---- jewellery island with a glass top
+  var iz0 = 2.55, iz1 = 3.35, ix = 0.42, ih = 0.92;
+  push(poly([[-ix - 0.06, 0, iz0 - 0.05], [ix + 0.06, 0, iz0 - 0.05], [ix + 0.06, 0, iz1 + 0.05], [-ix - 0.06, 0, iz1 + 0.05]]), '#000000', 'none', 0, null, 0.14);
+  push(poly([[-ix, ih, iz0], [ix, ih, iz0], [ix, ih, iz1], [-ix, ih, iz1]]), '#2F2A26', INK, sw(iz0));
+  var jewels = '';
+  for (var jr = 0; jr < 3; jr++) for (var jc = 0; jc < 5; jc++) {
+    jewels += ell(-0.3 + jc * 0.15, ih, iz0 + 0.15 + jr * 0.25, 0.025, 0.006);
+  }
+  push(jewels, '#D8B66E', '#8A6A35', 0.6);
+  push(poly([[-ix, ih, iz0], [ix, ih, iz0], [ix, ih, iz1], [-ix, ih, iz1]]), 'url(#grGlass)', '#FFFFFF', sw(iz0), null, 0.85);
+  push(poly([[-ix, 0.04, iz0], [ix, 0.04, iz0], [ix, ih, iz0], [-ix, ih, iz0]]), C.white, INK, sw(iz0));
+  push(poly([[-ix, 0.04, iz0], [ix, 0.04, iz0], [ix, ih, iz0], [-ix, ih, iz0]]), 'url(#grShade)', 'none', 0, null, 0.6);
+  push(seg([-ix, ih - 0.3, iz0], [ix, ih - 0.3, iz0]) + seg([-ix, ih - 0.58, iz0], [ix, ih - 0.58, iz0]), 'none', INK, sw(iz0) * 0.7);
+  [ih - 0.15, ih - 0.44, ih - 0.73].forEach(function (y) { push(seg([-0.1, y, iz0 - 0.005], [0.1, y, iz0 - 0.005]), 'none', C.brass, sw(iz0) * 2.4); });
+  push(poly([[-ix, 0, iz0 + 0.02], [ix, 0, iz0 + 0.02], [ix, 0.04, iz0 + 0.02], [-ix, 0.04, iz0 + 0.02]]), '#3A3633');
+
+  // ---- recessed spots with soft light cones
+  [1.2, 2.0, 4.2].forEach(function (z) {
+    push(ell(0, H, z, 0.06, 0.012), '#FFFFFF', INK, sw(z) * 0.5);
+    push(ell(0, H - 0.02, z, 0.35, 0.35), 'url(#grGlow)', 'none', 0, null, 0.55);
+    push(poly([[-0.05, H, z], [0.05, H, z], [0.5, 0, z], [-0.5, 0, z]]), 'url(#grCone)', 'none', 0, null, 0.35);
+  });
+  return { shapes: out };
+})();
+
+(function () {
+  var NS = 'http://www.w3.org/2000/svg';
+  var DEFS = '<defs>\n<linearGradient id="grBay" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF4DE"></stop><stop offset=".45" stop-color="#F5EDE1"></stop><stop offset="1" stop-color="#E6DDD0"></stop></linearGradient>\n<linearGradient id="grLed" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE2AA" stop-opacity=".95"></stop><stop offset=".35" stop-color="#FFE9C4" stop-opacity=".45"></stop><stop offset="1" stop-color="#FFF3DF" stop-opacity="0"></stop></linearGradient>\n<linearGradient id="grFloor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F6F1EA"></stop><stop offset=".5" stop-color="#E8E1D6"></stop><stop offset="1" stop-color="#D6CCBE"></stop></linearGradient>\n<linearGradient id="grRefl" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FFF6E6" stop-opacity=".7"></stop><stop offset="1" stop-color="#FFF6E6" stop-opacity="0"></stop></linearGradient>\n<linearGradient id="grShade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000000" stop-opacity="0"></stop><stop offset=".6" stop-color="#000000" stop-opacity=".06"></stop><stop offset="1" stop-color="#000000" stop-opacity=".24"></stop></linearGradient>\n<linearGradient id="grPanel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0"></stop><stop offset="1" stop-color="#C9BFB2" stop-opacity=".35"></stop></linearGradient>\n<linearGradient id="grMirror" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E9EEF0"></stop><stop offset=".5" stop-color="#C9D3D7"></stop><stop offset="1" stop-color="#AEBAC0"></stop></linearGradient>\n<linearGradient id="grGlass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity=".55"></stop><stop offset="1" stop-color="#CFE3E6" stop-opacity=".18"></stop></linearGradient>\n<linearGradient id="grCone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF4DD" stop-opacity=".9"></stop><stop offset="1" stop-color="#FFF4DD" stop-opacity="0"></stop></linearGradient>\n<radialGradient id="grGlow"><stop offset="0" stop-color="#FFE8BE" stop-opacity="1"></stop><stop offset="1" stop-color="#FFE8BE" stop-opacity="0"></stop></radialGradient>\n<linearGradient id="grWood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C79B6D"></stop><stop offset=".5" stop-color="#B0835A"></stop><stop offset="1" stop-color="#946A45"></stop></linearGradient>\n<linearGradient id="grSheen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF1DA" stop-opacity=".55"></stop><stop offset="1" stop-color="#FFF1DA" stop-opacity="0"></stop></linearGradient>\n<radialGradient id="grVig" gradientUnits="userSpaceOnUse" cx="300" cy="500" r="900"><stop offset=".45" stop-color="#1E140A" stop-opacity="0"></stop><stop offset="1" stop-color="#1E140A" stop-opacity=".38"></stop></radialGradient>\n</defs>';
+  var stage = document.getElementById('stage');
+  var phone = document.querySelector('.phone');
+
+  function buildStage() {
+    var a = phone.clientWidth / Math.max(1, phone.clientHeight);
+    var box = a > 0.6 ? (300 - 500 * a).toFixed(0) + ' 0 ' + (1000 * a).toFixed(0) + ' 1000' : '0 0 600 1000';
+    var paths = GR_SCENE.shapes.map(function (p) {
+      var attrs = ['d="' + p.d + '"', 'fill="' + p.fill + '"', 'stroke="' + p.stroke + '"', 'stroke-width="' + p.sw + '"', 'opacity="' + p.op + '"', 'stroke-linecap="round"', 'stroke-linejoin="round"'];
+      if (p.tf) attrs.push('transform="' + p.tf + '"');
+      return '<path ' + attrs.join(' ') + '></path>';
+    }).join('');
+    stage.innerHTML =
+      '<div class="gr-dolly"><svg xmlns="' + NS + '" viewBox="' + box + '" preserveAspectRatio="xMidYMid slice">' + DEFS + paths +
+      '<rect x="-1500" y="0" width="3600" height="1000" fill="url(#grVig)"></rect></svg></div>' +
+      '<div class="gr-front"><div class="gr-door gr-door-l"><i></i><b></b></div><div class="gr-door gr-door-r"><i></i><b></b></div></div>' +
+      '<div class="gr-flash"></div>';
+  }
+
+  // Deep links (app.html#inspo) skip the intro
+  if (location.hash.length > 1) { stage.hidden = true; return; }
+  buildStage();
+  setTimeout(function () {
+    stage.classList.add('leaving');
+    setTimeout(function () { stage.hidden = true; stage.innerHTML = ''; }, 500);
+  }, 4400);
 })();
 </script>
 </body>
