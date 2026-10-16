@@ -113,11 +113,6 @@ h2{margin:0 0 12px;font-size:19px;font-weight:700;letter-spacing:-.02em}
 .wx-dots button.on{width:14px;background:var(--ink)}
 .wx-note{margin:6px 16px 0;font-size:11px;color:var(--muted);text-align:center}
 .wx-note button{background:none;border:0;padding:0;font-size:inherit;font-weight:700;color:var(--ink);text-decoration:underline}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.stat{text-align:center;padding:14px 6px}
-.stat b{display:block;font-size:24px;font-weight:800;letter-spacing:-.03em}
-.stat span{font-size:12px;color:var(--muted);font-weight:600}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 
 /* Inspirations + wardrobe grids */
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -254,6 +249,46 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
 @keyframes up{from{transform:translateY(100%)}}
 .sheet-head{display:flex;align-items:center;justify-content:space-between}
 .sheet-head h2{margin:0;font-size:22px;font-weight:800;letter-spacing:-.02em}
+
+/* Welcome on Home: handwritten, letters pop in one by one; hover or touch makes them bolder with white glints */
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.greet{font-family:'Dancing Script',cursive;font-weight:700;font-size:40px;line-height:1.15;color:var(--black);-webkit-text-stroke:.8px var(--black);white-space:nowrap;cursor:default;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+.greet .lt{display:inline-block;white-space:pre;animation:greetPop .7s cubic-bezier(.3,1.5,.5,1) both}
+.greet .lt i{position:relative;display:inline-block;font-style:normal;padding:.08em .1em;margin:-.08em -.1em;transition:-webkit-text-stroke-width .35s,transform .35s}
+.greet .lt i::before,.greet .lt i::after{content:'';position:absolute;pointer-events:none;background:#FFFFFF;opacity:0;clip-path:polygon(50% 0,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0 50%,39% 39%);filter:drop-shadow(0 0 1px rgba(176,141,87,.9))}
+.greet .lt i::after{width:.34em;height:.34em;top:14%;left:30%}
+.greet .lt i::before{width:.22em;height:.22em;top:56%;left:58%}
+.greet .lt:nth-child(3n+2) i::after{top:40%;left:8%}
+.greet .lt:nth-child(3n+2) i::before{top:12%;left:64%}
+.greet .lt:nth-child(3n) i::after{top:2%;left:52%}
+.greet .lt:nth-child(3n) i::before{top:62%;left:16%}
+.greet:hover .lt i,.greet.shine .lt i{-webkit-text-stroke-width:1.7px;transform:translateY(-1px);color:transparent;background-image:linear-gradient(105deg,#141414 0 42%,#8A8378 46%,#FFFFFF 49%,#FFF6DF 50%,#FFFFFF 51%,#8A8378 54%,#141414 58% 100%);background-size:320% 100%;-webkit-background-clip:text;background-clip:text;animation:greetGlint 1.9s calc(var(--i) * .09s) ease-in-out infinite}
+.greet:hover .lt i::after,.greet.shine .lt i::after{animation:greetTwinkle 1.5s calc(var(--i) * .23s) ease-in-out infinite}
+.greet:hover .lt i::before,.greet.shine .lt i::before{animation:greetTwinkle 1.5s calc(var(--i) * .23s + .7s) ease-in-out infinite}
+@keyframes greetPop{0%{opacity:0;transform:translateY(.6em) scale(.4)}55%{opacity:1;transform:translateY(-.2em) scale(1.12)}78%{transform:translateY(.04em) scale(.97)}100%{opacity:1;transform:none}}
+@keyframes greetGlint{0%{background-position:120% 0}60%,100%{background-position:-20% 0}}
+@keyframes greetTwinkle{0%,100%{opacity:0;transform:scale(.2) rotate(0)}45%{opacity:1;transform:scale(1) rotate(45deg)}70%{opacity:.25;transform:scale(.5) rotate(70deg)}}
+@media (prefers-reduced-motion:reduce){
+  .greet .lt,.greet:hover .lt i,.greet.shine .lt i{animation:none}
+  .greet:hover .lt i::before,.greet:hover .lt i::after,.greet.shine .lt i::before,.greet.shine .lt i::after{animation:none;opacity:.9;transform:none}
+}
+
+/* Settings */
+.set-group{display:flex;flex-direction:column;gap:8px}
+.set-label{font-size:13px;font-weight:700;color:var(--muted)}
+.langs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.langs button{display:flex;align-items:center;gap:10px;min-height:48px;padding:0 14px;border-radius:14px;border:1px solid var(--border);background:var(--surface);font-size:15px;font-weight:600;text-align:left}
+.langs button span{font-size:20px;line-height:1}
+.langs button[aria-checked="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink);font-weight:800}
+.set-row{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;padding:14px 16px;border-radius:16px;border:1px solid var(--border);background:var(--surface);text-align:left;cursor:pointer}
+.set-row b{display:block;font-size:15px;font-weight:700}
+.set-row small{display:block;margin-top:2px;font-size:12px;font-weight:600;color:var(--muted)}
+.set-row>svg{flex:0 0 auto;width:20px;height:20px;stroke:var(--ink);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.switch{appearance:none;-webkit-appearance:none;flex:0 0 auto;position:relative;width:50px;height:30px;margin:0;border-radius:999px;background:#D8CFC2;cursor:pointer;transition:background .2s}
+.switch::after{content:'';position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#FFFFFF;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .2s}
+.switch:checked{background:var(--ink)}
+.switch:checked::after{transform:translateX(20px)}
+.switch:focus-visible{outline:2px solid #444444;outline-offset:2px}
 .photo-pick{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;height:170px;border-radius:20px;border:1.5px dashed var(--hover);background:var(--surface);color:var(--muted);font-size:14px;font-weight:600;overflow:hidden;cursor:pointer}
 .photo-pick input{position:absolute;inset:0;opacity:0;cursor:pointer}
 .photo-pick img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
@@ -282,21 +317,21 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
   <div class="stage" id="stage" aria-hidden="true"></div>
 
   <!-- HOME -->
-  <main class="screen active" id="home" aria-label="Home">
+  <main class="screen active" id="home" aria-label="Home" data-t-aria="home">
     <div class="topline">
-      <span class="kicker">Welcome</span>
-      <button class="round" aria-label="Notifications"><svg viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg></button>
+      <div class="greet" id="greet"><span class="sr" data-t="greeting">Welcome</span><span aria-hidden="true" id="greetLetters"></span></div>
+      <button class="round" id="openSettings" aria-label="Settings" data-t-aria="settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
     </div>
     <div class="hero">
       <span class="gr-hang"><svg width="210" height="88" viewBox="0 0 240 100" role="img" aria-label="My Gardrobe"><g fill="none" stroke="#111111" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"><path d="M120 34v-6c0-3.4 2.4-5.2 5.2-6.6 2.8-1.4 5-3.6 5-7.4 0-4.8-3.8-8.2-8.6-8.2-4.4 0-7.8 2.8-8.6 6.6"/><path d="M120 34C92 44 54 57 30 65.5c-9 3.2-11 10.6-3.4 14.5"/><path d="M120 34c28 10 66 23 90 31.5 9 3.2 11 10.6 3.4 14.5"/></g><g fill="none" stroke="#8E857A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M120 34v-6c0-3.4 2.4-5.2 5.2-6.6 2.8-1.4 5-3.6 5-7.4 0-4.8-3.8-8.2-8.6-8.2-4.4 0-7.8 2.8-8.6 6.6"/><path d="M120 34C92 44 54 57 30 65.5c-9 3.2-11 10.6-3.4 14.5"/><path d="M120 34c28 10 66 23 90 31.5 9 3.2 11 10.6 3.4 14.5"/></g><text x="120" y="88" text-anchor="middle" textLength="166" lengthAdjust="spacingAndGlyphs" font-family="'Dancing Script', cursive" font-weight="700" font-size="31" fill="#8E857A" stroke="#111111" stroke-width=".7">My Gardrobe</text></svg></span>
-      <p class="motto">Style and organise your clothes</p>
+      <p class="motto" data-t="motto">Style and organise your clothes</p>
     </div>
 
     <div class="section">
-      <h2>Weather</h2>
+      <h2 data-t="weather">Weather</h2>
       <div class="wx" id="wx" aria-live="polite">
-        <div class="wx-track" id="wx-track" tabindex="0" aria-label="Weather by day, swipe for the next days">
-          <div class="wx-slide"><div class="wx-top"><span class="deg">–°</span><span class="cond"><b>Loading forecast</b><span id="wx-city">Finding your location…</span></span><span class="day"><b>Today</b><span id="wx-date"></span></span></div></div>
+        <div class="wx-track" id="wx-track" tabindex="0" aria-label="Weather by day, swipe for the next days" data-t-aria="wxAria">
+          <div class="wx-slide"><div class="wx-top"><span class="deg">–°</span><span class="cond"><b data-t="wxLoading">Loading forecast</b><span id="wx-city" data-t="wxFinding">Finding your location…</span></span><span class="day"><b data-t="today">Today</b><span id="wx-date"></span></span></div></div>
         </div>
         <div class="wx-dots" id="wx-dots"></div>
         <p class="wx-note" id="wx-note" hidden></p>
@@ -304,60 +339,46 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
     </div>
 
     <div class="section">
-      <h2>Try on some clothes</h2>
+      <h2 data-t="tryOn">Try on some clothes</h2>
       <div class="card look">
         <div class="art" id="cardAvatar"></div>
-        <button class="round edit" id="figureCard" aria-label="Edit your figure"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg></button>
+        <button class="round edit" id="figureCard" aria-label="Edit your figure" data-t-aria="editFigure"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg></button>
         <div class="combo">
-          <span class="tag">Look of the day</span>
+          <span class="tag" data-t="lookOfDay">Look of the day</span>
           <div class="flatlay" id="flatlay"></div>
           <button class="btn" id="recreate">Recreate</button>
           <small id="comboNote"></small>
         </div>
       </div>
     </div>
-
-    <div class="section">
-      <h2>Your wardrobe</h2>
-      <div class="stats">
-        <div class="card stat"><b id="statItems">48</b><span>Items</span></div>
-        <div class="card stat"><b>12</b><span>Outfits</span></div>
-        <div class="card stat"><b>7</b><span>Favourites</span></div>
-      </div>
-    </div>
-
-    <div class="section actions">
-      <button class="btn" data-go="wardrobe"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Add item</button>
-      <button class="btn ghost" data-go="inspo">Get inspired</button>
-    </div>
   </main>
 
   <!-- INSPIRATIONS -->
-  <main class="screen" id="inspo" aria-label="Inspirations">
+  <main class="screen" id="inspo" aria-label="Inspirations" data-t-aria="inspirations">
     <div class="topline">
-      <div><span class="kicker">Discover</span><h1>Inspirations</h1></div>
-      <button class="round" aria-label="Saved"><svg viewBox="0 0 24 24"><path d="M7 4h10v16l-5-3.5L7 20z"/></svg></button>
+      <div><span class="kicker" data-t="discover">Discover</span><h1 data-t="inspirations">Inspirations</h1></div>
+      <button class="round" aria-label="Saved" data-t-aria="saved"><svg viewBox="0 0 24 24"><path d="M7 4h10v16l-5-3.5L7 20z"/></svg></button>
     </div>
     <div class="chips" data-chips>
-      <button class="chip on">All</button><button class="chip">Trends</button><button class="chip">Casual</button><button class="chip">Work</button><button class="chip">Evening</button><button class="chip">Weekend</button>
+      <button class="chip on" data-t="all">All</button><button class="chip" data-t="trends">Trends</button><button class="chip" data-t="casual">Casual</button><button class="chip" data-t="work">Work</button><button class="chip" data-t="evening">Evening</button><button class="chip" data-t="weekend">Weekend</button>
     </div>
 
     <div class="section">
       <div class="feature">
-        <div class="txt"><span class="tag">This week</span><h3>Autumn neutrals</h3></div>
+        <div class="txt"><span class="tag" data-t="thisWeek">This week</span><h3 data-t="autumnNeutrals">Autumn neutrals</h3></div>
         <img src="assets/magazine.svg" alt="">
       </div>
     </div>
 
     <div class="section">
-      <h2>Looks from your clothes</h2>
+      <h2 data-t="looksFromYours">Looks from your clothes</h2>
       <div class="grid">
-        <div class="tile tall"><div class="art" style="background:#E2DACD"><img src="assets/mannequin.svg" alt=""></div><div class="meta"><b>City classic</b><span>4 of your items</span></div></div>
-        <div class="tile"><div class="art" style="background:#EFE9DF"><img src="assets/outfit.svg" alt=""></div><div class="meta"><b>Office ready</b><span>3 of your items</span></div></div>
-        <div class="tile"><div class="art" style="background:#DCD3C6"><img src="assets/bags.svg" alt=""></div><div class="meta"><b>Bag edit</b><span>Trend</span></div></div>
-        <div class="tile tall"><div class="art" style="background:#E9E2D6"><img src="assets/step-dress.svg" alt=""></div><div class="meta"><b>Evening out</b><span>5 of your items</span></div></div>
-        <div class="tile"><div class="art" style="background:#E6DFD4"><img src="assets/swatches.svg" alt=""></div><div class="meta"><b>Colour match</b><span>Tip</span></div></div>
-        <div class="tile"><div class="art" style="background:#D8CFC2"><img src="assets/wardrobe.svg" alt=""></div><div class="meta"><b>Capsule closet</b><span>Guide</span></div></div>
+        <div class="tile tall"><div class="art" style="background:#E2DACD"><img src="assets/mannequin.svg" alt=""></div><div class="meta"><b data-t="cityClassic">City classic</b><span data-t="nItems" data-t-n="4">4 of your items</span></div></div>
+        <div class="tile"><div class="art" style="background:#EFE9DF"><img src="assets/outfit.svg" alt=""></div><div class="meta"><b data-t="officeReady">Office ready</b><span data-t="nItems" data-t-n="3">3 of your items</span></div></div>
+        <div class="tile"><div class="art" style="background:#DCD3C6"><img src="assets/bags.svg" alt=""></div><div class="meta"><b data-t="bagEdit">Bag edit</b><span data-t="trend">Trend</span></div></div>
+        <div class="tile tall"><div class="art" style="background:#E9E2D6"><img src="assets/step-dress.svg" alt=""></div><div class="meta"><b data-t="eveningOut">Evening out</b><span data-t="nItems" data-t-n="5">5 of your items</span></div></div>
+        <div class="tile"><div class="art" style="background:#E6DFD4"><img src="assets/swatches.svg" alt=""></div><div class="meta"><b data-t="colourMatch">Colour match</b><span data-t="tip">Tip</span></div></div>
+        <div class="tile"><div class="art" style="background:#D8CFC2"><img src="assets/wardrobe.svg" alt=""></div><div class="meta"><b data-t="capsule">Capsule closet</b><span data-t="guide">Guide</span></div></div>
       </div>
     </div>
   </main>
@@ -367,7 +388,7 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
     <div class="topline">
       <h1>My Gardrobe</h1>
     </div>
-    <label class="search" id="wSearch"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input type="search" id="wQ" placeholder="Search by brand, colour or item" aria-label="Search your clothes" autocomplete="off"><button type="button" class="clear" aria-label="Clear search"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></label>
+    <label class="search" id="wSearch"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input type="search" id="wQ" placeholder="Search by brand, colour or item" aria-label="Search your clothes" data-t-ph="searchAll" data-t-aria="searchAria" autocomplete="off"><button type="button" class="clear" aria-label="Clear search" data-t-aria="clearSearch"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></label>
     <div class="chips" id="wChips"></div>
     <div class="section" id="wBody"></div>
   </main>
@@ -375,15 +396,15 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
   <!-- ONE CATEGORY (opened from My Gardrobe) -->
   <main class="screen" id="category" aria-label="Category">
     <div class="cat-top">
-      <button class="round back" id="cBack" aria-label="Back to My Gardrobe"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <button class="round back" id="cBack" aria-label="Back to My Gardrobe" data-t-aria="back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
       <div><span class="kicker" id="cCount"></span><h1 id="cTitle"></h1></div>
     </div>
-    <div class="pickbar" id="pickBar" hidden><div><b id="pickTitle">Choose a top</b><span>Tap a piece to put it on your figure</span></div><button class="link" id="pickCancel">Cancel</button></div>
-    <label class="search" id="cSearch"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input type="search" id="cQ" autocomplete="off"><button type="button" class="clear" aria-label="Clear search"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></label>
+    <div class="pickbar" id="pickBar" hidden><div><b id="pickTitle">Choose a top</b><span data-t="tapToWear">Tap a piece to put it on your figure</span></div><button class="link" id="pickCancel" data-t="cancel">Cancel</button></div>
+    <label class="search" id="cSearch"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input type="search" id="cQ" autocomplete="off"><button type="button" class="clear" aria-label="Clear search" data-t-aria="clearSearch"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></label>
     <div class="chips" id="cChips"></div>
     <div class="cbody">
       <div class="pager" id="cPager"></div>
-      <div class="rail" id="cRail" aria-label="Jump to colour" hidden></div>
+      <div class="rail" id="cRail" aria-label="Jump to colour" data-t-aria="jumpColour" hidden></div>
       <div class="bubble" id="cBubble"></div>
     </div>
   </main>
@@ -392,69 +413,82 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
   <div class="sheet-wrap" id="sheet" hidden>
     <div class="sheet-bg" data-close></div>
     <form class="sheet" id="addForm" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
-      <div class="sheet-head"><h2 id="sheetTitle">Add an item</h2><button type="button" class="round" data-close aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
-      <label class="photo-pick"><input type="file" id="fPhoto" accept="image/*"><svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Add a photo<img id="fPreview" alt="" hidden></label>
-      <label class="field" id="fCatWrap">Category<select id="fCat"></select></label>
-      <label class="field" id="fSubWrap">Type<select id="fSub"></select></label>
-      <label class="field">Name<input id="fName" required placeholder="e.g. Camel wrap coat" autocomplete="off"></label>
-      <label class="field">Brand<input id="fBrand" placeholder="e.g. Guess" autocomplete="off"></label>
-      <div class="field">Colour<div class="swatches" id="fColor"></div></div>
-      <button class="btn" type="submit">Save</button>
+      <div class="sheet-head"><h2 id="sheetTitle">Add an item</h2><button type="button" class="round" data-close aria-label="Close" data-t-aria="close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+      <label class="photo-pick"><input type="file" id="fPhoto" accept="image/*"><svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg><span data-t="addPhoto">Add a photo</span><img id="fPreview" alt="" hidden></label>
+      <label class="field" id="fCatWrap"><span data-t="category">Category</span><select id="fCat"></select></label>
+      <label class="field" id="fSubWrap"><span data-t="type">Type</span><select id="fSub"></select></label>
+      <label class="field"><span data-t="name">Name</span><input id="fName" required placeholder="e.g. Camel wrap coat" autocomplete="off"></label>
+      <label class="field"><span data-t="brand">Brand</span><input id="fBrand" placeholder="e.g. Guess" autocomplete="off"></label>
+      <div class="field"><span data-t="colour">Colour</span><div class="swatches" id="fColor"></div></div>
+      <button class="btn" type="submit" data-t="save">Save</button>
     </form>
   </div>
 
-  <button class="fab" id="fab" aria-label="Add item"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+  <button class="fab" id="fab" aria-label="Add item" data-t-aria="addItem"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
 
   <!-- FIGURE EDITOR -->
   <div class="fx-bg" id="figBg"></div>
-  <section class="fx-sheet" id="figSheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" aria-hidden="true">
+  <section class="fx-sheet" id="figSheet" role="dialog" aria-modal="true" aria-labelledby="figTitle" aria-hidden="true">
     <div class="fx-grab"></div>
-    <h2 id="sheetTitle">Your figure</h2>
-    <p class="sub">Make the figure look like you. You can change it any time.</p>
+    <h2 id="figTitle" data-t="yourFigure">Your figure</h2>
+    <p class="sub" data-t="figureSub">Make the figure look like you. You can change it any time.</p>
     <div class="fx-preview" id="sheetAvatar"></div>
 
     <div class="fx-field">
-      <div class="fx-lbl">I am</div>
+      <div class="fx-lbl" data-t="iAm">I am</div>
       <div class="seg" id="genderSeg">
-        <button data-g="woman" class="on">Woman</button><button data-g="man">Man</button>
+        <button data-g="woman" class="on" data-t="woman">Woman</button><button data-g="man" data-t="man">Man</button>
       </div>
     </div>
     <div class="fx-field">
-      <div class="fx-lbl">Skin tone</div>
+      <div class="fx-lbl" data-t="skin">Skin tone</div>
       <div class="swatches" id="skinSw"></div>
     </div>
     <div class="fx-field">
-      <div class="fx-lbl">Hair colour</div>
+      <div class="fx-lbl" data-t="hair">Hair colour</div>
       <div class="swatches" id="hairSw"></div>
     </div>
     <div class="fx-field">
-      <label class="fx-lbl" for="height">Height <output id="heightOut">168 cm</output></label>
+      <label class="fx-lbl" for="height"><span data-t="height">Height</span> <output id="heightOut">168 cm</output></label>
       <input type="range" id="height" min="140" max="210" step="1" value="168">
     </div>
     <div class="fx-field">
-      <label class="fx-lbl" for="weight">Weight <output id="weightOut">60 kg</output></label>
+      <label class="fx-lbl" for="weight"><span data-t="weight">Weight</span> <output id="weightOut">60 kg</output></label>
       <input type="range" id="weight" min="40" max="150" step="1" value="60">
     </div>
     <div class="fx-field">
       <button class="expander" id="shapeToggle" aria-expanded="false" aria-controls="shapes">
-        <span>Body shape<small id="shapeSummary">Optional · you can skip this</small></span>
+        <span><span data-t="bodyShape">Body shape</span><small id="shapeSummary">Optional · you can skip this</small></span>
         <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
       </button>
       <div class="shapes" id="shapes" hidden></div>
     </div>
 
     <div class="fx-actions">
-      <button class="btn" id="saveFig">Save</button>
-      <button class="link" id="skipFig">Skip for now</button>
+      <button class="btn" id="saveFig" data-t="save">Save</button>
+      <button class="link" id="skipFig" data-t="skip">Skip for now</button>
     </div>
   </section>
 
+  <!-- SETTINGS -->
+  <div class="sheet-wrap" id="settings" hidden>
+    <div class="sheet-bg" data-close></div>
+    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="setTitle">
+      <div class="sheet-head"><h2 id="setTitle" data-t="settings">Settings</h2><button type="button" class="round" data-close aria-label="Close" data-t-aria="close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+      <div class="set-group"><div class="set-label" id="langLbl" data-t="language">Language</div><div class="langs" id="langList" role="radiogroup" aria-labelledby="langLbl"></div></div>
+      <div class="set-group"><div class="set-label" data-t="temperature">Temperature</div><div class="seg" id="unitSeg"><button type="button" data-u="c">°C <span data-t="celsius">Celsius</span></button><button type="button" data-u="f">°F <span data-t="fahrenheit">Fahrenheit</span></button></div></div>
+      <label class="set-row"><span><b data-t="intro">Opening animation</b><small data-t="introSub">Play the walk-in closet when the app opens</small></span><input type="checkbox" class="switch" id="introToggle"></label>
+      <button type="button" class="set-row" id="setFigure"><span><b data-t="yourFigure">Your figure</b><small data-t="figureRowSub">Height, shape, skin and hair</small></span><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+      <button type="button" class="btn" data-close data-t="done">Done</button>
+    </div>
+  </div>
+
   <nav class="tabbar" aria-label="Main">
     <button class="tab active" data-tab="home" aria-current="page">
-      <span class="pill"><svg viewBox="0 0 24 24"><path d="M3.5 11 12 4l8.5 7"/><path d="M5.5 9.5V20h13V9.5"/><path d="M10 20v-5.5h4V20"/></svg></span>Home
+      <span class="pill"><svg viewBox="0 0 24 24"><path d="M3.5 11 12 4l8.5 7"/><path d="M5.5 9.5V20h13V9.5"/><path d="M10 20v-5.5h4V20"/></svg></span><span data-t="home">Home</span>
     </button>
     <button class="tab" data-tab="inspo">
-      <span class="pill"><svg viewBox="0 0 24 24"><path d="M10 3.5c.6 3.7 2.3 5.4 6 6-3.7.6-5.4 2.3-6 6-.6-3.7-2.3-5.4-6-6 3.7-.6 5.4-2.3 6-6z"/><path d="M18 14.5c.3 1.6 1 2.3 2.5 2.5-1.5.2-2.2.9-2.5 2.5-.3-1.6-1-2.3-2.5-2.5 1.5-.2 2.2-.9 2.5-2.5z"/><path d="M18.5 3.5v2.5M17.25 4.75h2.5"/></svg></span>Inspirations
+      <span class="pill"><svg viewBox="0 0 24 24"><path d="M10 3.5c.6 3.7 2.3 5.4 6 6-3.7.6-5.4 2.3-6 6-.6-3.7-2.3-5.4-6-6 3.7-.6 5.4-2.3 6-6z"/><path d="M18 14.5c.3 1.6 1 2.3 2.5 2.5-1.5.2-2.2.9-2.5 2.5-.3-1.6-1-2.3-2.5-2.5 1.5-.2 2.2-.9 2.5-2.5z"/><path d="M18.5 3.5v2.5M17.25 4.75h2.5"/></svg></span><span data-t="inspirations">Inspirations</span>
     </button>
     <button class="tab" data-tab="wardrobe">
       <span class="pill"><svg viewBox="0 0 24 24"><path d="M9 3.5 4.5 5.5 2.5 10l3 1.3 1.5-1.6V20.5h10V9.7l1.5 1.6 3-1.3-2-4.5L15 3.5c-.4 1.5-1.6 2.5-3 2.5S9.4 5 9 3.5z"/></svg></span>My Gardrobe
@@ -462,6 +496,55 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
   </nav>
 </div>
 
+<script src="i18n/app-strings.js"></script>
+<script>
+// Language for the whole app. Shares the 'gr-lang' choice with the website, so both open in the same language.
+(function () {
+  var S = window.MG_STRINGS;
+  function pick(code) { var b = String(code || '').split('-')[0].toLowerCase(); if (b === 'nb' || b === 'nn') b = 'no'; return S[b] ? b : null; }
+  var lang = null, subs = [];
+  try { lang = pick(localStorage.getItem('gr-lang')); } catch (e) {}
+  if (!lang) (navigator.languages || [navigator.language]).some(function (l) { return (lang = pick(l)); });
+  lang = lang || 'en';
+  function get(table, key) { return key.split('.').reduce(function (o, k) { return o == null ? o : o[k]; }, table); }
+  function t(key, vars) {
+    var v = get(S[lang], key);
+    if (v == null) v = get(S.en, key);
+    if (v == null) return key.split('.').pop();
+    if (typeof v !== 'string') return v;
+    return vars ? v.replace(/\{(\w+)\}/g, function (m, k) { return vars[k] != null ? vars[k] : m; }) : v;
+  }
+  function apply(root) {
+    root = root || document;
+    root.querySelectorAll('[data-t]').forEach(function (el) { el.textContent = t(el.dataset.t, el.dataset.tN ? { n: el.dataset.tN } : null); });
+    root.querySelectorAll('[data-t-ph]').forEach(function (el) { el.placeholder = t(el.dataset.tPh); });
+    root.querySelectorAll('[data-t-aria]').forEach(function (el) { el.setAttribute('aria-label', t(el.dataset.tAria)); });
+    document.documentElement.lang = lang;
+  }
+  window.MG = {
+    t: t, apply: apply,
+    lang: function () { return lang; },
+    locale: function () { return S[lang].locale; },
+    langs: function () { return Object.keys(S).map(function (k) { return { code: k, native: S[k].native, flag: S[k].flag }; }); },
+    // "17 coats", using the language's plural rules
+    count: function (n, forms) {
+      var r = 'other'; try { r = new Intl.PluralRules(S[lang].locale).select(n); } catch (e) {}
+      return n + ' ' + (r === 'one' ? forms[0] : r === 'few' && forms[2] ? forms[2] : forms[1]);
+    },
+    onLang: function (fn) { subs.push(fn); },
+    setLang: function (code) {
+      lang = pick(code) || 'en';
+      try { localStorage.setItem('gr-lang', lang); } catch (e) {}
+      apply();
+      subs.forEach(function (fn) { try { fn(lang); } catch (e) { setTimeout(function () { throw e; }); } });
+    },
+    // Small settings kept in the browser
+    get: function (k, d) { try { var v = localStorage.getItem('mg-' + k); return v == null ? d : v; } catch (e) { return d; } },
+    set: function (k, v) { try { localStorage.setItem('mg-' + k, v); } catch (e) {} document.dispatchEvent(new CustomEvent('mg-setting', { detail: { key: k, value: v } })); }
+  };
+  apply();
+})();
+</script>
 <script>
 (function () {
   var tabs = document.querySelectorAll('.tab');
@@ -570,6 +653,9 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
   try { items = items.concat(JSON.parse(localStorage.getItem(STORE) || '[]')); } catch (e) {}
 
   function catById(id) { return CATS.filter(function (c) { return c.id === id; })[0]; }
+  function catName(c) { return MG.t('cat.' + c.id); }
+  function subName(s) { return s ? MG.t('sub.' + s) : MG.t('all'); }
+  function colorName(id) { return MG.t('color.' + id); }
   function colorOf(id) { return COLORS.filter(function (c) { return c[0] === id; })[0] || COLORS[0]; }
   function colorRank(id) { for (var i = 0; i < COLORS.length; i++) if (COLORS[i][0] === id) return i; return 99; }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (ch) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]; }); }
@@ -580,7 +666,8 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
   function matches(it, q) {
     var t = tokens(q); if (!t.length) return true;
     var c = catById(it.cat);
-    var hay = [it.name, it.brand, colorOf(it.color)[1], c.name, c.one, c.many, it.sub].join(' ');
+    // English and the chosen language both work, so "jeans" and "farmer" style searches find the same piece
+    var hay = [it.name, it.brand, colorOf(it.color)[1], colorName(it.color), c.name, c.one, c.many, catName(c), MG.t('n.' + c.id).join(' '), it.sub, it.sub && subName(it.sub)].join(' ');
     return t.every(function (w) { return hasWord(hay, w); });
   }
   function isDark(hex) { var n = parseInt(hex.slice(1), 16); return (0.299 * (n >> 16) + 0.587 * (n >> 8 & 255) + 0.114 * (n & 255)) < 110; }
@@ -592,10 +679,10 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
     var col = colorOf(it.color);
     var art = it.photo ? '<img class="photo" src="' + esc(it.photo) + '" alt="">' : icon(catById(it.cat).icon, col[2]);
     var worn = W8.isWorn && W8.isWorn(it);
-    return '<div class="tile item' + (worn ? ' wearing' : '') + '" data-i="' + items.indexOf(it) + '">' + (worn ? '<span class="badge">Wearing</span>' : '') + '<div class="art" style="background:#EFE9DF">' + art + '</div><div class="meta"><b>' + esc(it.name) + '</b><span>' + esc([it.brand, col[1]].filter(Boolean).join(' · ')) + '</span></div></div>';
+    return '<div class="tile item' + (worn ? ' wearing' : '') + '" data-i="' + items.indexOf(it) + '">' + (worn ? '<span class="badge">' + esc(MG.t('wearing')) + '</span>' : '') + '<div class="art" style="background:#EFE9DF">' + art + '</div><div class="meta"><b>' + esc(it.name) + '</b><span>' + esc([it.brand, colorName(col[0])].filter(Boolean).join(' · ')) + '</span></div></div>';
   }
   function catTile(c, subIndex, label) {
-    return '<button class="tile cat" data-cat="' + c.id + '" data-sub="' + (subIndex || 0) + '"><div class="art">' + icon(c.icon, '#D8CFC2') + '</div><div class="meta"><b>' + esc(label || c.name) + '</b>' + (label ? '<span>' + esc(c.name) + '</span>' : '') + '</div></button>';
+    return '<button class="tile cat" data-cat="' + c.id + '" data-sub="' + (subIndex || 0) + '"><div class="art">' + icon(c.icon, '#D8CFC2') + '</div><div class="meta"><b>' + esc(label ? subName(label) : catName(c)) + '</b>' + (label ? '<span>' + esc(catName(c)) + '</span>' : '') + '</div></button>';
   }
   function bySort(a, b) { return colorRank(a.color) - colorRank(b.color) || a.name.localeCompare(b.name); }
   function wireSearch(label, onInput) {
@@ -609,7 +696,8 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
   var wQ = '';
   var wBody = document.getElementById('wBody');
   var wChips = document.getElementById('wChips');
-  wChips.innerHTML = '<button class="chip on">All</button>' + CATS.map(function (c) { return '<button class="chip" data-cat="' + c.id + '">' + esc(c.name) + '</button>'; }).join('');
+  function renderChips() { wChips.innerHTML = '<button class="chip on">' + esc(MG.t('all')) + '</button>' + CATS.map(function (c) { return '<button class="chip" data-cat="' + c.id + '">' + esc(catName(c)) + '</button>'; }).join(''); }
+  renderChips();
   wireSearch(document.getElementById('wSearch'), function (v) { wQ = v; renderMain(); });
 
   function renderMain() {
@@ -618,13 +706,13 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
     // Category or type names that match the search (e.g. "coats", "heels")
     var hits = [];
     CATS.forEach(function (c) {
-      if (t.every(function (w) { return hasWord(c.name + ' ' + c.many, w); })) hits.push(catTile(c));
-      c.subs.forEach(function (s, i) { if (t.every(function (w) { return hasWord(s, w); })) hits.push(catTile(c, i + 1, s)); });
+      if (t.every(function (w) { return hasWord(c.name + ' ' + c.many + ' ' + catName(c), w); })) hits.push(catTile(c));
+      c.subs.forEach(function (s, i) { if (t.every(function (w) { return hasWord(s + ' ' + subName(s), w); })) hits.push(catTile(c, i + 1, s)); });
     });
-    if (hits.length) html += '<div class="label">Categories</div><div class="grid">' + hits.join('') + '</div>';
+    if (hits.length) html += '<div class="label">' + esc(MG.t('categories')) + '</div><div class="grid">' + hits.join('') + '</div>';
     var found = items.filter(function (it) { return matches(it, wQ); }).sort(bySort);
-    if (found.length) html += '<div class="label">Clothes</div><div class="grid">' + found.map(itemTile).join('') + '</div>';
-    if (!html) html = '<p class="empty">Nothing matches “' + esc(wQ.trim()) + '”. Try a brand, a colour or a type, like “guess jeans”.</p>';
+    if (found.length) html += '<div class="label">' + esc(MG.t('clothes')) + '</div><div class="grid">' + found.map(itemTile).join('') + '</div>';
+    if (!html) html = '<p class="empty">' + esc(MG.t('noMatchAll', { q: wQ.trim() })) + '</p>';
     wBody.innerHTML = html;
   }
   wBody.addEventListener('click', function (e) {
@@ -641,18 +729,23 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
   document.getElementById('cBack').addEventListener('click', function () { show('wardrobe'); });
 
   function pagesOf(c) { return [null].concat(c.subs); }
-  function countLabel(c) { var n = items.filter(function (it) { return it.cat === c.id; }).length; return n + ' ' + (n === 1 ? c.one : c.many); }
+  function countLabel(c) { return MG.count(items.filter(function (it) { return it.cat === c.id; }).length, MG.t('n.' + c.id)); }
 
   function openCat(id, subIndex) {
     cur = catById(id); cQ = ''; cQInput.value = ''; document.getElementById('cSearch').classList.remove('has');
-    cQInput.placeholder = 'Search ' + cur.name.toLowerCase() + ' by brand or colour';
-    document.getElementById('cTitle').textContent = cur.name;
-    document.getElementById('category').setAttribute('aria-label', cur.name);
-    cChips.hidden = !cur.subs.length;
-    cChips.innerHTML = pagesOf(cur).map(function (s, i) { return '<button class="chip" data-i="' + i + '">' + esc(s || 'All') + '</button>'; }).join('');
+    labelCat();
     renderPages();
     show('category');
     goPage(subIndex || 0, false);
+  }
+
+  function labelCat() {
+    var name = catName(cur);
+    cQInput.placeholder = MG.t('searchCat', { cat: name.toLowerCase() });
+    document.getElementById('cTitle').textContent = name;
+    document.getElementById('category').setAttribute('aria-label', name);
+    cChips.hidden = !cur.subs.length;
+    cChips.innerHTML = pagesOf(cur).map(function (s, i) { return '<button class="chip' + (i === pageIdx ? ' on' : '') + '" data-i="' + i + '">' + esc(subName(s)) + '</button>'; }).join('');
   }
 
   function renderPages() {
@@ -665,11 +758,11 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
       list.forEach(function (it) { var g = groups[groups.length - 1]; if (!g || g.color !== it.color) groups.push(g = { color: it.color, list: [] }); g.list.push(it); });
       groups.forEach(function (g) {
         var col = colorOf(g.color);
-        html += '<section class="cgroup" data-color="' + g.color + '"><div class="chead"><span class="dot" style="background:' + col[2] + '"></span>' + col[1] + ' · ' + g.list.length + '</div><div class="grid">' + g.list.map(itemTile).join('') + '</div></section>';
+        html += '<section class="cgroup" data-color="' + g.color + '"><div class="chead"><span class="dot" style="background:' + col[2] + '"></span>' + esc(colorName(g.color)) + ' · ' + g.list.length + '</div><div class="grid">' + g.list.map(itemTile).join('') + '</div></section>';
       });
-      if (!list.length) html += '<p class="empty">' + (tokens(cQ).length ? 'Nothing matches “' + esc(cQ.trim()) + '”.' : 'Nothing here yet.') + '</p>';
-      html += '<div class="grid addwrap"><button class="tile add" data-sub="' + esc(sub || '') + '"><span class="plus"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>Add</button></div>';
-      return '<div class="page" role="region" aria-label="' + esc(sub || 'All ' + cur.name.toLowerCase()) + '">' + html + '</div>';
+      if (!list.length) html += '<p class="empty">' + esc(tokens(cQ).length ? MG.t('noMatch', { q: cQ.trim() }) : MG.t('emptyHere')) + '</p>';
+      html += '<div class="grid addwrap"><button class="tile add" data-sub="' + esc(sub || '') + '"><span class="plus"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>' + esc(MG.t('add')) + '</button></div>';
+      return '<div class="page" role="region" aria-label="' + esc(sub ? subName(sub) : MG.t('allOf', { cat: catName(cur).toLowerCase() })) + '">' + html + '</div>';
     }).join('');
     pager.scrollLeft = keep;
     pager.querySelectorAll('.page').forEach(function (p) { p.addEventListener('scroll', function () { if (p === pager.children[pageIdx]) syncRail(); }, { passive: true }); });
@@ -731,7 +824,7 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
     rail.hidden = groups.length < 2;
     rail.innerHTML = Array.prototype.map.call(groups, function (g) {
       var col = colorOf(g.dataset.color);
-      return '<button data-color="' + col[0] + '" aria-label="' + col[1] + '"><span class="dot" style="background:' + col[2] + '"></span></button>';
+      return '<button data-color="' + col[0] + '" aria-label="' + esc(colorName(col[0])) + '"><span class="dot" style="background:' + col[2] + '"></span></button>';
     }).join('');
     syncRail();
   }
@@ -750,7 +843,7 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
     if (b) {
       rail.querySelectorAll('button').forEach(function (x) { x.classList.toggle('on', x === b); });
       var box = rail.parentNode.getBoundingClientRect(), r = b.getBoundingClientRect();
-      bubble.textContent = colorOf(color)[1];
+      bubble.textContent = colorName(color);
       bubble.style.top = (r.top + r.height / 2 - box.top) + 'px';
       bubble.classList.add('show');
       clearTimeout(jumpTo.t); jumpTo.t = setTimeout(function () { bubble.classList.remove('show'); }, 900);
@@ -773,14 +866,20 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
   var fCat = document.getElementById('fCat'), fSub = document.getElementById('fSub'), fColor = document.getElementById('fColor');
   var fPhoto = document.getElementById('fPhoto'), fPreview = document.getElementById('fPreview');
   var pick = { color: 'black', photo: '' };
-  fCat.innerHTML = CATS.map(function (c) { return '<option value="' + c.id + '">' + esc(c.name) + '</option>'; }).join('');
-  fColor.innerHTML = COLORS.map(function (c) { return '<button type="button" data-color="' + c[0] + '" aria-label="' + c[1] + '" style="background:' + c[2] + '"></button>'; }).join('');
+  function labelForm() {
+    var keep = fCat.value;
+    fCat.innerHTML = CATS.map(function (c) { return '<option value="' + c.id + '">' + esc(catName(c)) + '</option>'; }).join('');
+    if (keep) fCat.value = keep;
+    fColor.innerHTML = COLORS.map(function (c) { return '<button type="button" data-color="' + c[0] + '" aria-label="' + esc(colorName(c[0])) + '" style="background:' + c[2] + '"' + (c[0] === pick.color ? ' class="on"' : '') + '></button>'; }).join('');
+    document.getElementById('fBrand').placeholder = MG.t('eg', { x: 'Guess' });
+  }
+  labelForm();
   function fillSubs(sub) {
     var c = catById(fCat.value);
     document.getElementById('fSubWrap').hidden = !c.subs.length;
     var ex = items.filter(function (it) { return it.cat === c.id && !it.mine && (!sub || it.sub === sub); })[0];
-    document.getElementById('fName').placeholder = ex ? 'e.g. ' + ex.name : 'Name';
-    fSub.innerHTML = c.subs.map(function (s) { return '<option' + (s === sub ? ' selected' : '') + '>' + esc(s) + '</option>'; }).join('');
+    document.getElementById('fName').placeholder = ex ? MG.t('eg', { x: ex.name }) : MG.t('name');
+    fSub.innerHTML = c.subs.map(function (s) { return '<option value="' + esc(s) + '"' + (s === sub ? ' selected' : '') + '>' + esc(subName(s)) + '</option>'; }).join('');
   }
   function setColor(id) { pick.color = id; fColor.querySelectorAll('button').forEach(function (b) { b.classList.toggle('on', b.dataset.color === id); }); }
   fCat.addEventListener('change', function () { fillSubs(''); });
@@ -807,7 +906,7 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
     form.reset(); pick.photo = ''; fPreview.hidden = true; fPreview.removeAttribute('src'); setColor('black');
     fCat.value = catId || 'coats';
     document.getElementById('fCatWrap').hidden = !!catId;
-    document.getElementById('sheetTitle').textContent = catId ? 'Add to ' + catById(catId).name : 'Add an item';
+    document.getElementById('sheetTitle').textContent = catId ? MG.t('addTo', { cat: catName(catById(catId)) }) : MG.t('addAnItem');
     fillSubs(sub);
     sheet.hidden = false;
     setTimeout(function () { document.getElementById('fName').focus(); }, 50);
@@ -844,6 +943,13 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
     var ic = ICONS[name];
     return '<svg viewBox="0 0 64 64" aria-hidden="true"><path d="' + ic[0] + '" fill="none" stroke="#2B2B2B" stroke-width="2" stroke-linejoin="round"/><path d="' + ic[1] + '" fill="none" stroke="#2B2B2B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   };
+
+  // Switching language relabels everything in place, without losing the page you are on
+  MG.onLang(function () {
+    renderChips(); labelForm(); renderMain();
+    if (cur) { labelCat(); renderPages(); }
+    if (!sheet.hidden) { var sc = fCat.value; document.getElementById('sheetTitle').textContent = document.getElementById('fCatWrap').hidden ? MG.t('addTo', { cat: catName(catById(sc)) }) : MG.t('addAnItem'); fillSubs(fSub.value); }
+  });
 
   renderMain();
   var start = location.hash.slice(1);
@@ -1079,7 +1185,8 @@ var GR_SCENE = (function () {
       '<div class="gr-flash"></div>';
   }
 
-  // The intro plays every time the app opens; a link to a tab (app.html#inspo) still lands there afterwards
+  // The intro plays every time the app opens (unless it is switched off in Settings); a link to a tab (app.html#inspo) still lands there afterwards
+  if (MG.get('intro', 'on') === 'off') { stage.hidden = true; return; }
   buildStage();
   setTimeout(function () {
     stage.classList.add('leaving');
@@ -1406,17 +1513,17 @@ var GR_SCENE = (function () {
   var cardFig = new Live($('cardAvatar')), sheetFig = new Live($('sheetAvatar'));
   var thumbsFor = null;
 
-  function shapeName(id) { var x = SHAPES.filter(function (s) { return s.id === id; })[0]; return x ? x.name : null; }
+  function shapeName(id) { return SHAPES.some(function (s) { return s.id === id; }) ? MG.t('shape.' + id) : null; }
 
   function buildThumbs() {
-    var key = draft.gender + draft.skin + draft.hair;
+    var key = draft.gender + draft.skin + draft.hair + MG.lang();
     if (thumbsFor === key) return;
     thumbsFor = key;
     var opts = SHAPES.map(function (sh) {
       var o = { gender: draft.gender, shape: sh.id, height: 170, weight: draft.gender === 'man' ? 70 : 60, skin: draft.skin, hair: draft.hair };
-      return '<button class="shape" data-s="' + sh.id + '">' + figureSVG(o, 1.6) + sh.name + '</button>';
+      return '<button class="shape" data-s="' + sh.id + '">' + figureSVG(o, 1.6) + shapeName(sh.id) + '</button>';
     });
-    opts.push('<button class="shape" data-s=""><span class="q">?</span>Not sure</button>');
+    opts.push('<button class="shape" data-s=""><span class="q">?</span>' + MG.t('notSure') + '</button>');
     $('shapes').innerHTML = opts.join('');
   }
 
@@ -1426,9 +1533,9 @@ var GR_SCENE = (function () {
     $('weightOut').textContent = draft.weight + ' kg';
     $('height').value = draft.height; $('weight').value = draft.weight;
     document.querySelectorAll('#genderSeg button').forEach(function (b) { b.classList.toggle('on', b.dataset.g === draft.gender); });
-    $('shapeSummary').textContent = shapeName(draft.shape) || 'Optional · you can skip this';
-    $('skinSw').innerHTML = SKINS.map(function (c) { return '<button class="swatch' + (c === draft.skin ? ' on' : '') + '" data-c="' + c + '" style="background:' + c + '" aria-label="Skin tone"></button>'; }).join('');
-    $('hairSw').innerHTML = HAIRS.map(function (c) { return '<button class="swatch' + (c === draft.hair ? ' on' : '') + '" data-c="' + c + '" style="background:' + c + '" aria-label="Hair colour"></button>'; }).join('');
+    $('shapeSummary').textContent = shapeName(draft.shape) || MG.t('optional');
+    $('skinSw').innerHTML = SKINS.map(function (c) { return '<button class="swatch' + (c === draft.skin ? ' on' : '') + '" data-c="' + c + '" style="background:' + c + '" aria-label="' + MG.t('skin') + '"></button>'; }).join('');
+    $('hairSw').innerHTML = HAIRS.map(function (c) { return '<button class="swatch' + (c === draft.hair ? ' on' : '') + '" data-c="' + c + '" style="background:' + c + '" aria-label="' + MG.t('hair') + '"></button>'; }).join('');
     buildThumbs();
     document.querySelectorAll('#shapes .shape').forEach(function (b) { b.classList.toggle('on', (b.dataset.s || null) === (draft.shape || null)); });
   }
@@ -1485,13 +1592,13 @@ var GR_SCENE = (function () {
   // which figure slot each wardrobe category fills, and the category a slot opens
   var SLOT_OF = { coats: 'outer', sweaters: 'top', tshirts: 'top', trousers: 'bottom', sweatpants: 'bottom', shoes: 'shoes', bags: 'bag', accessories: 'hat', jewellery: 'jewelry' };
   var SLOTS = [
-    { slot: 'outer', cat: 'coats', pick: 'Choose a coat', bg: '#E2DACD' },
-    { slot: 'top', cat: 'sweaters', pick: 'Choose a top', bg: '#EFE9DF' },
-    { slot: 'bottom', cat: 'trousers', pick: 'Choose trousers', bg: '#E6DFD4' },
-    { slot: 'shoes', cat: 'shoes', pick: 'Choose shoes', bg: '#E9E2D6' },
-    { slot: 'bag', cat: 'bags', pick: 'Choose a bag', bg: '#DCD3C6' },
-    { slot: 'hat', cat: 'accessories', sub: 'Hats', pick: 'Choose a hat', bg: '#EFE9DF' },
-    { slot: 'jewelry', cat: 'jewellery', pick: 'Choose jewellery', bg: '#E2DACD' }
+    { slot: 'outer', cat: 'coats', bg: '#E2DACD' },
+    { slot: 'top', cat: 'sweaters', bg: '#EFE9DF' },
+    { slot: 'bottom', cat: 'trousers', bg: '#E6DFD4' },
+    { slot: 'shoes', cat: 'shoes', bg: '#E9E2D6' },
+    { slot: 'bag', cat: 'bags', bg: '#DCD3C6' },
+    { slot: 'hat', cat: 'accessories', sub: 'Hats', bg: '#EFE9DF' },
+    { slot: 'jewelry', cat: 'jewellery', bg: '#E2DACD' }
   ];
   // An aesthetic look, rebuilt from your own pieces
   var COMBO = { outer: 'Classic trench coat', top: 'Cashmere crew neck', bottom: 'Straight jeans', shoes: 'Suede loafers', bag: 'Leather tote', hat: 'Wool fedora', jewelry: 'Gold chain' };
@@ -1525,11 +1632,11 @@ var GR_SCENE = (function () {
   function renderCombo() {
     $('flatlay').innerHTML = SLOTS.map(function (s) {
       var w = outfit[s.slot], cat = W8.catById(s.cat);
-      return '<button style="background:' + s.bg + '" data-slot="' + s.slot + '" aria-label="' + s.pick + '">' + W8.lineIcon(cat.icon) +
+      return '<button style="background:' + s.bg + '" data-slot="' + s.slot + '" aria-label="' + MG.t('pick.' + s.slot) + '">' + W8.lineIcon(cat.icon) +
         (w ? '<i class="fdot" style="background:' + w.color + '"></i>' : '') + '</button>';
     }).join('');
-    $('recreate').textContent = isCombo() ? 'Take off' : 'Recreate';
-    $('comboNote').textContent = Object.keys(outfit).length ? 'Tap a piece to swap it' : 'Tap a piece to pick your own';
+    $('recreate').textContent = MG.t(isCombo() ? 'takeOff' : 'recreate');
+    $('comboNote').textContent = MG.t(Object.keys(outfit).length ? 'tapSwap' : 'tapPick');
   }
   function showCard() { cardFig.set(Object.assign({}, fig, { outfit: outfit })); }
   function refresh() { saveOutfit(); renderCombo(); showCard(); W8.refresh(); }
@@ -1545,7 +1652,7 @@ var GR_SCENE = (function () {
   $('flatlay').addEventListener('click', function (e) {
     var b = e.target.closest('button'); if (!b) return;
     picking = SLOTS.filter(function (s) { return s.slot === b.dataset.slot; })[0];
-    $('pickTitle').textContent = picking.pick;
+    $('pickTitle').textContent = MG.t('pick.' + picking.slot);
     $('pickBar').hidden = false;
     var cat = W8.catById(picking.cat);
     W8.openCat(picking.cat, picking.sub ? cat.subs.indexOf(picking.sub) + 1 : 0);
@@ -1568,7 +1675,11 @@ var GR_SCENE = (function () {
   document.querySelectorAll('.tab').forEach(function (t) { t.addEventListener('click', stopPicking); });
   $('cBack').addEventListener('click', stopPicking);
 
-  $('statItems').textContent = W8.items.length;
+  MG.onLang(function () {
+    thumbsFor = null; syncControls(); renderCombo();
+    if (picking) $('pickTitle').textContent = MG.t('pick.' + picking.slot);
+  });
+  W8.openFigure = open;
   renderCombo(); W8.refresh();
   cardFig.set(Object.assign({}, fig, { outfit: outfit }), true);
 })();
@@ -1589,34 +1700,38 @@ var GR_SCENE = (function () {
     snow: '<path d="M9 19h14a5.5 5.5 0 0 0 0-11 7.5 7.5 0 0 0-14.3 2.4A4.3 4.3 0 0 0 9 19z"/><path d="M11 23v4M9 25h4M20 23v4M18 25h4"/>',
     storm: '<path d="M9 18h14a5.5 5.5 0 0 0 0-11 7.5 7.5 0 0 0-14.3 2.4A4.3 4.3 0 0 0 9 18z"/><path d="M17 20l-3 5h4l-3 5"/>'
   };
+  // [icon, label] for a weather code; the label is in the app's language
   function kind(code) {
-    if (code === 0) return ['sun', 'Clear'];
-    if (code <= 2) return ['part', 'Partly cloudy'];
-    if (code === 3) return ['cloud', 'Cloudy'];
-    if (code === 45 || code === 48) return ['fog', 'Foggy'];
-    if (code >= 71 && code <= 77 || code === 85 || code === 86) return ['snow', 'Snow'];
-    if (code >= 95) return ['storm', 'Thunderstorm'];
-    if (code >= 51) return ['rain', code <= 57 ? 'Drizzle' : 'Rain'];
-    return ['cloud', 'Cloudy'];
+    var k = code === 0 ? ['sun', 'clear'] : code <= 2 ? ['part', 'part'] : code === 3 ? ['cloud', 'cloudy'] : code === 45 || code === 48 ? ['fog', 'fog'] :
+      code >= 71 && code <= 77 || code === 85 || code === 86 ? ['snow', 'snow'] : code >= 95 ? ['storm', 'storm'] : code >= 51 ? ['rain', code <= 57 ? 'drizzle' : 'rain'] : ['cloud', 'cloudy'];
+    return [k[0], MG.t('wx.' + k[1])];
   }
   function icon(code) { return '<svg class="wx-ico" viewBox="0 0 32 32" aria-hidden="true">' + ICONS[kind(code)[0]] + '</svg>'; }
 
-  var dayName = new Intl.DateTimeFormat('en-GB', { weekday: 'long' });
-  var dayDate = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short' });
+  var dayName, dayDate;
+  function formats() {
+    dayName = new Intl.DateTimeFormat(MG.locale(), { weekday: 'long' });
+    dayDate = new Intl.DateTimeFormat(MG.locale(), { day: 'numeric', month: 'short' });
+  }
+  formats();
   function localDay(iso) { var p = iso.split('-'); return new Date(+p[0], p[1] - 1, +p[2]); }
   function pad(n) { return (n < 10 ? '0' : '') + n; }
 
-  var city = '';
+  var city = '', cityIsPlaceholder = false, last = null, noteFn = null, loads = 0;
   $('wx-date').textContent = dayDate.format(new Date());
 
-  function note(html) { var n = $('wx-note'); n.innerHTML = html; n.hidden = !html; }
+  // note() takes a function so the message can be rebuilt in a new language
+  function note(fn) { noteFn = fn || null; var n = $('wx-note'); n.innerHTML = fn ? fn() : ''; n.hidden = !fn; if (fn && $('wx-retry')) $('wx-retry').addEventListener('click', locate); }
   function setCity(c) { city = c; document.querySelectorAll('.wx-city').forEach(function (e) { e.textContent = c; }); var f = $('wx-city'); if (f) f.textContent = c; }
 
+  // The forecast always arrives in °C; °F is converted here, so switching units needs no new request
+  function deg(c) { return Math.round(MG.get('unit', 'c') === 'f' ? c * 9 / 5 + 32 : c); }
   function render(d) {
+    last = d;
     var hi = d.daily.temperature_2m_max, lo = d.daily.temperature_2m_min, ht = d.hourly.time;
     var now = d.current.time.slice(0, 13);
     var start = Math.max(0, ht.findIndex(function (h) { return h.slice(0, 13) === now; }));
-    if ($('look-tag')) $('look-tag').textContent = Math.round(d.current.temperature_2m) + '°C · ' + kind(d.current.weather_code)[1];
+    if ($('look-tag')) $('look-tag').textContent = deg(d.current.temperature_2m) + (MG.get('unit', 'c') === 'f' ? '°F · ' : '°C · ') + kind(d.current.weather_code)[1];
 
     var slides = d.daily.time.map(function (iso, j) {
       // Today: the next six hours; later days: every three hours from 06:00
@@ -1624,28 +1739,31 @@ var GR_SCENE = (function () {
       if (j === 0) for (var i = start; i < start + 6 && i < ht.length; i++) idx.push(i);
       else { var first = ht.indexOf(iso + 'T06:00'); if (first >= 0) for (var k = 0; k < 18; k += 3) idx.push(first + k); }
       var hours = idx.map(function (i) {
-        return '<div class="wx-h' + (i === start && j === 0 ? ' now' : '') + '"><small>' + (i === start && j === 0 ? 'Now' : ht[i].slice(11, 16)) + '</small>' +
-          icon(d.hourly.weather_code[i]) + '<b>' + Math.round(d.hourly.temperature_2m[i]) + '°</b></div>';
+        return '<div class="wx-h' + (i === start && j === 0 ? ' now' : '') + '"><small>' + (i === start && j === 0 ? MG.t('now') : ht[i].slice(11, 16)) + '</small>' +
+          icon(d.hourly.weather_code[i]) + '<b>' + deg(d.hourly.temperature_2m[i]) + '°</b></div>';
       }).join('');
       var code = j === 0 ? d.current.weather_code : d.daily.weather_code[j];
-      var big = j === 0 ? Math.round(d.current.temperature_2m) : Math.round(hi[j]);
-      var title = j === 0 ? 'Today' : j === 1 ? 'Tomorrow' : dayName.format(localDay(iso));
+      var big = j === 0 ? deg(d.current.temperature_2m) : deg(hi[j]);
+      var title = j === 0 ? MG.t('today') : j === 1 ? MG.t('tomorrow') : dayName.format(localDay(iso));
+      title = title.charAt(0).toUpperCase() + title.slice(1);
       return '<div class="wx-slide" aria-label="' + title + '"><div class="wx-top">' + icon(code) + '<span class="deg">' + big + '°</span>' +
-        '<span class="cond"><b>' + kind(code)[1] + '</b>H ' + Math.round(hi[j]) + '° · L ' + Math.round(lo[j]) + '°</span>' +
+        '<span class="cond"><b>' + kind(code)[1] + '</b>' + MG.t('hi') + ' ' + deg(hi[j]) + '° · ' + MG.t('lo') + ' ' + deg(lo[j]) + '°</span>' +
         '<span class="day"><b>' + title + '</b>' + dayDate.format(localDay(iso)) + ' · <span class="wx-city">' + city + '</span></span></div>' +
         '<div class="wx-hours">' + hours + '</div></div>';
     });
     $('wx-track').innerHTML = slides.join('');
-    $('wx-dots').innerHTML = slides.map(function (_, j) { return '<button type="button" aria-label="Day ' + (j + 1) + '"' + (j === 0 ? ' class="on"' : '') + '></button>'; }).join('');
+    $('wx-dots').innerHTML = slides.map(function (_, j) { return '<button type="button" aria-label="' + MG.t('dayN', { n: j + 1 }) + '"' + (j === 0 ? ' class="on"' : '') + '></button>'; }).join('');
   }
 
   function load(lat, lon, name) {
     if (name) setCity(name);
+    var ticket = ++loads;  // only the newest request may draw, so a slow older answer can't overwrite it
     var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat.toFixed(3) + '&longitude=' + lon.toFixed(3) +
       '&current=temperature_2m,weather_code&hourly=temperature_2m,weather_code' +
       '&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=7';
-    fetch(url).then(function (r) { if (!r.ok) throw r; return r.json(); }).then(render).catch(function () {
-      var m = document.querySelector('.wx-top .cond b'); if (m) m.textContent = 'Forecast unavailable right now';
+    fetch(url).then(function (r) { if (!r.ok) throw r; return r.json(); }).then(function (d) { if (ticket === loads) render(d); }).catch(function () {
+      if (ticket !== loads) return;
+      var m = document.querySelector('.wx-top .cond b'); if (m) m.textContent = MG.t('wxUnavailable');
     });
   }
 
@@ -1674,21 +1792,87 @@ var GR_SCENE = (function () {
     if (!navigator.geolocation) return useFallback();
     navigator.geolocation.getCurrentPosition(function (pos) {
       var lat = pos.coords.latitude, lon = pos.coords.longitude;
-      note('');
-      load(lat, lon, 'Your location');
+      note(null);
+      load(lat, lon, MG.t('yourLocation')); cityIsPlaceholder = true;
       fetch('https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=' + lat + '&longitude=' + lon + '&localityLanguage=en')
         .then(function (r) { return r.json(); })
-        .then(function (g) { var c = g.city || g.locality || g.principalSubdivision; if (c) setCity(c + (g.countryCode ? ', ' + g.countryCode : '')); })
+        .then(function (g) { var c = g.city || g.locality || g.principalSubdivision; if (c) { cityIsPlaceholder = false; setCity(c + (g.countryCode ? ', ' + g.countryCode : '')); } })
         .catch(function () {});
     }, useFallback, { timeout: 8000, maximumAge: 600000 });
   }
   function useFallback() {
     load(FALLBACK.lat, FALLBACK.lon, FALLBACK.city);
-    note('Location is off, showing ' + FALLBACK.city + '. <button type="button" id="wx-retry">Use my location</button>');
-    $('wx-retry').addEventListener('click', locate);
+    note(function () { return MG.t('locOff', { city: FALLBACK.city }) + ' <button type="button" id="wx-retry">' + MG.t('useLocation') + '</button>'; });
   }
 
+  // New language: redraw from the forecast we already have. New unit: fetch it again.
+  MG.onLang(function () {
+    formats();
+    if ($('wx-date')) $('wx-date').textContent = dayDate.format(new Date());
+    if (cityIsPlaceholder) setCity(MG.t('yourLocation'));
+    if (last) render(last);
+    if (noteFn) note(noteFn);
+  });
+  document.addEventListener('mg-setting', function (e) { if (e.detail.key === 'unit' && last) render(last); });
+
   locate();
+})();
+</script>
+<script>
+// Home: the handwritten Welcome, and the Settings sheet
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+
+  // Welcome letters pop in one by one; scripts whose letters join (e.g. Arabic) stay whole
+  function letters(text) {
+    try { if (window.Intl && Intl.Segmenter) return Array.from(new Intl.Segmenter(undefined, { granularity: 'grapheme' }).segment(text), function (x) { return x.segment; }); } catch (e) {}
+    return Array.from(text);
+  }
+  function greet() {
+    $('greetLetters').innerHTML = letters(MG.t('greeting')).map(function (ch, i) {
+      return '<span class="lt" style="animation-delay:' + (0.25 + i * 0.09).toFixed(2) + 's;--i:' + i + '"><i>' + ch.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</i></span>';
+    }).join('');
+  }
+  greet();
+  // Wait for the opening animation before the letters pop in
+  var stage = $('stage');
+  if (stage && !stage.hidden) {
+    $('greetLetters').style.visibility = 'hidden';
+    var wait = setInterval(function () { if (stage.hidden) { clearInterval(wait); $('greetLetters').style.visibility = ''; greet(); } }, 150);
+  }
+  var shineT;
+  $('greet').addEventListener('touchstart', function () {
+    var g = $('greet'); g.classList.add('shine');
+    clearTimeout(shineT); shineT = setTimeout(function () { g.classList.remove('shine'); }, 2600);
+  }, { passive: true });
+
+  // Settings
+  var box = $('settings');
+  function paint() {
+    $('langList').innerHTML = MG.langs().map(function (l) {
+      return '<button type="button" role="radio" lang="' + l.code + '" data-lang="' + l.code + '" aria-checked="' + (l.code === MG.lang()) + '"><span aria-hidden="true">' + l.flag + '</span>' + l.native + '</button>';
+    }).join('');
+    var u = MG.get('unit', 'c');
+    $('unitSeg').querySelectorAll('button').forEach(function (b) { b.classList.toggle('on', b.dataset.u === u); });
+    $('introToggle').checked = MG.get('intro', 'on') !== 'off';
+  }
+  function openSettings() { paint(); box.hidden = false; }
+  function closeSettings() { box.hidden = true; }
+  $('openSettings').addEventListener('click', openSettings);
+  box.addEventListener('click', function (e) { if (e.target.closest('[data-close]')) closeSettings(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !box.hidden) closeSettings(); });
+  $('langList').addEventListener('click', function (e) {
+    var b = e.target.closest('button[data-lang]'); if (!b || b.dataset.lang === MG.lang()) return;
+    MG.setLang(b.dataset.lang); paint();
+  });
+  $('unitSeg').addEventListener('click', function (e) {
+    var b = e.target.closest('button[data-u]'); if (!b) return;
+    MG.set('unit', b.dataset.u); paint();
+  });
+  $('introToggle').addEventListener('change', function () { MG.set('intro', this.checked ? 'on' : 'off'); });
+  $('setFigure').addEventListener('click', function () { closeSettings(); if (window.mgWardrobe && window.mgWardrobe.openFigure) window.mgWardrobe.openFigure(); });
+
+  MG.onLang(greet);
 })();
 </script>
 </body>
