@@ -90,7 +90,7 @@ h2{margin:0 0 12px;font-size:19px;font-weight:700;letter-spacing:-.02em}
 /* Home fits one screen: the Try on card takes whatever height is left */
 #home.active{display:flex;flex-direction:column;padding-top:16px;padding-bottom:14px}
 #home .home-top{margin-bottom:0}
-#home .try{flex:1;min-height:0;display:flex;flex-direction:column;margin-top:14px}
+#home .try{flex:1 0 auto;display:flex;flex-direction:column;margin-top:14px}
 #home .try h2{margin-bottom:8px;font-size:17px}
 #home .try .look{flex:1;min-height:236px}
 #home .try .look .art{height:auto}
@@ -108,7 +108,7 @@ h2{margin:0 0 12px;font-size:19px;font-weight:700;letter-spacing:-.02em}
 .tag{display:inline-block;padding:4px 10px;border-radius:999px;background:#EFE9DF;font-size:12px;font-weight:700;color:var(--accent);margin-bottom:8px}
 .combo{flex:0 0 41%;display:flex;flex-direction:column;gap:8px;min-width:0}
 .combo .tag{align-self:flex-start;margin:2px 0 0}
-.flatlay{flex:1;display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:6px;min-height:0}
+.flatlay{flex:1;display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:minmax(34px,1fr);gap:6px;min-height:0}
 .flatlay button{position:relative;border:0;border-radius:12px;display:flex;align-items:center;justify-content:center;min-height:0;padding:0;transition:transform .2s,box-shadow .2s}
 .flatlay button:hover{box-shadow:0 0 0 1.5px var(--ink)}
 .flatlay button:active{transform:scale(.96)}
@@ -118,6 +118,14 @@ h2{margin:0 0 12px;font-size:19px;font-weight:700;letter-spacing:-.02em}
 .combo .btn:disabled{opacity:.35;cursor:default}
 .combo .btn{min-height:36px}
 .combo .btn + .btn{margin-top:-2px}
+/* Dress for the weather: full width under the try-on card */
+.weather-look{width:100%;margin-top:10px;min-height:46px}
+#dressWeather svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}
+/* I'm wearing this: logs today's wear for the pieces on the figure */
+.wear-today{position:absolute;bottom:22px;inset-inline-start:22px;z-index:1;display:flex;align-items:center;gap:6px;max-width:calc(56% - 28px);padding:7px 12px;border-radius:999px;border:1px solid var(--border);background:var(--surface);font:inherit;font-size:12px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.wear-today.done{background:var(--ink);border-color:var(--ink);color:#F6F2EA}
+.wear-today:disabled{opacity:.4;cursor:default}
+.wear-today svg{flex:0 0 auto;width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .combo small{font-size:11px;font-weight:600;color:var(--muted);text-align:center;line-height:1.3}
 /* Weather on Home: a compact card per day, swipe for the next days */
 .wx{position:relative;padding:14px 0 10px;overflow:hidden;border-radius:22px;border:1px solid #E2D9CB;background:linear-gradient(160deg,#F4EFE6,#EEE7DC)}
@@ -153,6 +161,7 @@ h2{margin:0 0 12px;font-size:19px;font-weight:700;letter-spacing:-.02em}
 .wx-warn{display:flex;align-items:center;gap:10px;margin-top:10px;padding:10px 14px;border-radius:16px;background:#F3E7D3;border:1px solid #E6D3B0;font-size:13px;font-weight:600;line-height:1.35}
 .wx-warn svg,.wxd-box>svg{flex:0 0 auto;width:20px;height:20px;fill:none;stroke:#A8834A;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .wx-warn b{font-weight:800}
+.wx-warn[hidden]{display:none}
 .wx-warn.ok{background:#EFEBE3;border-color:#E2DBCF;color:var(--muted)}
 .wx-warn.ok svg{stroke:#7E8F6E}
 .wx-warn.ok b{color:var(--ink)}
@@ -308,6 +317,21 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
 #category .tile.add .plus,#category .tile.none .nope{width:40px;height:40px}
 #category .tile .badge{top:6px;right:6px;font-size:10px;padding:3px 7px}
 .tile.item.wearing{border-color:var(--ink)}
+/* Laundry: a basket button on every piece; pieces in the wash fade and can't go on the figure */
+.tile .wash{position:absolute;top:8px;inset-inline-start:8px;z-index:1;width:30px;height:30px;padding:0;border-radius:50%;border:1px solid var(--border);background:rgba(255,253,248,.92);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.tile .wash svg{width:16px;height:16px;fill:none;stroke:var(--muted);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.tile.item.washing .wash{background:#3F5F8C;border-color:#3F5F8C}
+.tile.item.washing .wash svg{stroke:#F6F2EA}
+.tile.item.washing .art>:not(.wash){opacity:.35}
+.tile.item.washing .meta b{color:var(--muted)}
+.tile .badge.wash-badge{background:#3F5F8C}
+#category .tile .wash{top:6px;inset-inline-start:6px;width:26px;height:26px}
+#category .tile .wash svg{width:14px;height:14px}
+.tile .meta em{display:block;margin-top:2px;font-style:normal;font-size:11px;font-weight:600;color:var(--taupe)}
+.wash-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 8px}
+.wash-head .label{margin:0}
+.wash-head button{padding:6px 12px;border-radius:999px;border:1px solid var(--border);background:var(--surface);font:inherit;font-size:12px;font-weight:700;color:var(--ink);cursor:pointer}
+.wash-list{margin-bottom:18px}
 .tile .badge{position:absolute;top:8px;inset-inline-end:8px;z-index:1;background:var(--ink);color:#F6F2EA;font-size:11px;font-weight:700;padding:4px 9px;border-radius:999px}
 
 /* Add-item sheet */
@@ -446,6 +470,7 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
       <h2 data-t="tryOn">Try on some clothes</h2>
       <div class="card look">
         <div class="art" id="cardAvatar"></div>
+        <button type="button" class="wear-today" id="wearToday"></button>
         <button class="round edit" id="figureCard" aria-label="Edit your figure" data-t-aria="editFigure"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg></button>
         <div class="combo">
           <span class="tag" data-t="lookOfDay">Look of the day</span>
@@ -455,6 +480,7 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
           <small id="comboNote"></small>
         </div>
       </div>
+      <button class="btn weather-look" id="dressWeather"><svg viewBox="0 0 24 24"><circle cx="9" cy="9" r="3.2"/><path d="M9 2.5v1.6M2.5 9h1.6M4.4 4.4l1.1 1.1M13.6 4.4l-1.1 1.1"/><path d="M9.5 20h8a3.5 3.5 0 0 0 0-7 4.6 4.6 0 0 0-8.8 1.3A2.9 2.9 0 0 0 9.5 20z"/></svg><span data-t="look.weather">Dress for the weather</span></button>
     </div>
 
   </main>
@@ -852,6 +878,29 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
   var items = SAMPLE.map(function (r) { return { cat: r[0], sub: r[1], name: r[2], brand: r[3], color: r[4] }; });
   try { items = items.concat(JSON.parse(localStorage.getItem(STORE) || '[]').map(function (it) { if (it.cat === 'sweatpants') { it.cat = 'trousers'; it.sub = 'Comfy trousers'; } return it; })); } catch (e) {}
 
+  // Laundry and how often each piece was worn, kept in this browser (keyed like the figure: category|name|brand)
+  function keyOf(it) { return it.cat + '|' + it.name + '|' + (it.brand || ''); }
+  function loadMap(k) { try { return JSON.parse(localStorage.getItem(k) || '{}') || {}; } catch (e) { return {}; } }
+  function saveMap(k, m) { try { localStorage.setItem(k, JSON.stringify(m)); } catch (e) {} }
+  var wash = loadMap('mg-wash'), wornLog = loadMap('mg-worn');
+  W8.key = keyOf;
+  W8.inWash = function (it) { return !!wash[keyOf(it)]; };
+  W8.setWash = function (it, on) {
+    if (on) wash[keyOf(it)] = 1; else delete wash[keyOf(it)];
+    saveMap('mg-wash', wash);
+    if (on && W8.onWashed) W8.onWashed(it);
+    W8.refresh();
+  };
+  W8.wornCount = function (it) { var w = wornLog[keyOf(it)]; return w ? w.n : 0; };
+  W8.addWear = function (key, delta, day) {
+    var w = wornLog[key] || { n: 0 };
+    w.n = Math.max(0, w.n + delta);
+    if (delta > 0) w.last = day;
+    if (w.n) wornLog[key] = w; else delete wornLog[key];
+    saveMap('mg-worn', wornLog);
+  };
+  var WASH_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h16l-1.6 10.2a1.5 1.5 0 0 1-1.5 1.3H7.1a1.5 1.5 0 0 1-1.5-1.3z"/><path d="M8 9V7.5a4 4 0 0 1 8 0V9"/><path d="M9 13.5c1 .8 2 .8 3 0s2-.8 3 0"/></svg>';
+
   function catById(id) { return CATS.filter(function (c) { return c.id === id; })[0]; }
   function catName(c) { return MG.t('cat.' + c.id); }
   function subName(s) { return s ? MG.t('sub.' + s) : MG.t('all'); }
@@ -884,8 +933,12 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
   function itemTile(it) {
     var col = colorOf(it.color);
     var art = it.photo ? '<img class="photo" src="' + esc(it.photo) + '" alt="">' : icon(catById(it.cat).icon, col[2]);
-    var worn = W8.isWorn && W8.isWorn(it);
-    return '<div class="tile item' + (worn ? ' wearing' : '') + '" data-i="' + items.indexOf(it) + '">' + (worn ? '<span class="badge">' + esc(MG.t('wearing')) + '</span>' : '') + '<div class="art" style="background:#EFE9DF">' + art + '</div><div class="meta"><b>' + esc(it.name) + '</b><span>' + esc([it.brand, it.size, colorName(col[0])].filter(Boolean).join(' · ')) + '</span></div></div>';
+    var worn = W8.isWorn && W8.isWorn(it), washing = W8.inWash(it), n = W8.wornCount(it);
+    var badge = washing ? '<span class="badge wash-badge">' + esc(MG.t('wash.badge')) + '</span>' : worn ? '<span class="badge">' + esc(MG.t('wearing')) + '</span>' : '';
+    return '<div class="tile item' + (worn ? ' wearing' : '') + (washing ? ' washing' : '') + '" data-i="' + items.indexOf(it) + '">' + badge +
+      '<button type="button" class="wash" aria-pressed="' + washing + '" aria-label="' + esc(MG.t(washing ? 'wash.off' : 'wash.on')) + '" title="' + esc(MG.t(washing ? 'wash.off' : 'wash.on')) + '">' + WASH_ICON + '</button>' +
+      '<div class="art" style="background:#EFE9DF">' + art + '</div><div class="meta"><b>' + esc(it.name) + '</b><span>' + esc([it.brand, it.size, colorName(col[0])].filter(Boolean).join(' · ')) + '</span>' +
+      '<em>' + esc(n ? MG.t('worn.n', { n: n }) : MG.t('worn.never')) + '</em></div></div>';
   }
   function catTile(c, subIndex, label) {
     return '<button class="tile cat" data-cat="' + c.id + '" data-sub="' + (subIndex || 0) + '"><div class="art">' + icon(c.icon, '#D8CFC2') + '</div><div class="meta"><b>' + esc(label ? subName(label) : catName(c)) + '</b>' + (label ? '<span>' + esc(catName(c)) + '</span>' : '') + '</div></button>';
@@ -907,7 +960,13 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
   wireSearch(document.getElementById('wSearch'), function (v) { wQ = v; renderMain(); });
 
   function renderMain() {
-    if (!tokens(wQ).length) { wBody.innerHTML = '<div class="grid">' + CATS.map(function (c) { return catTile(c); }).join('') + '</div>'; return; }
+    if (!tokens(wQ).length) {
+      var washing = items.filter(W8.inWash).sort(bySort);
+      wBody.innerHTML = (washing.length ? '<div class="wash-head"><div class="label">' + esc(MG.t('wash.title')) + ' · ' + washing.length + '</div><button type="button" id="allClean">' + esc(MG.t('wash.allClean')) + '</button></div>' +
+        '<div class="grid items3 wash-list">' + washing.map(itemTile).join('') + '</div>' : '') +
+        '<div class="grid">' + CATS.map(function (c) { return catTile(c); }).join('') + '</div>';
+      return;
+    }
     var t = tokens(wQ), html = '';
     // Category or type names that match the search (e.g. "coats", "heels")
     var hits = [];
@@ -921,7 +980,16 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
     if (!html) html = '<p class="empty">' + esc(MG.t('noMatchAll', { q: wQ.trim() })) + '</p>';
     wBody.innerHTML = html;
   }
+  // the basket on a tile puts that piece in the wash (or takes it out) instead of wearing it
+  function washClick(e) {
+    var w = e.target.closest('.tile.item .wash'); if (!w) return false;
+    var it = items[+w.closest('.tile.item').dataset.i];
+    W8.setWash(it, !W8.inWash(it));
+    return true;
+  }
   wBody.addEventListener('click', function (e) {
+    if (e.target.closest('#allClean')) { items.filter(W8.inWash).forEach(function (it) { delete wash[keyOf(it)]; }); saveMap('mg-wash', wash); W8.refresh(); return; }
+    if (washClick(e)) return;
     var b = e.target.closest('.tile.cat'); if (b) return openCat(b.dataset.cat, +b.dataset.sub);
     var t = e.target.closest('.tile.item'); if (t && W8.onItem && W8.onItem(items[+t.dataset.i])) renderMain();
   });
@@ -1237,6 +1305,7 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
   pager.addEventListener('click', function (e) {
     var b = e.target.closest('.tile.add'); if (b) return openSheet(cur.id, b.dataset.sub || (cur.subs[0] || ''));
     if (e.target.closest('.tile.none')) return W8.onNone && W8.onNone();
+    if (washClick(e)) return;
     var t = e.target.closest('.tile.item'); if (t && W8.onItem) W8.onItem(items[+t.dataset.i]);
   });
   fab.addEventListener('click', function () { openSheet('', ''); });
@@ -2013,7 +2082,8 @@ var GR_SCENE = (function () {
     $('recreate').textContent = MG.t('prevLook');
     $('recreate').disabled = !prev || sameLook(prev, outfit);
     $('takeOff').disabled = !Object.keys(outfit).length;
-    $('comboNote').textContent = MG.t(Object.keys(outfit).length ? 'tapSwap' : 'tapPick');
+    $('comboNote').textContent = autoLook && sameLook(autoLook, outfit) && lookNote ? lookNote : MG.t(Object.keys(outfit).length ? 'tapSwap' : 'tapPick');
+    renderWear();
   }
   function showCard() { cardFig.set(Object.assign({}, fig, { outfit: outfit })); }
   function refresh() { saveOutfit(); renderCombo(); showCard(); W8.refresh(); }
@@ -2043,6 +2113,11 @@ var GR_SCENE = (function () {
     var slot = SLOT_OF[it.cat]; if (!slot) return false;
     if (slot === 'jewelry') slot = jewelKey(it);
     var takingOff = !picking && outfit[slot] && outfit[slot].key === keyOf(it);
+    if (!takingOff && W8.inWash(it)) {
+      window.mgConfirm(MG.t('wash.msg', { name: it.name }), function () { W8.setWash(it, false); W8.onItem(it); },
+        { title: MG.t('wash.title'), yes: MG.t('wash.cleanWear'), no: MG.t('warn.pickElse') });
+      return true;
+    }
     var warn = !takingOff && window.mgWeatherCheck && window.mgWeatherCheck(it);
     if (warn) { window.mgConfirm(warn, function () { putOn(it, slot); }); return true; }
     putOn(it, slot);
@@ -2060,6 +2135,94 @@ var GR_SCENE = (function () {
       refresh();
     }
   }
+  // Something just went in the wash: it comes off the figure (Previous look can still bring the old look back)
+  W8.onWashed = function (it) {
+    var k = keyOf(it), hit = Object.keys(outfit).filter(function (sl) { return outfit[sl].key === k; });
+    if (!hit.length) return;
+    remember(); hit.forEach(function (sl) { delete outfit[sl]; });
+    saveOutfit(); renderCombo(); showCard();
+  };
+
+  // ---- Dress for the weather: a look from your own clean pieces that suits today
+  var autoLook = null;
+  function lc(it) { return (it.name + ' ' + (it.sub || '')).toLowerCase(); }
+  // random, but pieces you wear less often come up more
+  function choose(list) {
+    if (!list.length) return null;
+    var w = list.map(function (it) { return 1 / (1 + W8.wornCount(it)); }), sum = w.reduce(function (a, b) { return a + b; }, 0), r = Math.random() * sum;
+    for (var i = 0; i < list.length; i++) { r -= w[i]; if (r <= 0) return list[i]; }
+    return list[list.length - 1];
+  }
+  function dressForWeather() {
+    var t = (window.mgToday && window.mgToday()) || { max: 16 }, temp = t.max;
+    var pool = W8.items.filter(function (it) { return !W8.inWash(it) && !(window.mgWeatherCheck && window.mgWeatherCheck(it)); });
+    function by(cat, test) { return pool.filter(function (it) { return it.cat === cat && (!test || test(it)); }); }
+    function first() { for (var i = 0; i < arguments.length; i++) if (arguments[i].length) return arguments[i]; return []; }
+    var look = {};
+    // a coat unless it's warm and dry
+    if (temp < 22 || t.wet) {
+      look.outer = choose(first(
+        t.wet && !t.cold ? by('coats', function (it) { return it.sub === 'Rain coats' || /trench/.test(lc(it)); }) : [],
+        by('coats', function (it) {
+          return temp <= 8 ? /Winter coats|Fur coats|Elegant coats/.test(it.sub) : temp <= 15 ? /Elegant coats|Trench coats|Leather coats|Ponchos/.test(it.sub) : /Jackets|Trench coats|Leather coats/.test(it.sub);
+        }),
+        by('coats')));
+    }
+    // a dress now and then on milder days, otherwise a top with trousers or jeans
+    var dresses = temp >= 18 && !t.cold ? by('dresses', function (it) { return !(t.wet && /Evening|Maxi/.test(it.sub)); }) : [];
+    if (dresses.length && Math.random() < 0.35) look.dress = choose(dresses);
+    else {
+      look.top = choose(first(temp <= 14 ? by('sweaters') : temp >= 22 ? by('tshirts') : by('sweaters').concat(by('tshirts')), by('sweaters').concat(by('tshirts'))));
+      look.bottom = choose(first(by('jeans').concat(by('trousers', function (it) { return temp >= 22 || !/linen/.test(lc(it)); })), by('trousers')));
+    }
+    var notSlippers = function (it) { return it.sub !== 'Slippers'; };
+    look.shoes = choose(first(by('shoes', function (it) {
+      return t.wet || t.cold ? /Boots|Sneakers|Loafers/.test(it.sub) : t.warm ? /Sandals|Sneakers|Loafers/.test(it.sub) : /Sneakers|Loafers|Boots/.test(it.sub);
+    }), by('shoes', notSlippers)));
+    look.bag = choose(by('bags', function (it) { return !/Clutch/.test(it.sub || ''); }));
+    if (t.cold) look.hat = choose(by('accessories', function (it) { return it.sub === 'Hats' && /wool|fedora|beanie/.test(lc(it)); }));
+    else if (t.sunny && t.warm) look.hat = choose(by('accessories', function (it) { return it.sub === 'Hats' || it.sub === 'Baseball caps'; }));
+    look.jewel = choose(by('jewellery', function (it) { return /Necklaces|Earrings/.test(it.sub); }));
+
+    remember(); outfit = {};
+    Object.keys(look).forEach(function (k) {
+      var it = look[k]; if (!it) return;
+      var slot = SLOT_OF[it.cat]; wear(slot === 'jewelry' ? jewelKey(it) : slot, it);
+    });
+    autoLook = Object.assign({}, outfit);
+    lookNote = t.label ? MG.t('look.for', { t: t.shown, sky: t.label }) : MG.t('look.fromYours');
+    refresh();
+  }
+  var lookNote = '';
+  $('dressWeather').addEventListener('click', dressForWeather);
+
+  // ---- I'm wearing this: one wear per piece per day, tap again to undo
+  function todayISO() { var d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
+  var wornDay = null;
+  try { wornDay = JSON.parse(localStorage.getItem('mg-worn-day') || 'null'); } catch (e) {}
+  if (!wornDay || wornDay.date !== todayISO()) wornDay = { date: todayISO(), keys: [] };
+  function outfitKeys() { var ks = []; Object.keys(outfit).forEach(function (sl) { if (ks.indexOf(outfit[sl].key) < 0) ks.push(outfit[sl].key); }); return ks.sort(); }
+  function renderWear() {
+    if (!wornDay) return;
+    var b = $('wearToday'), logged = wornDay.date === todayISO() && wornDay.keys.length, ks = outfitKeys();
+    var same = logged && ks.join() === wornDay.keys.slice().sort().join();
+    b.classList.toggle('done', !!same);
+    b.disabled = !ks.length && !logged;
+    b.innerHTML = same ? '<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>' + esc(MG.t('worn.today'))
+      : esc(MG.t(logged ? 'worn.update' : 'worn.wearing'));
+  }
+  $('wearToday').addEventListener('click', function () {
+    var day = todayISO();
+    if (wornDay.date !== day) wornDay = { date: day, keys: [] };
+    var ks = outfitKeys(), same = wornDay.keys.length && ks.join() === wornDay.keys.slice().sort().join();
+    wornDay.keys.forEach(function (k) { W8.addWear(k, -1, day); });   // undo what was logged today
+    wornDay.keys = same ? [] : ks;
+    wornDay.keys.forEach(function (k) { W8.addWear(k, 1, day); });
+    try { localStorage.setItem('mg-worn-day', JSON.stringify(wornDay)); } catch (e) {}
+    renderWear(); W8.refresh();
+  });
+  function esc(x) { return String(x).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+
   W8.isWorn = function (it) {
     var sl = SLOT_OF[it.cat], k = keyOf(it);
     if (sl === 'jewelry') return JEWELS.some(function (j) { return outfit[j] && outfit[j].key === k; });
@@ -2134,6 +2297,8 @@ var GR_SCENE = (function () {
     var now = d.current.time.slice(0, 13);
     var start = Math.max(0, ht.findIndex(function (h) { return h.slice(0, 13) === now; }));
     today = summarise(d, start);
+    today.shown = deg(d.current.temperature_2m) + '°';
+    today.label = kind(d.current.weather_code)[1].toLowerCase();
     showWarning();
     if ($('look-tag')) $('look-tag').textContent = deg(d.current.temperature_2m) + (MG.get('unit', 'c') === 'f' ? '°F · ' : '°C · ') + kind(d.current.weather_code)[1];
 
@@ -2229,7 +2394,13 @@ var GR_SCENE = (function () {
     return '';
   };
   var dlg = $('wxd'), onYes = null, back = null;
-  window.mgConfirm = function (text, yes) {
+  window.mgToday = function () { return today; };
+  // opts can rename the title and buttons (e.g. for a piece that is in the wash)
+  window.mgConfirm = function (text, yes, opts) {
+    opts = opts || {};
+    $('wxd-title').textContent = opts.title || W('sure');
+    $('wxd-yes').textContent = opts.yes || W('wearAnyway');
+    $('wxd-no').textContent = opts.no || W('pickElse');
     $('wxd-text').textContent = text; onYes = yes; back = document.activeElement;
     dlg.hidden = false; $('wxd-no').focus();
   };
@@ -2243,7 +2414,7 @@ var GR_SCENE = (function () {
   dlg.addEventListener('click', function (e) { if (e.target === dlg) closeDlg(false); });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !dlg.hidden) closeDlg(false); });
 
-  function load(lat, lon, name) {
+  function load(lat, lon, name, retry) {
     if (name) setCity(name);
     var ticket = ++loads;  // only the newest request may draw, so a slow older answer can't overwrite it
     var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat.toFixed(3) + '&longitude=' + lon.toFixed(3) +
@@ -2251,6 +2422,8 @@ var GR_SCENE = (function () {
       '&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=7';
     fetch(url).then(function (r) { if (!r.ok) throw r; return r.json(); }).then(function (d) { if (ticket === loads) render(d); }).catch(function () {
       if (ticket !== loads) return;
+      // the forecast service sometimes answers "busy" (503): try again a few times before giving up
+      if ((retry || 0) < 3) { setTimeout(function () { if (ticket === loads) load(lat, lon, null, (retry || 0) + 1); }, 2000 * ((retry || 0) + 1)); return; }
       var m = document.querySelector('.wx-top .cond b'); if (m) m.textContent = MG.t('wxUnavailable');
     });
   }
