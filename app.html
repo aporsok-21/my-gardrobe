@@ -59,7 +59,6 @@ h2{margin:0 0 12px;font-size:19px;font-weight:700;letter-spacing:-.02em}
 .btn svg{width:18px;height:18px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round}
 
 /* Home */
-.hero{text-align:center;padding:4px 0 6px}
 /* Hanger swing, as on the website: once when Home appears after the intro, again on hover or tap */
 @keyframes grSwing{0%{transform:rotate(0)}14%{transform:rotate(7deg)}31%{transform:rotate(-5deg)}49%{transform:rotate(3.2deg)}67%{transform:rotate(-1.7deg)}84%{transform:rotate(.6deg)}100%{transform:rotate(0)}}
 .gr-hang{display:inline-block;transform-origin:50.7% 5.8%}
@@ -67,7 +66,23 @@ h2{margin:0 0 12px;font-size:19px;font-weight:700;letter-spacing:-.02em}
 .gr-hang>svg{display:block;transform-origin:50.7% 5.8%;cursor:pointer}
 .gr-hang>svg.gr-swing{animation:grSwing 1.9s ease-in-out}
 @media (prefers-reduced-motion:reduce){.gr-hang,.gr-hang>svg.gr-swing{animation:none}}
-.hero .motto{margin:2px 0 0;font-size:17px;font-weight:700;letter-spacing:-.01em}
+/* Welcome screen after the intro: Welcome, logo and motto, large and centred on white */
+.splash{position:absolute;inset:0;z-index:40;background:#FFFFFF;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:24px;text-align:center;cursor:pointer}
+.splash[hidden]{display:none}
+.splash.leaving{animation:grOut .5s both;pointer-events:none}
+.splash .greet{font-size:58px}
+.splash .gr-hang>svg{width:290px;max-width:78vw;height:auto}
+.splash .motto{margin:0;max-width:300px;font-size:21px;font-weight:700;letter-spacing:-.01em;line-height:1.3;color:var(--black)}
+.mg-wait .splash>*{visibility:hidden}
+/* Home: the weather sits beside the settings button */
+.home-top{align-items:flex-start;gap:10px}
+.wx-wrap{flex:1;min-width:0}
+/* narrower card up here: day, date and city move to a second line */
+.home-top .wx-top{flex-wrap:wrap;row-gap:6px;padding-inline-end:34px}
+.home-top .wx-top .cond{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.home-top .wx-top .cond b{overflow:hidden;text-overflow:ellipsis}
+.home-top .wx-top .day{order:3;flex:1 0 100%;text-align:start;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.home-top .wx-top .day b{display:inline;margin-inline-end:6px}
 .look{position:relative;display:flex;gap:12px;align-items:stretch;padding:12px}
 .look .art{flex:1 1 56%;min-width:0;height:350px;border-radius:18px;background:#E9E2D6;display:flex;align-items:flex-end;justify-content:center;padding-top:6px;overflow:hidden}
 .look .art svg{height:100%;width:auto}
@@ -394,28 +409,28 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
   <!-- INTRO: the walk-in closet from the website plays on open -->
   <div class="stage" id="stage" aria-hidden="true"></div>
 
+  <!-- WELCOME: shown for a few seconds after the intro, then Home -->
+  <div class="splash" id="splash">
+    <div class="greet" id="greet"><span class="sr" data-t="greeting">Welcome</span><span aria-hidden="true" id="greetLetters"></span></div>
+    <span class="gr-hang"><svg width="290" height="121" viewBox="0 0 240 100" role="img" aria-label="My Gardrobe"><g fill="none" stroke="#111111" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"><path d="M120 34v-6c0-3.4 2.4-5.2 5.2-6.6 2.8-1.4 5-3.6 5-7.4 0-4.8-3.8-8.2-8.6-8.2-4.4 0-7.8 2.8-8.6 6.6"/><path d="M120 34C92 44 54 57 30 65.5c-9 3.2-11 10.6-3.4 14.5"/><path d="M120 34c28 10 66 23 90 31.5 9 3.2 11 10.6 3.4 14.5"/></g><g fill="none" stroke="#8E857A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M120 34v-6c0-3.4 2.4-5.2 5.2-6.6 2.8-1.4 5-3.6 5-7.4 0-4.8-3.8-8.2-8.6-8.2-4.4 0-7.8 2.8-8.6 6.6"/><path d="M120 34C92 44 54 57 30 65.5c-9 3.2-11 10.6-3.4 14.5"/><path d="M120 34c28 10 66 23 90 31.5 9 3.2 11 10.6 3.4 14.5"/></g><text x="120" y="88" text-anchor="middle" textLength="166" lengthAdjust="spacingAndGlyphs" font-family="'Dancing Script', cursive" font-weight="700" font-size="31" fill="#8E857A" stroke="#111111" stroke-width=".7">My Gardrobe</text></svg></span>
+    <p class="motto" data-t="motto">Style and organise your clothes</p>
+  </div>
+
   <!-- HOME -->
   <main class="screen active" id="home" aria-label="Home" data-t-aria="home">
-    <div class="topline">
-      <div class="greet" id="greet"><span class="sr" data-t="greeting">Welcome</span><span aria-hidden="true" id="greetLetters"></span></div>
-      <button class="round" id="openSettings" aria-label="Settings" data-t-aria="settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
-    </div>
-    <div class="hero">
-      <span class="gr-hang"><svg width="210" height="88" viewBox="0 0 240 100" role="img" aria-label="My Gardrobe"><g fill="none" stroke="#111111" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"><path d="M120 34v-6c0-3.4 2.4-5.2 5.2-6.6 2.8-1.4 5-3.6 5-7.4 0-4.8-3.8-8.2-8.6-8.2-4.4 0-7.8 2.8-8.6 6.6"/><path d="M120 34C92 44 54 57 30 65.5c-9 3.2-11 10.6-3.4 14.5"/><path d="M120 34c28 10 66 23 90 31.5 9 3.2 11 10.6 3.4 14.5"/></g><g fill="none" stroke="#8E857A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M120 34v-6c0-3.4 2.4-5.2 5.2-6.6 2.8-1.4 5-3.6 5-7.4 0-4.8-3.8-8.2-8.6-8.2-4.4 0-7.8 2.8-8.6 6.6"/><path d="M120 34C92 44 54 57 30 65.5c-9 3.2-11 10.6-3.4 14.5"/><path d="M120 34c28 10 66 23 90 31.5 9 3.2 11 10.6 3.4 14.5"/></g><text x="120" y="88" text-anchor="middle" textLength="166" lengthAdjust="spacingAndGlyphs" font-family="'Dancing Script', cursive" font-weight="700" font-size="31" fill="#8E857A" stroke="#111111" stroke-width=".7">My Gardrobe</text></svg></span>
-      <p class="motto" data-t="motto">Style and organise your clothes</p>
-    </div>
-
-    <div class="section">
-      <h2 data-t="weather">Weather</h2>
-      <div class="wx" id="wx" aria-live="polite">
-        <button type="button" class="wx-fold" id="wx-fold" aria-expanded="false" aria-controls="wx-track" aria-label="Show the hours" data-t-aria="wxShow"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button>
-        <div class="wx-track" id="wx-track" tabindex="0" aria-label="Weather by day, swipe for the next days" data-t-aria="wxAria">
-          <div class="wx-slide"><div class="wx-top"><span class="deg">–°</span><span class="cond"><b data-t="wxLoading">Loading forecast</b><span id="wx-city" data-t="wxFinding">Finding your location…</span></span><span class="day"><b data-t="today">Today</b><span id="wx-date"></span></span></div></div>
+    <div class="topline home-top">
+      <div class="wx-wrap">
+        <div class="wx" id="wx" aria-live="polite">
+          <button type="button" class="wx-fold" id="wx-fold" aria-expanded="false" aria-controls="wx-track" aria-label="Show the hours" data-t-aria="wxShow"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button>
+          <div class="wx-track" id="wx-track" tabindex="0" aria-label="Weather by day, swipe for the next days" data-t-aria="wxAria">
+            <div class="wx-slide"><div class="wx-top"><span class="deg">–°</span><span class="cond"><b data-t="wxLoading">Loading forecast</b><span id="wx-city" data-t="wxFinding">Finding your location…</span></span><span class="day"><b data-t="today">Today</b><span id="wx-date"></span></span></div></div>
+          </div>
+          <div class="wx-dots" id="wx-dots"></div>
+          <p class="wx-note" id="wx-note" hidden></p>
         </div>
-        <div class="wx-dots" id="wx-dots"></div>
-        <p class="wx-note" id="wx-note" hidden></p>
+        <div class="wx-warn" id="wx-warn" role="status" hidden></div>
       </div>
-      <div class="wx-warn" id="wx-warn" role="status" hidden></div>
+      <button class="round" id="openSettings" aria-label="Settings" data-t-aria="settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
     </div>
 
     <div class="section">
@@ -743,7 +758,7 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
   window.mgShow = show;
 
   tabs.forEach(function (t) { t.addEventListener('click', function () { show(t.dataset.tab); }); });
-  var logo = document.querySelector('.hero .gr-hang > svg');
+  var logo = document.querySelector('#splash .gr-hang > svg');
   function swing() {
     if (logo.classList.contains('gr-swing')) return;
     logo.classList.add('gr-swing');
@@ -2249,12 +2264,22 @@ var GR_SCENE = (function () {
     }).join('');
   }
   greet();
+  // The white Welcome screen stays a few seconds after the intro (tap to skip), then shows Home
+  var splash = $('splash'), splashT;
+  function hideSplash() {
+    if (splash.hidden || splash.classList.contains('leaving')) return;
+    clearTimeout(splashT);
+    splash.classList.add('leaving');
+    setTimeout(function () { splash.hidden = true; }, 500);
+  }
+  splash.addEventListener('click', hideSplash);
+  function showSplash() { splashT = setTimeout(hideSplash, 3400); }
   // Wait for the opening animation before the letters pop in
   var stage = $('stage');
   if (stage && !stage.hidden) {
     $('greetLetters').style.visibility = 'hidden';
-    var wait = setInterval(function () { if (stage.hidden) { clearInterval(wait); $('greetLetters').style.visibility = ''; greet(); } }, 150);
-  }
+    var wait = setInterval(function () { if (stage.hidden) { clearInterval(wait); $('greetLetters').style.visibility = ''; greet(); showSplash(); } }, 150);
+  } else showSplash();
   var shineT;
   $('greet').addEventListener('touchstart', function () {
     var g = $('greet'); g.classList.add('shine');
