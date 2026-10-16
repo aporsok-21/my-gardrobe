@@ -1289,13 +1289,15 @@ var GR_SCENE = (function () {
     // vertical landmarks: high hip, crotch, thigh, knee, calf (legs about 47% of the height)
     var yHH = lerp(98, 99, fem), yCr = lerp(116, 117, fem), yTh = 136, yKn = 155, yCa = 172;
     // men stand a little wider with fuller legs
-    var kc = lerp(7.4, 6.5, fem), cc = lerp(7.6, 6.7, fem), lw = lerp(1.15, 1, fem), ank = lerp(10.2, 9.4, fem), ox = lerp(0.8, 0, fem);
+    // straight legs: knees almost touch, small gaps at calf and ankle (no bow legs)
+    var lw = lerp(1.15, 1, fem), kIn = lerp(1.2, 0.6, fem), cIn = lerp(1.8, 1.4, fem), aIn = lerp(2.6, 2.2, fem), tIn = lerp(1.8, 0.6, fem);
+    var kc = kIn + 4.5 * g * lw, cc = cIn + 5.2 * g * lw, ank = aIn + lerp(5.4, 5, fem), ox = ank - 9.4;
 
     // skin: torso + legs
     var torso = [P(neck, 31), P(neck + 0.4, 38), P(S * lerp(0.6, 0.55, fem), lerp(41.4, 42.5, fem)), P(S - lerp(2.4, 3, fem), lerp(45, 46, fem)), P(S - 4.6, 58),
       P(B, bustY), P(B - lerp(1, 2.2, fem), 78), P(W, waistY), P(W + (H - W) * 0.7, yHH), P(H, hipY)];
-    var legOut = [P(H * 0.98, yCr - 1), P(H * 0.74 + 3.6, yTh), P(kc + 4.5 * g * lw, yKn), P(cc + 5.2 * g * lw, yCa), P(ank, 196)];
-    var legIn = [P(ank - 5, 196), P(cc - 5.2 * g * lw, yCa), P(kc - 4.5 * g * lw, yKn), P(H * 0.06 + 2.2, yTh), P(0, yCr)];
+    var legOut = [P(H * 0.98, yCr - 1), P(H * 0.74 + 2.4, yTh), P(kc + 4.5 * g * lw, yKn), P(cc + 5.2 * g * lw, yCa), P(ank, 196)];
+    var legIn = [P(aIn, 196), P(cIn, yCa), P(kIn, yKn), P(H * 0.03 + tIn, yTh), P(0, yCr)];
     var foot = function (s) { var x = function (v) { return f1(60 + s * (v + ox)); }; return s > 0
       ? ' C' + x(10.2) + ' 200 ' + x(12) + ' 204 ' + x(10.6) + ' 206 L' + x(4.2) + ' 206 C' + x(3.4) + ' 203 ' + x(3.8) + ' 199 ' + x(4.4) + ' 196'
       : ' C' + x(3.8) + ' 199 ' + x(3.4) + ' 203 ' + x(4.2) + ' 206 L' + x(10.6) + ' 206 C' + x(12) + ' 204 ' + x(10.2) + ' 200 ' + x(9.4) + ' 196'; };
@@ -1356,7 +1358,7 @@ var GR_SCENE = (function () {
 
     // ---- clothes: every garment is built from the same body numbers, so it fits any figure
     var bodyPts = [[46, S - 3], [58, S - 4.6], [bustY, B], [78, B - lerp(1, 2.2, fem)], [waistY, W], [yHH, W + (H - W) * 0.7], [hipY, H],
-      [yCr - 1, H * 0.98], [yTh, H * 0.74 + 3.6], [yKn, kc + 4.5 * g * lw], [yCa, cc + 5.2 * g * lw], [196, ank]];
+      [yCr - 1, H * 0.98], [yTh, H * 0.74 + 2.4], [yKn, kc + 4.5 * g * lw], [yCa, cc + 5.2 * g * lw], [196, ank]];
     function bodyX(y) {
       for (var i = 1; i < bodyPts.length; i++) if (y <= bodyPts[i][0]) {
         var a0 = bodyPts[i - 1], a1 = bodyPts[i]; return lerp(a0[1], a1[1], (y - a0[0]) / (a1[0] - a0[0]));
@@ -1393,9 +1395,9 @@ var GR_SCENE = (function () {
 
     var G = {
       bottom: function (it) {
-        var c = it.color, hemY = 194, hw = 5.6 * g * lw + 0.6, jc = lerp(7.8, 6.8, fem), jeans = /jean|denim/i.test(it.name || '');
-        var out = [P(W + 0.9, waistY + 4), P(W + (H - W) * 0.7 + 0.9, yHH), P(H + 0.9, hipY), P(H * 0.98 + 0.9, yCr - 1), P(H * 0.74 + 4.4, yTh), P(jc + hw, yKn + 4), P(jc + hw, hemY)];
-        var inn = [P(jc - hw, hemY), P(jc - hw, yKn + 4), P(H * 0.06 + 1.6, yTh), P(0, yCr + 1.4)];
+        var c = it.color, hemY = 194, hw = 5.2 * g * lw + 0.4, jc = lerp(6.4, 5.8, fem), jeans = /jean|denim/i.test(it.name || '');
+        var out = [P(W + 0.9, waistY + 4), P(W + (H - W) * 0.7 + 0.9, yHH), P(H + 0.9, hipY), P(H * 0.98 + 0.9, yCr - 1), P(H * 0.74 + 3.2, yTh), P(jc + hw, yKn + 4), P(jc + hw, hemY)];
+        var inn = [P(jc - hw, hemY), P(jc - hw, yKn + 4), P(H * 0.03 + tIn - 0.6, yTh), P(0, yCr + 1.4)];
         var d = 'M' + f1(X(0)) + ' ' + f1(waistY + 4.4) + ' L' + f1(out[0][0]) + ' ' + f1(out[0][1]) + through(out) + ' L' + f1(inn[0][0]) + ' ' + hemY + through(inn) +
           through(mirror(inn).reverse()) + ' L' + f1(120 - out[6][0]) + ' ' + hemY + through(mirror(out).reverse()) + 'Z';
         var det = 'M' + f1(X(-W - 0.9)) + ' ' + f1(waistY + 7.4) + 'H' + f1(X(W + 0.9)) + (jeans
@@ -1429,7 +1431,7 @@ var GR_SCENE = (function () {
       shoes: function (it) {
         var c = it.color;
         return [1, -1].map(function (s) {
-          var x = function (v) { return f1(60 + s * v); };
+          var x = function (v) { return f1(60 + s * (v + ox)); };
           var d = 'M' + x(3.9) + ' 199.2C' + x(6) + ' 197.8 ' + x(9.6) + ' 197.8 ' + x(10.7) + ' 200.6C' + x(12.6) + ' 203.4 ' + x(12.6) + ' 205.6 ' + x(10.9) + ' 206.6L' + x(3.8) + ' 206.6C' + x(3.1) + ' 204.2 ' + x(3.3) + ' 201.2 ' + x(3.9) + ' 199.2Z';
           return paint(d, c, '<path d="M' + x(5) + ' 201.2q2.6-1 5 .2" fill="none" stroke="' + shade(c, 0.25) + '" stroke-width=".5"/>');
         }).join('');
