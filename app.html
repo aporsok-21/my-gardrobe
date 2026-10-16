@@ -106,6 +106,21 @@ h2{margin:0 0 12px;font-size:19px;font-weight:700;letter-spacing:-.02em}
 .wx-h .wx-ico{display:block;width:18px;height:18px;margin:4px auto 3px}
 .wx-h b{font-size:13px;font-weight:700}
 .wx-h.now small{color:var(--ink);font-weight:800}
+/* Weather warnings: a strip under the weather card, and an "are you sure" check when dressing */
+.wx-warn{display:flex;align-items:center;gap:10px;margin-top:10px;padding:10px 14px;border-radius:16px;background:#F3E7D3;border:1px solid #E6D3B0;font-size:13px;font-weight:600;line-height:1.35}
+.wx-warn svg,.wxd-box>svg{flex:0 0 auto;width:20px;height:20px;fill:none;stroke:#A8834A;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.wx-warn b{font-weight:800}
+.wx-warn.ok{background:#EFEBE3;border-color:#E2DBCF;color:var(--muted)}
+.wx-warn.ok svg{stroke:#7E8F6E}
+.wx-warn.ok b{color:var(--ink)}
+.wxd{position:absolute;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(43,43,43,.35);animation:fade .2s}
+.wxd[hidden]{display:none}
+.wxd-box{width:100%;max-width:320px;background:var(--surface);border-radius:24px;padding:22px 20px 18px;text-align:center;box-shadow:0 20px 50px rgba(43,43,43,.25)}
+.wxd-box>svg{width:34px;height:34px;margin:0 auto 6px;display:block}
+.wxd-box h3{margin:0 0 6px;font-size:20px;font-weight:800;letter-spacing:-.02em}
+.wxd-box p{margin:0 0 16px;font-size:14px;color:var(--muted);line-height:1.45}
+.wxd-box .btn{width:100%;min-height:46px}
+.wxd-box .btn+.btn{margin-top:8px}
 .wx-ico{fill:none;stroke:var(--ink);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 .wx-ico .sun{stroke:#A8834A}
 .wx-dots{display:flex;justify-content:center;gap:5px;margin-top:10px}
@@ -336,6 +351,7 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
         <div class="wx-dots" id="wx-dots"></div>
         <p class="wx-note" id="wx-note" hidden></p>
       </div>
+      <div class="wx-warn" id="wx-warn" role="status" hidden></div>
     </div>
 
     <div class="section">
@@ -422,6 +438,16 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
       <div class="field"><span data-t="colour">Colour</span><div class="swatches" id="fColor"></div></div>
       <button class="btn" type="submit" data-t="save">Save</button>
     </form>
+  </div>
+
+  <div class="wxd" id="wxd" role="alertdialog" aria-modal="true" aria-labelledby="wxd-title" aria-describedby="wxd-text" hidden>
+    <div class="wxd-box">
+      <svg viewBox="0 0 24 24"><path d="M12 3.5 2.5 20h19z"/><path d="M12 10v4.5M12 17.2v.1"/></svg>
+      <h3 id="wxd-title" data-t="warn.sure">Are you sure?</h3>
+      <p id="wxd-text"></p>
+      <button class="btn" id="wxd-no" data-t="warn.pickElse">Pick something else</button>
+      <button class="btn ghost" id="wxd-yes" data-t="warn.wearAnyway">Wear it anyway</button>
+    </div>
   </div>
 
   <button class="fab" id="fab" aria-label="Add item" data-t-aria="addItem"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
@@ -1660,6 +1686,13 @@ var GR_SCENE = (function () {
   function stopPicking() { picking = null; $('pickBar').hidden = true; }
   W8.onItem = function (it) {
     var slot = SLOT_OF[it.cat]; if (!slot) return false;
+    var takingOff = !picking && outfit[slot] && outfit[slot].key === keyOf(it);
+    var warn = !takingOff && window.mgWeatherCheck && window.mgWeatherCheck(it);
+    if (warn) { window.mgConfirm(warn, function () { putOn(it, slot); }); return true; }
+    putOn(it, slot);
+    return true;
+  };
+  function putOn(it, slot) {
     if (picking) {
       wear(slot, it); stopPicking(); saveOutfit(); renderCombo(); W8.refresh();
       window.mgShow('home');
@@ -1668,8 +1701,7 @@ var GR_SCENE = (function () {
       wear(slot, outfit[slot] && outfit[slot].key === keyOf(it) ? null : it);
       refresh();
     }
-    return true;
-  };
+  }
   W8.isWorn = function (it) { var sl = SLOT_OF[it.cat]; return !!(sl && outfit[sl] && outfit[sl].key === keyOf(it)); };
   $('pickCancel').addEventListener('click', function () { stopPicking(); window.mgShow('home'); });
   document.querySelectorAll('.tab').forEach(function (t) { t.addEventListener('click', stopPicking); });
@@ -1731,6 +1763,8 @@ var GR_SCENE = (function () {
     var hi = d.daily.temperature_2m_max, lo = d.daily.temperature_2m_min, ht = d.hourly.time;
     var now = d.current.time.slice(0, 13);
     var start = Math.max(0, ht.findIndex(function (h) { return h.slice(0, 13) === now; }));
+    today = summarise(d, start);
+    showWarning();
     if ($('look-tag')) $('look-tag').textContent = deg(d.current.temperature_2m) + (MG.get('unit', 'c') === 'f' ? '°F · ' : '°C · ') + kind(d.current.weather_code)[1];
 
     var slides = d.daily.time.map(function (iso, j) {
@@ -1754,6 +1788,89 @@ var GR_SCENE = (function () {
     $('wx-track').innerHTML = slides.join('');
     $('wx-dots').innerHTML = slides.map(function (_, j) { return '<button type="button" aria-label="' + MG.t('dayN', { n: j + 1 }) + '"' + (j === 0 ? ' class="on"' : '') + '></button>'; }).join('');
   }
+
+  // ---- Warnings: what today's weather means for clothes
+  var today = null;
+  function summarise(d, start) {
+    var ht = d.hourly.time, day = ht[start].slice(0, 10), from = '', snow = false;
+    for (var i = start; i < ht.length && ht[i].slice(0, 10) === day; i++) {
+      var k = kind(d.hourly.weather_code[i])[0];
+      if (k === 'rain' || k === 'snow' || k === 'storm') { if (!from) from = i === start ? 'now' : ht[i].slice(11, 16); if (k === 'snow') snow = true; }
+    }
+    var max = Math.round(d.daily.temperature_2m_max[0]), month = new Date().getMonth();
+    var winter = month === 11 || month <= 1, summer = month >= 5 && month <= 7, sky = kind(d.daily.weather_code[0])[0];
+    return { wet: !!from, snow: snow, from: from, max: max, gloomy: !!from || sky === 'fog', sunny: !from && (sky === 'sun' || sky === 'part'),
+      freezing: max <= 3 || snow, cold: max <= 10 || (winter && max <= 15),
+      warm: max >= 22 || (summer && max >= 20), hot: max >= 27 };
+  }
+  var WARN_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5 2.5 20h19z"/><path d="M12 10v4.5M12 17.2v.1"/></svg>';
+  var OK_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.7 2.7L16 9.8"/></svg>';
+  function W(key, vars) { return MG.t('warn.' + key, vars); }
+  function showWarning() {
+    var w = $('wx-warn'), t = today, head = '', tip = '';
+    if (t.wet) { head = W((t.snow ? 'snow' : 'rain') + (t.from === 'now' ? 'Now' : 'From'), { from: t.from }); tip = W(t.snow ? 'boots' : 'umbrella'); }
+    else if (t.cold) { head = W('coldStrip', { t: deg(t.max) + '°' }); tip = W('dressWarm'); }
+    else if (t.hot) { head = W('hotStrip', { t: deg(t.max) + '°' }); tip = W('keepLight'); }
+    w.classList.toggle('ok', !head);
+    w.innerHTML = head ? WARN_ICON + '<span><b>' + head + '</b> ' + tip + '</span>' : OK_ICON + '<span><b>' + W('none') + '</b> ' + W('noneSub') + '</span>';
+    w.hidden = false;
+  }
+  // Called by the figure before a piece goes on; returns a message, or nothing if it suits the day.
+  // Everyday rules: what most people would (not) wear in this weather.
+  window.mgWeatherCheck = function (it) {
+    var n = (it.name + ' ' + (it.sub || '')).toLowerCase(), t = today, v = { name: it.name };
+    function is(re) { return re.test(n); }
+    // Not about the weather at all
+    if (is(/slipper/)) return W('slippers', v);
+    if (!t) return '';
+
+    v.t = deg(t.max) + '°';
+    var open = is(/sandal|flip.?flop|slide|espadrille/);
+    var bare = open || is(/skirt|shorts|crop|linen|tank|sleeveless|dress/);
+    var heavyCoat = it.cat === 'coats' && (is(/fur|teddy|puffer|parka|down|winter|shearling/) || it.sub === 'Winter coats' || it.sub === 'Fur coats');
+    var longCoat = it.cat === 'coats' && !heavyCoat && /Elegant coats|Trench coats|Leather coats|Ponchos/.test(it.sub);
+    var thinJacket = it.cat === 'coats' && it.sub === 'Jackets';
+    var knit = it.cat === 'sweaters' || is(/knit|wool|cashmere|mohair|fleece|turtleneck|shearling/);
+    var winterBit = it.cat === 'accessories' && is(/wool|cashmere|fedora|beanie|glove/);
+    var boots = it.sub === 'Boots' || is(/boot/);
+    var wet = t.wet ? W('wet' + (t.snow ? 'Snow' : 'Rain') + (t.from === 'now' ? 'Now' : 'From'), { from: t.from }) + ' ' : '';
+    var cold = W('coldLine', v) + ' ', hot = W('hotLine', v) + ' ';
+
+    // Wet days
+    if (t.wet && open) return wet + W('feetWet', v);
+    if (t.wet && is(/suede/)) return wet + W('ruined', v);
+    if (t.wet && it.cat === 'coats' && is(/fur|teddy/)) return wet + W('soaked', v);
+    if (t.wet && it.cat === 'shoes' && it.color === 'white') return wet + W('muddy', v);
+    if (t.freezing && it.sub === 'Heels') return W('slippery', v);
+    // Cold days
+    if (t.cold && bare) return cold + W('leaveCold', v);
+    if (t.freezing && thinJacket) return cold + W('tooThin', v);
+    // Warm and hot days
+    if (t.warm && heavyCoat) return hot + W('winterCoat', v);
+    if (t.hot && longCoat) return hot + W('tooMuch', v);
+    if (t.hot && thinJacket) return hot + W('notNeeded', v);
+    if (t.max >= 25 && knit) return hot + W('tooWarm', v);
+    if (t.warm && winterBit) return hot + W('forWinter', v);
+    if (t.hot && boots) return hot + W('hotFeet', v);
+    // Sky
+    if (t.gloomy && it.sub === 'Sunglasses') return W('noSun') + ' ' + W('mightNot', v);
+    if (t.sunny && it.sub === 'Rain coats') return W('noRain') + ' ' + W('mightNot', v);
+    return '';
+  };
+  var dlg = $('wxd'), onYes = null, back = null;
+  window.mgConfirm = function (text, yes) {
+    $('wxd-text').textContent = text; onYes = yes; back = document.activeElement;
+    dlg.hidden = false; $('wxd-no').focus();
+  };
+  function closeDlg(ok) {
+    dlg.hidden = true; var f = onYes; onYes = null;
+    if (back && back.focus) back.focus();
+    if (ok && f) f();
+  }
+  $('wxd-yes').addEventListener('click', function () { closeDlg(true); });
+  $('wxd-no').addEventListener('click', function () { closeDlg(false); });
+  dlg.addEventListener('click', function (e) { if (e.target === dlg) closeDlg(false); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !dlg.hidden) closeDlg(false); });
 
   function load(lat, lon, name) {
     if (name) setCity(name);
