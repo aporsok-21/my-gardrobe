@@ -1057,8 +1057,7 @@ var GR_SCENE = (function () {
       '<div class="gr-flash"></div>';
   }
 
-  // Deep links (app.html#inspo) skip the intro
-  if (location.hash.length > 1) { stage.hidden = true; return; }
+  // The intro plays every time the app opens; a link to a tab (app.html#inspo) still lands there afterwards
   buildStage();
   setTimeout(function () {
     stage.classList.add('leaving');
