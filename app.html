@@ -343,18 +343,6 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
     </div>
 
     <div class="section">
-      <h2 data-t="weather">Weather</h2>
-      <div class="wx" id="wx" aria-live="polite">
-        <div class="wx-track" id="wx-track" tabindex="0" aria-label="Weather by day, swipe for the next days" data-t-aria="wxAria">
-          <div class="wx-slide"><div class="wx-top"><span class="deg">–°</span><span class="cond"><b data-t="wxLoading">Loading forecast</b><span id="wx-city" data-t="wxFinding">Finding your location…</span></span><span class="day"><b data-t="today">Today</b><span id="wx-date"></span></span></div></div>
-        </div>
-        <div class="wx-dots" id="wx-dots"></div>
-        <p class="wx-note" id="wx-note" hidden></p>
-      </div>
-      <div class="wx-warn" id="wx-warn" role="status" hidden></div>
-    </div>
-
-    <div class="section">
       <h2 data-t="tryOn">Try on some clothes</h2>
       <div class="card look">
         <div class="art" id="cardAvatar"></div>
@@ -366,6 +354,18 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
           <small id="comboNote"></small>
         </div>
       </div>
+    </div>
+
+    <div class="section">
+      <h2 data-t="weather">Weather</h2>
+      <div class="wx" id="wx" aria-live="polite">
+        <div class="wx-track" id="wx-track" tabindex="0" aria-label="Weather by day, swipe for the next days" data-t-aria="wxAria">
+          <div class="wx-slide"><div class="wx-top"><span class="deg">–°</span><span class="cond"><b data-t="wxLoading">Loading forecast</b><span id="wx-city" data-t="wxFinding">Finding your location…</span></span><span class="day"><b data-t="today">Today</b><span id="wx-date"></span></span></div></div>
+        </div>
+        <div class="wx-dots" id="wx-dots"></div>
+        <p class="wx-note" id="wx-note" hidden></p>
+      </div>
+      <div class="wx-warn" id="wx-warn" role="status" hidden></div>
     </div>
   </main>
 
