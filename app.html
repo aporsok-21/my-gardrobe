@@ -68,6 +68,34 @@ h2{margin:0 0 12px;font-size:19px;font-weight:700;letter-spacing:-.02em}
 .look h3{margin:0 0 4px;font-size:18px;font-weight:700;letter-spacing:-.02em}
 .look p{margin:0 0 12px;font-size:14px;color:var(--muted);line-height:1.4}
 .look .btn{min-height:40px;font-size:14px;padding:0 16px}
+/* Weather on Home: a compact card per day, swipe for the next days */
+.wx{position:relative;padding:14px 0 10px;overflow:hidden;border-radius:22px;border:1px solid #E2D9CB;background:linear-gradient(160deg,#F4EFE6,#EEE7DC)}
+.wx-track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain;-webkit-user-select:none;user-select:none}
+.wx-track::-webkit-scrollbar{display:none}
+.wx-track:focus:not(:focus-visible){outline:none}
+.wx{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M4 2.5v17l4.6-4.4 3 6.6 2.9-1.3-3-6.5h6.4z' fill='%23B08D57' stroke='%23FFFDF8' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E") 4 2,pointer}
+.wx-track.drag{scroll-snap-type:none;cursor:grabbing}
+.wx-slide{flex:0 0 100%;scroll-snap-align:center;padding:0 16px}
+.wx-top{display:flex;align-items:center;gap:10px}
+.wx-top .wx-ico{flex:0 0 auto;width:34px;height:34px}
+.wx-top .deg{font-size:30px;font-weight:800;letter-spacing:-.04em;line-height:1}
+.wx-top .cond{flex:1;min-width:0;font-size:12px;font-weight:600;color:var(--muted);line-height:1.3}
+.wx-top .cond b{display:block;font-size:13px;color:var(--ink)}
+.wx-top .day{text-align:right;font-size:12px;font-weight:600;color:var(--muted);line-height:1.3;white-space:nowrap}
+.wx-top .day b{display:block;font-size:13px;color:var(--ink)}
+.wx-hours{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-top:12px;padding-top:10px;border-top:1px solid rgba(142,133,122,.25)}
+.wx-h{text-align:center;line-height:1.2}
+.wx-h small{display:block;font-size:10px;font-weight:600;color:var(--muted)}
+.wx-h .wx-ico{display:block;width:18px;height:18px;margin:4px auto 3px}
+.wx-h b{font-size:13px;font-weight:700}
+.wx-h.now small{color:var(--ink);font-weight:800}
+.wx-ico{fill:none;stroke:var(--ink);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.wx-ico .sun{stroke:#A8834A}
+.wx-dots{display:flex;justify-content:center;gap:5px;margin-top:10px}
+.wx-dots button{width:5px;height:5px;padding:0;border:0;border-radius:9px;background:rgba(142,133,122,.4);transition:width .2s,background .2s}
+.wx-dots button.on{width:14px;background:var(--ink)}
+.wx-note{margin:6px 16px 0;font-size:11px;color:var(--muted);text-align:center}
+.wx-note button{background:none;border:0;padding:0;font-size:inherit;font-weight:700;color:var(--ink);text-decoration:underline}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .stat{text-align:center;padding:14px 6px}
 .stat b{display:block;font-size:24px;font-weight:800;letter-spacing:-.03em}
@@ -200,11 +228,22 @@ h2{margin:0 0 12px;font-size:19px;font-weight:700;letter-spacing:-.02em}
     </div>
 
     <div class="section">
+      <h2>Weather</h2>
+      <div class="wx" id="wx" aria-live="polite">
+        <div class="wx-track" id="wx-track" tabindex="0" aria-label="Weather by day, swipe for the next days">
+          <div class="wx-slide"><div class="wx-top"><span class="deg">–°</span><span class="cond"><b>Loading forecast</b><span id="wx-city">Finding your location…</span></span><span class="day"><b>Today</b><span id="wx-date"></span></span></div></div>
+        </div>
+        <div class="wx-dots" id="wx-dots"></div>
+        <p class="wx-note" id="wx-note" hidden></p>
+      </div>
+    </div>
+
+    <div class="section">
       <h2>Today's look</h2>
       <div class="card look">
         <div class="art"><img src="assets/outfit.svg" alt=""></div>
         <div>
-          <span class="tag">22°C · Sunny</span>
+          <span class="tag" id="look-tag">22°C · Sunny</span>
           <h3>Easy summer</h3>
           <p>Linen dress, straw hat and flats.</p>
           <button class="btn">Wear this</button>
@@ -903,6 +942,124 @@ var GR_SCENE = (function () {
     stage.classList.add('leaving');
     setTimeout(function () { stage.hidden = true; stage.innerHTML = ''; }, 500);
   }, 4400);
+})();
+</script>
+<script>
+(function () {
+  // Weather on Home: browser location -> city name (BigDataCloud) + forecast (Open-Meteo).
+  // One compact slide per day with the next hours underneath; swipe for the rest of the week.
+  var FALLBACK = { lat: 48.2082, lon: 16.3738, city: 'Vienna' };
+  var $ = function (id) { return document.getElementById(id); };
+
+  var ICONS = {
+    sun: '<circle class="sun" cx="16" cy="16" r="5.5"/><path class="sun" d="M16 4v3M16 25v3M4 16h3M25 16h3M7.5 7.5l2.1 2.1M22.4 22.4l2.1 2.1M7.5 24.5l2.1-2.1M22.4 9.6l2.1-2.1"/>',
+    part: '<circle class="sun" cx="12" cy="11" r="4.5"/><path class="sun" d="M12 3v2M4 11h2M6.3 5.3l1.4 1.4M17.7 5.3l-1.4 1.4"/><path d="M10 26h13a5 5 0 0 0 0-10 7 7 0 0 0-13 2 4 4 0 0 0 0 8z"/>',
+    cloud: '<path d="M9 25h14a6 6 0 0 0 0-12 8 8 0 0 0-15.4 2.3A4.9 4.9 0 0 0 9 25z"/>',
+    fog: '<path d="M9 18h14a5.5 5.5 0 0 0 0-11 7.5 7.5 0 0 0-14.3 2.4A4.3 4.3 0 0 0 9 18z"/><path d="M6 22h20M9 26h14"/>',
+    rain: '<path d="M9 19h14a5.5 5.5 0 0 0 0-11 7.5 7.5 0 0 0-14.3 2.4A4.3 4.3 0 0 0 9 19z"/><path d="M11 23l-1.5 4M16.5 23 15 27M22 23l-1.5 4"/>',
+    snow: '<path d="M9 19h14a5.5 5.5 0 0 0 0-11 7.5 7.5 0 0 0-14.3 2.4A4.3 4.3 0 0 0 9 19z"/><path d="M11 23v4M9 25h4M20 23v4M18 25h4"/>',
+    storm: '<path d="M9 18h14a5.5 5.5 0 0 0 0-11 7.5 7.5 0 0 0-14.3 2.4A4.3 4.3 0 0 0 9 18z"/><path d="M17 20l-3 5h4l-3 5"/>'
+  };
+  function kind(code) {
+    if (code === 0) return ['sun', 'Clear'];
+    if (code <= 2) return ['part', 'Partly cloudy'];
+    if (code === 3) return ['cloud', 'Cloudy'];
+    if (code === 45 || code === 48) return ['fog', 'Foggy'];
+    if (code >= 71 && code <= 77 || code === 85 || code === 86) return ['snow', 'Snow'];
+    if (code >= 95) return ['storm', 'Thunderstorm'];
+    if (code >= 51) return ['rain', code <= 57 ? 'Drizzle' : 'Rain'];
+    return ['cloud', 'Cloudy'];
+  }
+  function icon(code) { return '<svg class="wx-ico" viewBox="0 0 32 32" aria-hidden="true">' + ICONS[kind(code)[0]] + '</svg>'; }
+
+  var dayName = new Intl.DateTimeFormat('en-GB', { weekday: 'long' });
+  var dayDate = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short' });
+  function localDay(iso) { var p = iso.split('-'); return new Date(+p[0], p[1] - 1, +p[2]); }
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+
+  var city = '';
+  $('wx-date').textContent = dayDate.format(new Date());
+
+  function note(html) { var n = $('wx-note'); n.innerHTML = html; n.hidden = !html; }
+  function setCity(c) { city = c; document.querySelectorAll('.wx-city').forEach(function (e) { e.textContent = c; }); var f = $('wx-city'); if (f) f.textContent = c; }
+
+  function render(d) {
+    var hi = d.daily.temperature_2m_max, lo = d.daily.temperature_2m_min, ht = d.hourly.time;
+    var now = d.current.time.slice(0, 13);
+    var start = Math.max(0, ht.findIndex(function (h) { return h.slice(0, 13) === now; }));
+    $('look-tag').textContent = Math.round(d.current.temperature_2m) + '°C · ' + kind(d.current.weather_code)[1];
+
+    var slides = d.daily.time.map(function (iso, j) {
+      // Today: the next six hours; later days: every three hours from 06:00
+      var idx = [];
+      if (j === 0) for (var i = start; i < start + 6 && i < ht.length; i++) idx.push(i);
+      else { var first = ht.indexOf(iso + 'T06:00'); if (first >= 0) for (var k = 0; k < 18; k += 3) idx.push(first + k); }
+      var hours = idx.map(function (i) {
+        return '<div class="wx-h' + (i === start && j === 0 ? ' now' : '') + '"><small>' + (i === start && j === 0 ? 'Now' : ht[i].slice(11, 16)) + '</small>' +
+          icon(d.hourly.weather_code[i]) + '<b>' + Math.round(d.hourly.temperature_2m[i]) + '°</b></div>';
+      }).join('');
+      var code = j === 0 ? d.current.weather_code : d.daily.weather_code[j];
+      var big = j === 0 ? Math.round(d.current.temperature_2m) : Math.round(hi[j]);
+      var title = j === 0 ? 'Today' : j === 1 ? 'Tomorrow' : dayName.format(localDay(iso));
+      return '<div class="wx-slide" aria-label="' + title + '"><div class="wx-top">' + icon(code) + '<span class="deg">' + big + '°</span>' +
+        '<span class="cond"><b>' + kind(code)[1] + '</b>H ' + Math.round(hi[j]) + '° · L ' + Math.round(lo[j]) + '°</span>' +
+        '<span class="day"><b>' + title + '</b>' + dayDate.format(localDay(iso)) + ' · <span class="wx-city">' + city + '</span></span></div>' +
+        '<div class="wx-hours">' + hours + '</div></div>';
+    });
+    $('wx-track').innerHTML = slides.join('');
+    $('wx-dots').innerHTML = slides.map(function (_, j) { return '<button type="button" aria-label="Day ' + (j + 1) + '"' + (j === 0 ? ' class="on"' : '') + '></button>'; }).join('');
+  }
+
+  function load(lat, lon, name) {
+    if (name) setCity(name);
+    var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat.toFixed(3) + '&longitude=' + lon.toFixed(3) +
+      '&current=temperature_2m,weather_code&hourly=temperature_2m,weather_code' +
+      '&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=7';
+    fetch(url).then(function (r) { if (!r.ok) throw r; return r.json(); }).then(render).catch(function () {
+      var m = document.querySelector('.wx-top .cond b'); if (m) m.textContent = 'Forecast unavailable right now';
+    });
+  }
+
+  // Dots follow the swipe; clicking a dot jumps to that day
+  var track = $('wx-track');
+  track.addEventListener('scroll', function () {
+    var i = Math.round(track.scrollLeft / track.clientWidth);
+    $('wx-dots').querySelectorAll('button').forEach(function (b, j) { b.classList.toggle('on', j === i); });
+  }, { passive: true });
+  $('wx-dots').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    track.scrollTo({ left: [].indexOf.call(b.parentNode.children, b) * track.clientWidth, behavior: 'smooth' });
+  });
+  // Mouse drag on computers (touch already swipes natively)
+  var drag = null;
+  track.addEventListener('pointerdown', function (e) { if (e.pointerType === 'mouse') { drag = { x: e.clientX, left: track.scrollLeft }; track.classList.add('drag'); } });
+  window.addEventListener('pointermove', function (e) { if (drag) track.scrollLeft = drag.left - (e.clientX - drag.x); });
+  window.addEventListener('pointerup', function () {
+    if (!drag) return;
+    var i = Math.round(track.scrollLeft / track.clientWidth); drag = null;
+    track.classList.remove('drag');
+    track.scrollTo({ left: i * track.clientWidth, behavior: 'smooth' });
+  });
+
+  function locate() {
+    if (!navigator.geolocation) return useFallback();
+    navigator.geolocation.getCurrentPosition(function (pos) {
+      var lat = pos.coords.latitude, lon = pos.coords.longitude;
+      note('');
+      load(lat, lon, 'Your location');
+      fetch('https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=' + lat + '&longitude=' + lon + '&localityLanguage=en')
+        .then(function (r) { return r.json(); })
+        .then(function (g) { var c = g.city || g.locality || g.principalSubdivision; if (c) setCity(c + (g.countryCode ? ', ' + g.countryCode : '')); })
+        .catch(function () {});
+    }, useFallback, { timeout: 8000, maximumAge: 600000 });
+  }
+  function useFallback() {
+    load(FALLBACK.lat, FALLBACK.lon, FALLBACK.city);
+    note('Location is off, showing ' + FALLBACK.city + '. <button type="button" id="wx-retry">Use my location</button>');
+    $('wx-retry').addEventListener('click', locate);
+  }
+
+  locate();
 })();
 </script>
 </body>
