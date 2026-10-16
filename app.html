@@ -71,7 +71,7 @@ h2{margin:0 0 12px;font-size:19px;font-weight:700;letter-spacing:-.02em}
 .look{position:relative;display:flex;gap:12px;align-items:stretch;padding:12px}
 .look .art{flex:1 1 56%;min-width:0;height:350px;border-radius:18px;background:#E9E2D6;display:flex;align-items:flex-end;justify-content:center;padding-top:6px;overflow:hidden}
 .look .art svg{height:100%;width:auto}
-.look .edit{position:absolute;top:22px;left:22px;width:38px;height:38px}
+.look .edit{position:absolute;top:22px;inset-inline-start:22px;width:38px;height:38px}
 .look .edit:hover{border-color:var(--ink)}
 .tag{display:inline-block;padding:4px 10px;border-radius:999px;background:#EFE9DF;font-size:12px;font-weight:700;color:var(--accent);margin-bottom:8px}
 .combo{flex:0 0 41%;display:flex;flex-direction:column;gap:8px;min-width:0}
@@ -98,7 +98,7 @@ h2{margin:0 0 12px;font-size:19px;font-weight:700;letter-spacing:-.02em}
 .wx-top .deg{font-size:30px;font-weight:800;letter-spacing:-.04em;line-height:1}
 .wx-top .cond{flex:1;min-width:0;font-size:12px;font-weight:600;color:var(--muted);line-height:1.3}
 .wx-top .cond b{display:block;font-size:13px;color:var(--ink)}
-.wx-top .day{text-align:right;font-size:12px;font-weight:600;color:var(--muted);line-height:1.3;white-space:nowrap}
+.wx-top .day{text-align:end;font-size:12px;font-weight:600;color:var(--muted);line-height:1.3;white-space:nowrap}
 .wx-top .day b{display:block;font-size:13px;color:var(--ink)}
 .wx-hours{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-top:12px;padding-top:10px;border-top:1px solid rgba(142,133,122,.25)}
 .wx-h{text-align:center;line-height:1.2}
@@ -142,11 +142,11 @@ h2{margin:0 0 12px;font-size:19px;font-weight:700;letter-spacing:-.02em}
 .feature .txt{max-width:55%}
 .feature .tag{background:var(--surface)}
 .feature h3{margin:0;font-size:22px;font-weight:800;letter-spacing:-.03em;line-height:1.05}
-.feature img{position:absolute;right:8px;bottom:6px;width:150px}
+.feature img{position:absolute;inset-inline-end:8px;bottom:6px;width:150px}
 
 .search{display:flex;align-items:center;gap:10px;height:48px;padding:0 16px;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--taupe);font-size:15px;margin-bottom:14px}
 .search svg{width:18px;height:18px;stroke:var(--taupe);stroke-width:2;fill:none;stroke-linecap:round}
-.fab{position:absolute;right:20px;bottom:96px;width:58px;height:58px;border-radius:50%;border:0;background:var(--ink);display:none;align-items:center;justify-content:center;box-shadow:0 10px 24px rgba(43,43,43,.3)}
+.fab{position:absolute;inset-inline-end:20px;bottom:96px;width:58px;height:58px;border-radius:50%;border:0;background:var(--ink);display:none;align-items:center;justify-content:center;box-shadow:0 10px 24px rgba(43,43,43,.3)}
 .fab svg{width:26px;height:26px;stroke:#F6F2EA;stroke-width:2;fill:none;stroke-linecap:round}
 .fab.show{display:flex}
 
@@ -180,7 +180,7 @@ h2{margin:0 0 12px;font-size:19px;font-weight:700;letter-spacing:-.02em}
 .search .clear{display:none;width:26px;height:26px;border:0;border-radius:50%;background:#EFE9DF;align-items:center;justify-content:center;padding:0}
 .search .clear svg{width:12px;height:12px;stroke:var(--muted);stroke-width:2.4}
 .search.has .clear{display:flex}
-.tile.cat{display:block;width:100%;padding:0;text-align:left;font:inherit;transition:transform .2s,border-color .2s}
+.tile.cat{display:block;width:100%;padding:0;text-align:start;font:inherit;transition:transform .2s,border-color .2s}
 .tile.cat:active{transform:scale(.98)}
 .tile.cat .art{background:#EFE9DF}
 .tile .art svg{width:62%;height:auto}
@@ -198,19 +198,19 @@ h2{margin:0 0 12px;font-size:19px;font-weight:700;letter-spacing:-.02em}
 .pager{display:flex;height:100%;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;scrollbar-width:none}
 .pager::-webkit-scrollbar{display:none}
 .pager.drag{scroll-snap-type:none;cursor:grabbing}
-.page{position:relative;flex:0 0 100%;height:100%;overflow-y:auto;scroll-snap-align:start;scroll-snap-stop:always;padding:12px 46px 28px 20px;scrollbar-width:none}
+.page{position:relative;flex:0 0 100%;height:100%;overflow-y:auto;scroll-snap-align:start;scroll-snap-stop:always;padding-block:12px 28px;padding-inline:20px 46px;scrollbar-width:none}
 .page::-webkit-scrollbar{display:none}
 .chead{display:flex;align-items:center;gap:8px;margin:14px 0 10px;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 .cgroup:first-child .chead{margin-top:4px}
 .dot{width:14px;height:14px;border-radius:50%;border:1px solid rgba(43,43,43,.25);flex:0 0 auto}
 .addwrap{margin-top:12px}
 
-.rail{position:absolute;right:6px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:4px;padding:6px 4px;border-radius:999px;background:var(--surface);border:1px solid var(--border);box-shadow:0 6px 18px rgba(43,43,43,.12);touch-action:none;z-index:2}
+.rail{position:absolute;inset-inline-end:6px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:4px;padding:6px 4px;border-radius:999px;background:var(--surface);border:1px solid var(--border);box-shadow:0 6px 18px rgba(43,43,43,.12);touch-action:none;z-index:2}
 .rail[hidden]{display:none}
 .rail button{width:26px;height:26px;padding:0;border:0;background:none;display:flex;align-items:center;justify-content:center;border-radius:50%}
 .rail button .dot{width:16px;height:16px;transition:transform .15s}
 .rail button.on .dot{transform:scale(1.3);box-shadow:0 0 0 2px var(--surface),0 0 0 3.5px var(--ink)}
-.bubble{position:absolute;right:46px;padding:6px 12px;border-radius:999px;background:var(--ink);color:#F6F2EA;font-size:13px;font-weight:700;pointer-events:none;opacity:0;transform:translateY(-50%);transition:opacity .2s;white-space:nowrap;z-index:3}
+.bubble{position:absolute;inset-inline-end:46px;padding:6px 12px;border-radius:999px;background:var(--ink);color:#F6F2EA;font-size:13px;font-weight:700;pointer-events:none;opacity:0;transform:translateY(-50%);transition:opacity .2s;white-space:nowrap;z-index:3}
 .bubble.show{opacity:1}
 
 /* Figure editor (bottom sheet) */
@@ -231,7 +231,7 @@ h2{margin:0 0 12px;font-size:19px;font-weight:700;letter-spacing:-.02em}
 .seg button{border:0;background:none;min-height:42px;border-radius:999px;font-weight:700;color:var(--muted);transition:background .2s,color .2s}
 .seg button.on{background:var(--ink);color:#F6F2EA}
 input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
-.expander{width:100%;display:flex;justify-content:space-between;align-items:center;background:var(--bg);border:1px solid var(--border);border-radius:16px;padding:14px 16px;font-weight:700;text-align:left}
+.expander{width:100%;display:flex;justify-content:space-between;align-items:center;background:var(--bg);border:1px solid var(--border);border-radius:16px;padding:14px 16px;font-weight:700;text-align:start}
 .expander small{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-top:2px}
 .expander svg{width:20px;height:20px;stroke:var(--ink);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;transition:transform .25s}
 .expander[aria-expanded="true"] svg{transform:rotate(180deg)}
@@ -246,14 +246,14 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
 .fx-actions .btn{width:100%}
 .link{background:none;border:0;color:var(--muted);font-weight:700;min-height:44px}
 .fx-sheet .swatches button{width:36px;height:36px}
-.pickbar{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--ink);color:#F6F2EA;border-radius:16px;padding:10px 8px 10px 16px;margin:0 0 14px}
+.pickbar{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--ink);color:#F6F2EA;border-radius:16px;padding-block:10px;padding-inline:16px 8px;margin:0 0 14px}
 .pickbar[hidden]{display:none}
 .pickbar b{font-size:15px}
 .pickbar span{display:block;font-size:12px;opacity:.75}
 .pickbar .link{color:#F6F2EA;min-height:36px;padding:0 10px}
 .tile.item{position:relative;cursor:pointer;transition:border-color .2s}
 .tile.item.wearing{border-color:var(--ink)}
-.tile .badge{position:absolute;top:8px;right:8px;z-index:1;background:var(--ink);color:#F6F2EA;font-size:11px;font-weight:700;padding:4px 9px;border-radius:999px}
+.tile .badge{position:absolute;top:8px;inset-inline-end:8px;z-index:1;background:var(--ink);color:#F6F2EA;font-size:11px;font-weight:700;padding:4px 9px;border-radius:999px}
 
 /* Add-item sheet */
 .sheet-wrap{position:absolute;inset:0;z-index:20;display:flex;align-items:flex-end}
@@ -292,10 +292,10 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
 .set-group{display:flex;flex-direction:column;gap:8px}
 .set-label{font-size:13px;font-weight:700;color:var(--muted)}
 .langs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.langs button{display:flex;align-items:center;gap:10px;min-height:48px;padding:0 14px;border-radius:14px;border:1px solid var(--border);background:var(--surface);font-size:15px;font-weight:600;text-align:left}
+.langs button{display:flex;align-items:center;gap:10px;min-height:48px;padding:0 14px;border-radius:14px;border:1px solid var(--border);background:var(--surface);font-size:15px;font-weight:600;text-align:start}
 .langs button span{font-size:20px;line-height:1}
 .langs button[aria-checked="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink);font-weight:800}
-.set-row{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;padding:14px 16px;border-radius:16px;border:1px solid var(--border);background:var(--surface);text-align:left;cursor:pointer}
+.set-row{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;padding:14px 16px;border-radius:16px;border:1px solid var(--border);background:var(--surface);text-align:start;cursor:pointer}
 .set-row b{display:block;font-size:15px;font-weight:700}
 .set-row small{display:block;margin-top:2px;font-size:12px;font-weight:600;color:var(--muted)}
 .set-row>svg{flex:0 0 auto;width:20px;height:20px;stroke:var(--ink);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
@@ -304,6 +304,17 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
 .switch:checked{background:var(--ink)}
 .switch:checked::after{transform:translateX(20px)}
 .switch:focus-visible{outline:2px solid #444444;outline-offset:2px}
+[dir=rtl] .switch:checked::after{transform:translateX(-20px)}
+[dir=rtl] .switch::after{left:auto;right:3px}
+.lang-search{margin-bottom:0}
+.langs{max-height:248px;overflow-y:auto;padding:2px;margin:-2px}
+.langs button small{display:block;font-size:11px;font-weight:600;color:var(--muted)}
+.langs button[hidden]{display:none}
+
+/* Right-to-left languages: mirror arrows; the intro scene and swipe tracks keep their own geometry */
+[dir=rtl] .back svg,[dir=rtl] .set-row>svg{transform:scaleX(-1)}
+.stage{direction:ltr}
+.mg-wait .screen,.mg-wait .tabbar{visibility:hidden}
 .photo-pick{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;height:170px;border-radius:20px;border:1.5px dashed var(--hover);background:var(--surface);color:var(--muted);font-size:14px;font-weight:600;overflow:hidden;cursor:pointer}
 .photo-pick input{position:absolute;inset:0;opacity:0;cursor:pointer}
 .photo-pick img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
@@ -501,7 +512,10 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
     <div class="sheet-bg" data-close></div>
     <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="setTitle">
       <div class="sheet-head"><h2 id="setTitle" data-t="settings">Settings</h2><button type="button" class="round" data-close aria-label="Close" data-t-aria="close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
-      <div class="set-group"><div class="set-label" id="langLbl" data-t="language">Language</div><div class="langs" id="langList" role="radiogroup" aria-labelledby="langLbl"></div></div>
+      <div class="set-group"><div class="set-label" id="langLbl" data-t="language">Language</div>
+        <label class="search lang-search" id="langSearch"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input type="search" id="langQ" placeholder="Search languages" aria-label="Search languages" data-t-ph="searchLang" data-t-aria="searchLang" autocomplete="off"></label>
+        <div class="langs" id="langList" role="radiogroup" aria-labelledby="langLbl"></div>
+      </div>
       <div class="set-group"><div class="set-label" data-t="temperature">Temperature</div><div class="seg" id="unitSeg"><button type="button" data-u="c">°C <span data-t="celsius">Celsius</span></button><button type="button" data-u="f">°F <span data-t="fahrenheit">Fahrenheit</span></button></div></div>
       <label class="set-row"><span><b data-t="intro">Opening animation</b><small data-t="introSub">Play the walk-in closet when the app opens</small></span><input type="checkbox" class="switch" id="introToggle"></label>
       <button type="button" class="set-row" id="setFigure"><span><b data-t="yourFigure">Your figure</b><small data-t="figureRowSub">Height, shape, skin and hair</small></span><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
@@ -525,13 +539,34 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
 <script src="i18n/app-strings.js"></script>
 <script>
 // Language for the whole app. Shares the 'gr-lang' choice with the website, so both open in the same language.
+// English is built in; any other language is fetched from i18n/app/<code>.js the first time it is needed.
 (function () {
-  var S = window.MG_STRINGS;
-  function pick(code) { var b = String(code || '').split('-')[0].toLowerCase(); if (b === 'nb' || b === 'nn') b = 'no'; return S[b] ? b : null; }
-  var lang = null, subs = [];
+  var S = window.MG_STRINGS, CODES = window.MG_LANGS.map(function (l) { return l[0]; }), subs = [];
+  var root = document.documentElement;
+  // Exact code first (zh-TW, pa-Arab), then the base language (de-AT -> de, zh -> zh-CN)
+  function pick(code) {
+    code = String(code || '').replace('_', '-');
+    var low = code.toLowerCase(), base = low.split('-')[0];
+    if (base === 'nb' || base === 'nn') base = 'no';
+    if (base === 'zh') return /tw|hk|mo|hant/.test(low) ? 'zh-TW' : 'zh-CN';
+    for (var i = 0; i < CODES.length; i++) if (CODES[i].toLowerCase() === low) return CODES[i];
+    for (i = 0; i < CODES.length; i++) if (CODES[i].toLowerCase() === base) return CODES[i];
+    return null;
+  }
+  var lang = null;
   try { lang = pick(localStorage.getItem('gr-lang')); } catch (e) {}
   if (!lang) (navigator.languages || [navigator.language]).some(function (l) { return (lang = pick(l)); });
   lang = lang || 'en';
+
+  function load(code, done) {
+    if (S[code]) return done();
+    var el = document.createElement('script'), finished = false;
+    function end() { if (!finished) { finished = true; done(); } }
+    el.src = 'i18n/app/' + code + '.js';
+    el.onload = el.onerror = end;
+    setTimeout(end, 4000);   // slow network: carry on in English rather than wait forever
+    document.head.appendChild(el);
+  }
   function get(table, key) { return key.split('.').reduce(function (o, k) { return o == null ? o : o[k]; }, table); }
   function t(key, vars) {
     var v = get(S[lang], key);
@@ -540,35 +575,59 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
     if (typeof v !== 'string') return v;
     return vars ? v.replace(/\{(\w+)\}/g, function (m, k) { return vars[k] != null ? vars[k] : m; }) : v;
   }
-  function apply(root) {
-    root = root || document;
-    root.querySelectorAll('[data-t]').forEach(function (el) { el.textContent = t(el.dataset.t, el.dataset.tN ? { n: el.dataset.tN } : null); });
-    root.querySelectorAll('[data-t-ph]').forEach(function (el) { el.placeholder = t(el.dataset.tPh); });
-    root.querySelectorAll('[data-t-aria]').forEach(function (el) { el.setAttribute('aria-label', t(el.dataset.tAria)); });
-    document.documentElement.lang = lang;
+  function locale() { return (S[lang] && S[lang].locale) || lang; }
+  function apply(scope) {
+    scope = scope || document;
+    scope.querySelectorAll('[data-t]').forEach(function (el) { el.textContent = t(el.dataset.t, el.dataset.tN ? { n: el.dataset.tN } : null); });
+    scope.querySelectorAll('[data-t-ph]').forEach(function (el) { el.placeholder = t(el.dataset.tPh); });
+    scope.querySelectorAll('[data-t-aria]').forEach(function (el) { el.setAttribute('aria-label', t(el.dataset.tAria)); });
+    root.lang = lang;
+    root.dir = window.MG_RTL.indexOf(lang) >= 0 ? 'rtl' : 'ltr';
   }
+  function flag(cc) { return cc.replace(/./g, function (ch) { return String.fromCodePoint(127397 + ch.charCodeAt(0)); }); }
+  function nativeName(code, english) {
+    try { var n = new Intl.DisplayNames([code], { type: 'language' }).of(code); if (n && n.toLowerCase() !== code.toLowerCase()) return n.charAt(0).toLocaleUpperCase(code) + n.slice(1); } catch (e) {}
+    return english;
+  }
+  var LANGS = window.MG_LANGS.map(function (l) { var nat = nativeName(l[0], l[2]); return { code: l[0], native: nat, english: l[2], flag: flag(l[1]), hay: (l[0] + ' ' + l[2] + ' ' + nat).toLowerCase() }; });
+
   window.MG = {
-    t: t, apply: apply,
+    t: t, apply: apply, locale: locale,
     lang: function () { return lang; },
-    locale: function () { return S[lang].locale; },
-    langs: function () { return Object.keys(S).map(function (k) { return { code: k, native: S[k].native, flag: S[k].flag }; }); },
+    rtl: function () { return root.dir === 'rtl'; },
+    langs: function () { return LANGS; },
     // "17 coats", using the language's plural rules
     count: function (n, forms) {
-      var r = 'other'; try { r = new Intl.PluralRules(S[lang].locale).select(n); } catch (e) {}
-      return n + ' ' + (r === 'one' ? forms[0] : r === 'few' && forms[2] ? forms[2] : forms[1]);
+      var r = 'other'; try { r = new Intl.PluralRules(locale()).select(n); } catch (e) {}
+      var w = r === 'one' ? forms[0] : r === 'few' && forms[2] ? forms[2] : r === 'two' && forms[3] ? forms[3] : forms[1];
+      return w.indexOf('{n}') >= 0 ? w.replace('{n}', n) : n + ' ' + w;   // "{n}" lets a language put the number elsewhere
     },
     onLang: function (fn) { subs.push(fn); },
-    setLang: function (code) {
-      lang = pick(code) || 'en';
-      try { localStorage.setItem('gr-lang', lang); } catch (e) {}
-      apply();
-      subs.forEach(function (fn) { try { fn(lang); } catch (e) { setTimeout(function () { throw e; }); } });
+    setLang: function (code, done) {
+      var next = pick(code) || 'en';
+      try { localStorage.setItem('gr-lang', next); } catch (e) {}
+      load(next, function () {
+        lang = S[next] ? next : 'en';
+        apply();
+        subs.forEach(function (fn) { try { fn(lang); } catch (e) { setTimeout(function () { throw e; }); } });
+        if (done) done();
+      });
     },
     // Small settings kept in the browser
     get: function (k, d) { try { var v = localStorage.getItem('mg-' + k); return v == null ? d : v; } catch (e) { return d; } },
     set: function (k, v) { try { localStorage.setItem('mg-' + k, v); } catch (e) {} document.dispatchEvent(new CustomEvent('mg-setting', { detail: { key: k, value: v } })); }
   };
+
+  // Start in English, then switch as soon as the saved language has loaded; the page stays hidden for that moment
+  var wanted = lang;
+  lang = 'en';
   apply();
+  if (wanted !== 'en') {
+    root.classList.add('mg-wait');
+    window.addEventListener('DOMContentLoaded', function () {
+      MG.setLang(wanted, function () { root.classList.remove('mg-wait'); });
+    });
+  }
 })();
 </script>
 <script>
@@ -685,10 +744,16 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
   function colorOf(id) { return COLORS.filter(function (c) { return c[0] === id; })[0] || COLORS[0]; }
   function colorRank(id) { for (var i = 0; i < COLORS.length; i++) if (COLORS[i][0] === id) return i; return 99; }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (ch) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]; }); }
-  function norm(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
+  function norm(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').normalize('NFC'); }
   function tokens(q) { return norm(q).split(/\s+/).filter(Boolean); }
   // A search word matches the start of a word, so "red" finds red items but not "tailored".
-  function hasWord(text, w) { return (' ' + norm(text).replace(/[^a-z0-9&]+/g, ' ')).indexOf(' ' + w.replace(/[^a-z0-9&]+/g, '')) >= 0; }
+  // Scripts written without spaces (Chinese, Japanese, Thai…) match anywhere instead.
+  var NOSPACE = /[\u0E00-\u0EFF\u1000-\u109F\u1780-\u17FF\u3040-\u30FF\u3400-\u9FFF\uAC00-\uD7AF]/;
+  function hasWord(text, w) {
+    var hay = norm(text).replace(/[^\p{L}\p{N}&]+/gu, ' '), word = w.replace(/[^\p{L}\p{N}&]+/gu, '');
+    if (!word) return true;
+    return NOSPACE.test(word) ? hay.indexOf(word) >= 0 : (' ' + hay).indexOf(' ' + word) >= 0;
+  }
   function matches(it, q) {
     var t = tokens(q); if (!t.length) return true;
     var c = catById(it.cat);
@@ -795,11 +860,14 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
     setPage(pageIdx, true);
   }
 
+  // In right-to-left languages scrolling runs into negative numbers, so positions are measured from the start edge
+  function pos(el) { return Math.abs(el.scrollLeft); }
+  function toX(x) { return MG.rtl() ? -x : x; }
   var target = -1;
   function goPage(i, smooth) {
     i = Math.max(0, Math.min(i, pager.children.length - 1));
     target = smooth ? i : -1;
-    pager.scrollTo({ left: i * pager.clientWidth, behavior: smooth ? 'smooth' : 'auto' });
+    pager.scrollTo({ left: toX(i * pager.clientWidth), behavior: smooth ? 'smooth' : 'auto' });
     setPage(i, true);
   }
   function setPage(i, force) {
@@ -807,15 +875,18 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
     pageIdx = i;
     cChips.querySelectorAll('.chip').forEach(function (b, k) {
       b.classList.toggle('on', k === i);
-      if (k === i && cChips.scrollWidth > cChips.clientWidth) cChips.scrollTo({ left: b.offsetLeft - cChips.clientWidth / 2 + b.offsetWidth / 2, behavior: 'smooth' });
+      if (k === i && cChips.scrollWidth > cChips.clientWidth) {
+        var cr = cChips.getBoundingClientRect(), br = b.getBoundingClientRect();
+        cChips.scrollBy({ left: br.left + br.width / 2 - (cr.left + cr.width / 2), behavior: 'smooth' });
+      }
     });
     buildRail();
   }
   cChips.addEventListener('click', function (e) { var b = e.target.closest('.chip'); if (b) goPage(+b.dataset.i, true); });
   pager.addEventListener('scroll', function () {
     if (!pager.clientWidth) return;
-    var i = Math.round(pager.scrollLeft / pager.clientWidth);
-    if (target >= 0) { if (Math.abs(pager.scrollLeft - target * pager.clientWidth) > 2) return; target = -1; }
+    var i = Math.round(pos(pager) / pager.clientWidth);
+    if (target >= 0) { if (Math.abs(pos(pager) - target * pager.clientWidth) > 2) return; target = -1; }
     setPage(i);
   }, { passive: true });
   pager.addEventListener('touchstart', function () { target = -1; }, { passive: true });
@@ -838,8 +909,9 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
     var d = drag; drag = null;
     if (!d.moved) return;
     pager.classList.remove('drag');
-    var dx = e.clientX - d.x, from = Math.round(d.left / pager.clientWidth);
-    goPage(Math.abs(dx) > pager.clientWidth * 0.18 ? from + (dx < 0 ? 1 : -1) : from, true);
+    var dx = e.clientX - d.x, from = Math.round(Math.abs(d.left) / pager.clientWidth);
+    var forward = MG.rtl() ? dx > 0 : dx < 0;
+    goPage(Math.abs(dx) > pager.clientWidth * 0.18 ? from + (forward ? 1 : -1) : from, true);
     pager.addEventListener('click', function stop(ev) { ev.stopPropagation(); ev.preventDefault(); }, { capture: true, once: true });
   });
 
@@ -973,7 +1045,7 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
   // Switching language relabels everything in place, without losing the page you are on
   MG.onLang(function () {
     renderChips(); labelForm(); renderMain();
-    if (cur) { labelCat(); renderPages(); }
+    if (cur) { labelCat(); renderPages(); goPage(pageIdx, false); }
     if (!sheet.hidden) { var sc = fCat.value; document.getElementById('sheetTitle').textContent = document.getElementById('fCatWrap').hidden ? MG.t('addTo', { cat: catName(catById(sc)) }) : MG.t('addAnItem'); fillSubs(fSub.value); }
   });
 
@@ -1788,6 +1860,7 @@ var GR_SCENE = (function () {
         '<div class="wx-hours">' + hours + '</div></div>';
     });
     $('wx-track').innerHTML = slides.join('');
+    $('wx-track').scrollLeft = 0;
     $('wx-dots').innerHTML = slides.map(function (_, j) { return '<button type="button" aria-label="' + MG.t('dayN', { n: j + 1 }) + '"' + (j === 0 ? ' class="on"' : '') + '></button>'; }).join('');
   }
 
@@ -1889,12 +1962,12 @@ var GR_SCENE = (function () {
   // Dots follow the swipe; clicking a dot jumps to that day
   var track = $('wx-track');
   track.addEventListener('scroll', function () {
-    var i = Math.round(track.scrollLeft / track.clientWidth);
+    var i = Math.round(Math.abs(track.scrollLeft) / track.clientWidth);
     $('wx-dots').querySelectorAll('button').forEach(function (b, j) { b.classList.toggle('on', j === i); });
   }, { passive: true });
   $('wx-dots').addEventListener('click', function (e) {
     var b = e.target.closest('button'); if (!b) return;
-    track.scrollTo({ left: [].indexOf.call(b.parentNode.children, b) * track.clientWidth, behavior: 'smooth' });
+    track.scrollTo({ left: (MG.rtl() ? -1 : 1) * [].indexOf.call(b.parentNode.children, b) * track.clientWidth, behavior: 'smooth' });
   });
   // Mouse drag on computers (touch already swipes natively)
   var drag = null;
@@ -1902,9 +1975,9 @@ var GR_SCENE = (function () {
   window.addEventListener('pointermove', function (e) { if (drag) track.scrollLeft = drag.left - (e.clientX - drag.x); });
   window.addEventListener('pointerup', function () {
     if (!drag) return;
-    var i = Math.round(track.scrollLeft / track.clientWidth); drag = null;
+    var i = Math.round(Math.abs(track.scrollLeft) / track.clientWidth); drag = null;
     track.classList.remove('drag');
-    track.scrollTo({ left: i * track.clientWidth, behavior: 'smooth' });
+    track.scrollTo({ left: (MG.rtl() ? -1 : 1) * i * track.clientWidth, behavior: 'smooth' });
   });
 
   function locate() {
@@ -1942,8 +2015,11 @@ var GR_SCENE = (function () {
 (function () {
   var $ = function (id) { return document.getElementById(id); };
 
-  // Welcome letters pop in one by one; scripts whose letters join (e.g. Arabic) stay whole
+  // Welcome letters pop in one by one; scripts whose letters join or stack (Arabic, Hindi, Thai…) stay whole
   function letters(text) {
+    var split = true;
+    try { split = /^[\p{sc=Latin}\p{sc=Cyrillic}\p{sc=Greek}\p{sc=Armenian}\p{sc=Georgian}\p{sc=Han}\p{sc=Hiragana}\p{sc=Katakana}\p{sc=Hangul}\p{sc=Hebrew}\p{M}\p{P}\s]+$/u.test(text); } catch (e) {}
+    if (!split) return [text];
     try { if (window.Intl && Intl.Segmenter) return Array.from(new Intl.Segmenter(undefined, { granularity: 'grapheme' }).segment(text), function (x) { return x.segment; }); } catch (e) {}
     return Array.from(text);
   }
@@ -1969,20 +2045,32 @@ var GR_SCENE = (function () {
   var box = $('settings');
   function paint() {
     $('langList').innerHTML = MG.langs().map(function (l) {
-      return '<button type="button" role="radio" lang="' + l.code + '" data-lang="' + l.code + '" aria-checked="' + (l.code === MG.lang()) + '"><span aria-hidden="true">' + l.flag + '</span>' + l.native + '</button>';
+      return '<button type="button" role="radio" data-lang="' + l.code + '" aria-checked="' + (l.code === MG.lang()) + '"><span aria-hidden="true">' + l.flag + '</span><div><b lang="' + l.code + '">' + l.native + '</b>' +
+        (l.native !== l.english ? '<small>' + l.english + '</small>' : '') + '</div></button>';
     }).join('');
+    filterLangs();
     var u = MG.get('unit', 'c');
     $('unitSeg').querySelectorAll('button').forEach(function (b) { b.classList.toggle('on', b.dataset.u === u); });
     $('introToggle').checked = MG.get('intro', 'on') !== 'off';
   }
-  function openSettings() { paint(); box.hidden = false; }
+  function filterLangs() {
+    var q = $('langQ').value.trim().toLowerCase();
+    MG.langs().forEach(function (l, i) { $('langList').children[i].hidden = !!q && l.hay.indexOf(q) < 0; });
+  }
+  $('langQ').addEventListener('input', filterLangs);
+  function openSettings() {
+    $('langQ').value = '';
+    paint(); box.hidden = false;
+    var on = $('langList').querySelector('[aria-checked="true"]');
+    if (on) on.scrollIntoView({ block: 'nearest' });
+  }
   function closeSettings() { box.hidden = true; }
   $('openSettings').addEventListener('click', openSettings);
   box.addEventListener('click', function (e) { if (e.target.closest('[data-close]')) closeSettings(); });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !box.hidden) closeSettings(); });
   $('langList').addEventListener('click', function (e) {
     var b = e.target.closest('button[data-lang]'); if (!b || b.dataset.lang === MG.lang()) return;
-    MG.setLang(b.dataset.lang); paint();
+    MG.setLang(b.dataset.lang, paint);
   });
   $('unitSeg').addEventListener('click', function (e) {
     var b = e.target.closest('button[data-u]'); if (!b) return;
