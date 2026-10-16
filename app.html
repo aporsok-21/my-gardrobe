@@ -20,7 +20,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 button:focus-visible{outline:2px solid #444444;outline-offset:2px}
 
 /* The app shell: full screen on a phone, a phone-sized frame on a computer */
-.phone{position:relative;display:flex;flex-direction:column;height:100dvh;max-width:430px;margin:0 auto;background:var(--bg);overflow:hidden}
+.phone{position:relative;display:flex;flex-direction:column;height:100dvh;max-width:430px;margin:0 auto;background:var(--bg);overflow:hidden;overflow:clip}
 @media (min-width:600px){
   body{display:flex;align-items:center;justify-content:center;min-height:100vh}
   .phone{width:400px;height:min(860px,calc(100vh - 48px));border-radius:44px;border:10px solid var(--ink);box-shadow:0 30px 70px rgba(43,43,43,.25)}
@@ -316,7 +316,41 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
 .stage{direction:ltr}
 .mg-wait .screen,.mg-wait .tabbar{visibility:hidden}
 .photo-pick{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;height:170px;border-radius:20px;border:1.5px dashed var(--hover);background:var(--surface);color:var(--muted);font-size:14px;font-weight:600;overflow:hidden;cursor:pointer}
-.photo-pick input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.photo-pick{width:100%;font:inherit;cursor:default}
+.photo-pick[hidden]{display:none}
+.sheet>*{flex-shrink:0}
+.photo-pick img{background:var(--surface)}
+.photo-pick .chg{position:absolute;right:10px;bottom:10px;z-index:1;padding:6px 12px;border-radius:999px;background:rgba(17,17,17,.6);color:#F6F2EA;font-size:12px;font-weight:700}
+.photo-pick .chg[hidden]{display:none}
+/* Ways to add the photo: camera, upload, or find it on Google */
+.photo-menu{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.photo-menu[hidden],.g-panel[hidden]{display:none}
+.photo-menu button{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 4px;border-radius:16px;border:1px solid var(--border);background:var(--surface);font:inherit;font-size:12px;font-weight:700;color:var(--ink);line-height:1.2;text-align:center}
+.photo-menu button.on{border-color:var(--ink)}
+.photo-menu svg{width:24px;height:24px;stroke:var(--ink);stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.photo-menu input{display:none}
+/* In-app camera, so a computer's webcam works too (phones also get the native camera as a fallback) */
+.cam{position:absolute;inset:0;z-index:70;display:flex;flex-direction:column;background:#111;animation:fade .2s}
+.cam[hidden]{display:none}
+.cam video{flex:1;min-height:0;width:100%;object-fit:cover;background:#111}
+.cam video.mirror{transform:scaleX(-1)}
+.cam-bar{display:flex;align-items:center;justify-content:space-around;padding:18px 20px calc(22px + env(safe-area-inset-bottom));background:#111}
+.cam-bar button{width:48px;height:48px;border-radius:50%;border:0;background:rgba(246,242,234,.14);display:flex;align-items:center;justify-content:center}
+.cam-bar button[hidden]{visibility:hidden;display:flex}
+.cam-bar svg{width:22px;height:22px;stroke:#F6F2EA;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.cam-bar .shoot{width:72px;height:72px;background:none;border:4px solid #F6F2EA;padding:4px}
+.cam-bar .shoot i{display:block;width:100%;height:100%;border-radius:50%;background:#F6F2EA;transition:transform .1s}
+.cam-bar .shoot:active i{transform:scale(.9)}
+.g-panel{display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:18px;background:#EFE9DF}
+.g-panel p{margin:0;font-size:13px;color:var(--muted);line-height:1.4}
+.g-panel a.btn{text-decoration:none;min-height:44px}
+.g-row{display:flex;gap:8px}
+.g-row input{flex:1;min-width:0;height:44px;padding:0 12px;border-radius:12px;border:1px solid var(--border);background:var(--surface);font:inherit;font-size:14px;color:var(--ink)}
+.g-row .btn{min-height:44px;padding:0 16px;font-size:14px}
+.g-bad{color:#A9362F!important}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.field-row>.field{min-width:0}
+.field-row input{width:100%;min-width:0}
 .photo-pick img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .photo-pick svg{width:28px;height:28px;stroke:var(--ink);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .field{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700;color:var(--muted)}
@@ -441,14 +475,40 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
     <div class="sheet-bg" data-close></div>
     <form class="sheet" id="addForm" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
       <div class="sheet-head"><h2 id="sheetTitle">Add an item</h2><button type="button" class="round" data-close aria-label="Close" data-t-aria="close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
-      <label class="photo-pick"><input type="file" id="fPhoto" accept="image/*"><svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg><span data-t="addPhoto">Add a photo</span><img id="fPreview" alt="" hidden></label>
+      <div class="photo-pick" id="fPhotoBtn" hidden><img id="fPreview" alt=""></div>
+      <div class="photo-menu" id="fPhotoMenu" hidden>
+        <button type="button" data-way="camera"><svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg><span data-t="add2.camera">Take a photo</span></button>
+        <button type="button" data-way="upload"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="9.5" cy="9.5" r="1.6"/><path d="M5 17l4.5-4.5 3 3 2.5-2.5L20 18"/></svg><span data-t="add2.upload">Upload a photo</span></button>
+        <button type="button" data-way="google"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.3-4.3"/></svg><span data-t="add2.google">Search on Google</span></button>
+        <input type="file" id="fCamera" accept="image/*" capture="environment">
+        <input type="file" id="fPhoto" accept="image/*">
+      </div>
+      <div class="g-panel" id="fGoogle" hidden>
+        <p data-t="add2.gHint">Find your piece on Google Images, copy the image link and paste it here.</p>
+        <a class="btn ghost" id="fGoogleOpen" target="_blank" rel="noopener noreferrer" href="https://www.google.com/imghp" data-t="add2.gOpen">Open Google Images</a>
+        <div class="g-row"><input id="fLink" type="url" inputmode="url" placeholder="https://…" data-t-ph="add2.gLink" aria-label="Image link" data-t-aria="add2.gLink" autocomplete="off"><button type="button" class="btn" id="fLinkUse" data-t="add2.gUse">Use</button></div>
+        <p id="fLinkMsg" hidden></p>
+      </div>
       <label class="field" id="fCatWrap"><span data-t="category">Category</span><select id="fCat"></select></label>
       <label class="field" id="fSubWrap"><span data-t="type">Type</span><select id="fSub"></select></label>
       <label class="field"><span data-t="name">Name</span><input id="fName" required placeholder="e.g. Camel wrap coat" autocomplete="off"></label>
       <label class="field"><span data-t="brand">Brand</span><input id="fBrand" placeholder="e.g. Guess" autocomplete="off"></label>
+      <div class="field-row">
+        <label class="field" id="fFitWrap"><span data-t="add2.fit">Fit</span><input id="fFit" list="fFitList" autocomplete="off"><datalist id="fFitList"></datalist></label>
+        <label class="field"><span data-t="add2.size">Size</span><input id="fSize" list="fSizeList" autocomplete="off"><datalist id="fSizeList"></datalist></label>
+      </div>
       <div class="field"><span data-t="colour">Colour</span><div class="swatches" id="fColor"></div></div>
       <button class="btn" type="submit" data-t="save">Save</button>
     </form>
+  </div>
+
+  <div class="cam" id="cam" role="dialog" aria-modal="true" aria-label="Camera" data-t-aria="add2.camera" hidden>
+    <video id="camVideo" playsinline muted autoplay></video>
+    <div class="cam-bar">
+      <button type="button" id="camClose" aria-label="Close camera" data-t-aria="add2.camClose"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      <button type="button" class="shoot" id="camShoot" aria-label="Take photo" data-t-aria="add2.shoot"><i></i></button>
+      <button type="button" id="camFlip" aria-label="Switch camera" data-t-aria="add2.flip" hidden><svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><path d="M9.5 12.5a2.6 2.6 0 0 1 4.6-1.6M14.5 13.5a2.6 2.6 0 0 1-4.6 1.6M14.3 9.3v1.8h-1.8M9.7 16.7v-1.8h1.8"/></svg></button>
+    </div>
   </div>
 
   <div class="wxd" id="wxd" role="alertdialog" aria-modal="true" aria-labelledby="wxd-title" aria-describedby="wxd-text" hidden>
@@ -758,7 +818,7 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
     var t = tokens(q); if (!t.length) return true;
     var c = catById(it.cat);
     // English and the chosen language both work, so "jeans" and "farmer" style searches find the same piece
-    var hay = [it.name, it.brand, colorOf(it.color)[1], colorName(it.color), c.name, c.one, c.many, catName(c), MG.t('n.' + c.id).join(' '), it.sub, it.sub && subName(it.sub)].join(' ');
+    var hay = [it.name, it.brand, it.fit, it.size, colorOf(it.color)[1], colorName(it.color), c.name, c.one, c.many, catName(c), MG.t('n.' + c.id).join(' '), it.sub, it.sub && subName(it.sub)].join(' ');
     return t.every(function (w) { return hasWord(hay, w); });
   }
   function isDark(hex) { var n = parseInt(hex.slice(1), 16); return (0.299 * (n >> 16) + 0.587 * (n >> 8 & 255) + 0.114 * (n & 255)) < 110; }
@@ -770,7 +830,7 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
     var col = colorOf(it.color);
     var art = it.photo ? '<img class="photo" src="' + esc(it.photo) + '" alt="">' : icon(catById(it.cat).icon, col[2]);
     var worn = W8.isWorn && W8.isWorn(it);
-    return '<div class="tile item' + (worn ? ' wearing' : '') + '" data-i="' + items.indexOf(it) + '">' + (worn ? '<span class="badge">' + esc(MG.t('wearing')) + '</span>' : '') + '<div class="art" style="background:#EFE9DF">' + art + '</div><div class="meta"><b>' + esc(it.name) + '</b><span>' + esc([it.brand, colorName(col[0])].filter(Boolean).join(' · ')) + '</span></div></div>';
+    return '<div class="tile item' + (worn ? ' wearing' : '') + '" data-i="' + items.indexOf(it) + '">' + (worn ? '<span class="badge">' + esc(MG.t('wearing')) + '</span>' : '') + '<div class="art" style="background:#EFE9DF">' + art + '</div><div class="meta"><b>' + esc(it.name) + '</b><span>' + esc([it.brand, it.size, colorName(col[0])].filter(Boolean).join(' · ')) + '</span></div></div>';
   }
   function catTile(c, subIndex, label) {
     return '<button class="tile cat" data-cat="' + c.id + '" data-sub="' + (subIndex || 0) + '"><div class="art">' + icon(c.icon, '#D8CFC2') + '</div><div class="meta"><b>' + esc(label ? subName(label) : catName(c)) + '</b>' + (label ? '<span>' + esc(catName(c)) + '</span>' : '') + '</div></button>';
@@ -962,7 +1022,14 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
   // ---------- Add an item ----------
   var sheet = document.getElementById('sheet'), form = document.getElementById('addForm');
   var fCat = document.getElementById('fCat'), fSub = document.getElementById('fSub'), fColor = document.getElementById('fColor');
-  var fPhoto = document.getElementById('fPhoto'), fPreview = document.getElementById('fPreview');
+  var fPhoto = document.getElementById('fPhoto'), fCamera = document.getElementById('fCamera'), fPreview = document.getElementById('fPreview');
+  var fMenu = document.getElementById('fPhotoMenu'), fGoogle = document.getElementById('fGoogle'), fLink = document.getElementById('fLink'), fLinkMsg = document.getElementById('fLinkMsg');
+  // Fit and size suggestions by kind of piece; people can still type their own
+  var FIT_OF = { coats: 'outer', sweaters: 'top', tshirts: 'top', trousers: 'bottom', sweatpants: 'bottom', shoes: 'shoes' };
+  var LETTERS = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL'], EU = ['32', '34', '36', '38', '40', '42', '44', '46'];
+  var SIZES = { coats: LETTERS.concat(EU), sweaters: LETTERS.concat(EU), tshirts: LETTERS.concat(EU),
+    trousers: LETTERS.concat(EU, ['W24', 'W26', 'W28', 'W30', 'W32', 'W34', 'W36']), sweatpants: LETTERS.concat(EU),
+    shoes: ['35', '36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46'] };
   var pick = { color: 'black', photo: '' };
   function labelForm() {
     var keep = fCat.value;
@@ -980,11 +1047,51 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
     fSub.innerHTML = c.subs.map(function (s) { return '<option value="' + esc(s) + '"' + (s === sub ? ' selected' : '') + '>' + esc(subName(s)) + '</option>'; }).join('');
   }
   function setColor(id) { pick.color = id; fColor.querySelectorAll('button').forEach(function (b) { b.classList.toggle('on', b.dataset.color === id); }); }
-  fCat.addEventListener('change', function () { fillSubs(''); });
+  function fillFitSize() {
+    var c = fCat.value, kind = FIT_OF[c], fits = kind ? MG.t('add2.fits.' + kind) : [];
+    document.getElementById('fFitWrap').hidden = !kind;
+    document.getElementById('fFitList').innerHTML = (Array.isArray(fits) ? fits : []).map(function (f) { return '<option value="' + esc(f) + '">'; }).join('');
+    document.getElementById('fSizeList').innerHTML = (SIZES[c] || [MG.t('add2.oneSize')]).map(function (z) { return '<option value="' + esc(z) + '">'; }).join('');
+  }
+  fCat.addEventListener('change', function () { fillSubs(''); fillFitSize(); });
   fSub.addEventListener('change', function () { fillSubs(fSub.value); });
   fColor.addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) setColor(b.dataset.color); });
-  fPhoto.addEventListener('change', function () {
-    var f = fPhoto.files && fPhoto.files[0]; if (!f) return;
+  function setPhoto(src) {
+    pick.photo = src;
+    if (src) fPreview.src = src; else fPreview.removeAttribute('src');
+    document.getElementById('fPhotoBtn').hidden = !src;
+    showWays(true);
+  }
+  function showWays(on, way) {
+    fMenu.hidden = !on;
+    fGoogle.hidden = !(on && way === 'google');
+    fMenu.querySelectorAll('button').forEach(function (b) { b.classList.toggle('on', on && b.dataset.way === way); });
+  }
+  fMenu.addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    if (b.dataset.way === 'camera') openCamera();
+    else if (b.dataset.way === 'upload') fPhoto.click();
+    else { showWays(true, 'google'); googleLink(); fLink.focus(); }
+  });
+  // Google Images, searching for what has been typed so far
+  function googleLink() {
+    var c = catById(fCat.value), q = [document.getElementById('fBrand').value.trim(), document.getElementById('fName').value.trim() || (c.subs.length ? subName(fSub.value) : catName(c)), colorName(pick.color)].filter(Boolean).join(' ');
+    document.getElementById('fGoogleOpen').href = 'https://www.google.com/search?tbm=isch&q=' + encodeURIComponent(q);
+  }
+  document.getElementById('fGoogleOpen').addEventListener('click', googleLink);
+  function useLink() {
+    var url = fLink.value.trim(); if (!/^https?:\/\/\S+$/i.test(url)) { linkMsg(true); return; }
+    var img = new Image();
+    img.onload = function () { linkMsg(false); setPhoto(url); };
+    img.onerror = function () { linkMsg(true); };
+    img.src = url;
+  }
+  function linkMsg(bad) { fLinkMsg.hidden = !bad; fLinkMsg.className = bad ? 'g-bad' : ''; fLinkMsg.textContent = bad ? MG.t('add2.gBad') : ''; }
+  document.getElementById('fLinkUse').addEventListener('click', useLink);
+  fLink.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); useLink(); } });
+  [fPhoto, fCamera].forEach(function (input) { input.addEventListener('change', function () { readPhoto(input); }); });
+  function readPhoto(input) {
+    var f = input.files && input.files[0]; if (!f) return;
     var r = new FileReader();
     r.onload = function () {
       var img = new Image();
@@ -993,23 +1100,63 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
         var k = Math.min(1, 480 / Math.max(img.width, img.height)), cv = document.createElement('canvas');
         cv.width = Math.round(img.width * k); cv.height = Math.round(img.height * k);
         cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
-        try { pick.photo = cv.toDataURL('image/jpeg', 0.82); } catch (e) { pick.photo = r.result; }
-        fPreview.src = pick.photo; fPreview.hidden = false;
+        var data; try { data = cv.toDataURL('image/jpeg', 0.82); } catch (e) { data = r.result; }
+        setPhoto(data);
+        input.value = '';
       };
       img.src = r.result;
     };
     r.readAsDataURL(f);
-  });
+  }
   function openSheet(catId, sub) {
-    form.reset(); pick.photo = ''; fPreview.hidden = true; fPreview.removeAttribute('src'); setColor('black');
+    form.reset(); setPhoto(''); linkMsg(false); setColor('black');
     fCat.value = catId || 'coats';
-    document.getElementById('fCatWrap').hidden = !!catId;
+    fillFitSize();
     document.getElementById('sheetTitle').textContent = catId ? MG.t('addTo', { cat: catName(catById(catId)) }) : MG.t('addAnItem');
     fillSubs(sub);
     sheet.hidden = false;
     setTimeout(function () { document.getElementById('fName').focus(); }, 50);
   }
-  function closeSheet() { sheet.hidden = true; }
+  function closeSheet() { closeCamera(); sheet.hidden = true; }
+
+  // ---------- Camera ----------
+  var cam = document.getElementById('cam'), camVideo = document.getElementById('camVideo'), camStream = null, facing = 'environment';
+  function stopStream() { if (camStream) camStream.getTracks().forEach(function (t) { t.stop(); }); camStream = null; camVideo.srcObject = null; }
+  function startStream() {
+    stopStream();
+    return navigator.mediaDevices.getUserMedia({ video: { facingMode: facing, width: { ideal: 1280 }, height: { ideal: 1280 } }, audio: false }).then(function (st) {
+      camStream = st; camVideo.srcObject = st;
+      var t = st.getVideoTracks()[0], set = t && t.getSettings ? t.getSettings() : {};
+      // a laptop webcam or a front camera faces you, so show it like a mirror
+      camVideo.classList.toggle('mirror', set.facingMode ? set.facingMode === 'user' : facing === 'user');
+      return navigator.mediaDevices.enumerateDevices().then(function (ds) {
+        document.getElementById('camFlip').hidden = ds.filter(function (d) { return d.kind === 'videoinput'; }).length < 2;
+      }).catch(function () {});
+    });
+  }
+  function openCamera() {
+    // No camera access (old browser, not https, or refused): fall back to the phone's own camera / file picker
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { fCamera.click(); return; }
+    startStream().then(function () { cam.hidden = false; document.getElementById('camShoot').focus(); })
+      .catch(function () { stopStream(); fCamera.click(); });
+  }
+  function closeCamera() { stopStream(); cam.hidden = true; }
+  document.getElementById('camClose').addEventListener('click', closeCamera);
+  document.getElementById('camFlip').addEventListener('click', function () {
+    facing = facing === 'environment' ? 'user' : 'environment';
+    startStream().catch(closeCamera);
+  });
+  document.getElementById('camShoot').addEventListener('click', function () {
+    var w = camVideo.videoWidth, h = camVideo.videoHeight; if (!w || !h) return;
+    // Same small size as uploaded photos, so it fits in the browser's storage
+    var k = Math.min(1, 480 / Math.max(w, h)), cv = document.createElement('canvas'), g = cv.getContext('2d');
+    cv.width = Math.round(w * k); cv.height = Math.round(h * k);
+    if (camVideo.classList.contains('mirror')) { g.translate(cv.width, 0); g.scale(-1, 1); }
+    g.drawImage(camVideo, 0, 0, cv.width, cv.height);
+    setPhoto(cv.toDataURL('image/jpeg', 0.82));
+    closeCamera();
+  });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !cam.hidden) { e.stopImmediatePropagation(); closeCamera(); } }, true);
   sheet.addEventListener('click', function (e) { if (e.target.closest('[data-close]')) closeSheet(); });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !sheet.hidden) closeSheet(); });
   pager.addEventListener('click', function (e) {
@@ -1020,7 +1167,8 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     var c = catById(fCat.value);
-    var it = { cat: c.id, sub: c.subs.length ? fSub.value : '', name: document.getElementById('fName').value.trim(), brand: document.getElementById('fBrand').value.trim(), color: pick.color, photo: pick.photo, mine: true };
+    var it = { cat: c.id, sub: c.subs.length ? fSub.value : '', name: document.getElementById('fName').value.trim(), brand: document.getElementById('fBrand').value.trim(),
+      fit: FIT_OF[c.id] ? document.getElementById('fFit').value.trim() : '', size: document.getElementById('fSize').value.trim(), color: pick.color, photo: pick.photo, mine: true };
     if (!it.name) return;
     items.push(it);
     try { localStorage.setItem(STORE, JSON.stringify(items.filter(function (x) { return x.mine; }))); } catch (err) {}
@@ -1031,6 +1179,7 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
     } else {
       renderMain();
       openCat(c.id, c.subs.indexOf(it.sub) + 1);
+      setTimeout(function () { jumpTo(it.color, true); }, 80);
     }
   });
 
