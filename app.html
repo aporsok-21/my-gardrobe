@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F6F2EA">
+<title>My Gardrobe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400..900&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F6F2EA; --surface:#FFFDF8; --border:#DDD5C8; --ink:#2B2B2B; --black:#111111;
+  --muted:#6A635A; --taupe:#8E857A; --accent:#8B7D6B; --hover:#B5A898;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:#E6DFD4;font-family:'Archivo',sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible{outline:2px solid #444444;outline-offset:2px}
+
+/* The app shell: full screen on a phone, a phone-sized frame on a computer */
+.phone{position:relative;display:flex;flex-direction:column;height:100dvh;max-width:430px;margin:0 auto;background:var(--bg);overflow:hidden}
+@media (min-width:600px){
+  body{display:flex;align-items:center;justify-content:center;min-height:100vh}
+  .phone{width:400px;height:min(860px,calc(100vh - 48px));border-radius:44px;border:10px solid var(--ink);box-shadow:0 30px 70px rgba(43,43,43,.25)}
+}
+
+.screen{flex:1;overflow-y:auto;padding:22px 20px 28px;display:none;scrollbar-width:none}
+.screen::-webkit-scrollbar{display:none}
+.screen.active{display:block;animation:rise .35s ease-out}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* Bottom navigation */
+.tabbar{display:flex;background:var(--surface);border-top:1px solid var(--border);padding:8px 8px calc(10px + env(safe-area-inset-bottom))}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 0;background:none;border:0;border-radius:16px;color:var(--taupe);font-size:12px;font-weight:600;letter-spacing:.01em;transition:color .2s}
+.tab svg{width:26px;height:26px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round;transition:stroke-width .2s}
+.tab .pill{display:flex;align-items:center;justify-content:center;width:56px;height:32px;border-radius:999px;transition:background .2s}
+.tab.active{color:var(--ink);font-weight:700}
+.tab.active svg{stroke-width:2}
+.tab.active .pill{background:#E6DFD4}
+
+/* Shared pieces */
+.topline{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.kicker{font-size:13px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+h1{margin:0;font-size:30px;font-weight:800;letter-spacing:-.03em;line-height:1.05;color:var(--black)}
+h2{margin:0 0 12px;font-size:19px;font-weight:700;letter-spacing:-.02em}
+.sub{margin:6px 0 0;font-size:15px;color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:22px;padding:16px}
+.section{margin-top:26px}
+.round{width:42px;height:42px;border-radius:50%;border:1px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center}
+.round svg{width:20px;height:20px;stroke:var(--ink);stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.chips{display:flex;gap:8px;overflow-x:auto;margin:0 -20px;padding:2px 20px 4px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;padding:9px 16px;border-radius:999px;border:1px solid var(--border);background:var(--surface);font-size:14px;font-weight:600;color:var(--muted);transition:background .2s,color .2s}
+.chip.on{background:var(--ink);border-color:var(--ink);color:#F6F2EA}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:0 22px;border-radius:999px;border:0;background:var(--ink);color:#F6F2EA;font-size:15px;font-weight:700}
+.btn.ghost{background:var(--surface);color:var(--ink);border:1px solid var(--border)}
+.btn svg{width:18px;height:18px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round}
+
+/* Home */
+.hero{text-align:center;padding:4px 0 6px}
+.hero .motto{margin:2px 0 0;font-size:17px;font-weight:700;letter-spacing:-.01em}
+.look{display:flex;gap:14px;align-items:center}
+.look .art{flex:0 0 120px;height:140px;border-radius:16px;background:#E9E2D6;display:flex;align-items:center;justify-content:center}
+.look .art img{width:104px;height:104px}
+.tag{display:inline-block;padding:4px 10px;border-radius:999px;background:#EFE9DF;font-size:12px;font-weight:700;color:var(--accent);margin-bottom:8px}
+.look h3{margin:0 0 4px;font-size:18px;font-weight:700;letter-spacing:-.02em}
+.look p{margin:0 0 12px;font-size:14px;color:var(--muted);line-height:1.4}
+.look .btn{min-height:40px;font-size:14px;padding:0 16px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat{text-align:center;padding:14px 6px}
+.stat b{display:block;font-size:24px;font-weight:800;letter-spacing:-.03em}
+.stat span{font-size:12px;color:var(--muted);font-weight:600}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* Inspirations + wardrobe grids */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tile{border-radius:20px;overflow:hidden;background:var(--surface);border:1px solid var(--border)}
+.tile .art{display:flex;align-items:center;justify-content:center;aspect-ratio:1/1.05}
+.tile .art img{width:72%;height:auto}
+.tile .meta{padding:10px 12px 12px}
+.tile .meta b{display:block;font-size:14px;font-weight:700;letter-spacing:-.01em}
+.tile .meta span{font-size:12px;color:var(--muted)}
+.tile.tall .art{aspect-ratio:1/1.35}
+.feature{position:relative;border-radius:24px;overflow:hidden;background:#D8CFC2;padding:20px;display:flex;align-items:flex-end;justify-content:space-between;min-height:170px}
+.feature .txt{max-width:55%}
+.feature .tag{background:var(--surface)}
+.feature h3{margin:0;font-size:22px;font-weight:800;letter-spacing:-.03em;line-height:1.05}
+.feature img{position:absolute;right:8px;bottom:6px;width:150px}
+
+.search{display:flex;align-items:center;gap:10px;height:48px;padding:0 16px;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--taupe);font-size:15px;margin-bottom:14px}
+.search svg{width:18px;height:18px;stroke:var(--taupe);stroke-width:2;fill:none;stroke-linecap:round}
+.fab{position:absolute;right:20px;bottom:96px;width:58px;height:58px;border-radius:50%;border:0;background:var(--ink);display:none;align-items:center;justify-content:center;box-shadow:0 10px 24px rgba(43,43,43,.3)}
+.fab svg{width:26px;height:26px;stroke:#F6F2EA;stroke-width:2;fill:none;stroke-linecap:round}
+.fab.show{display:flex}
+</style>
+</head>
+<body>
+<div class="phone">
+
+  <!-- HOME -->
+  <main class="screen active" id="home" aria-label="Home">
+    <div class="topline">
+      <span class="kicker">Welcome</span>
+      <button class="round" aria-label="Notifications"><svg viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg></button>
+    </div>
+    <div class="hero">
+      <svg width="210" height="88" viewBox="0 0 240 100" role="img" aria-label="My Gardrobe"><g fill="none" stroke="#111111" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"><path d="M120 34v-6c0-3.4 2.4-5.2 5.2-6.6 2.8-1.4 5-3.6 5-7.4 0-4.8-3.8-8.2-8.6-8.2-4.4 0-7.8 2.8-8.6 6.6"/><path d="M120 34C92 44 54 57 30 65.5c-9 3.2-11 10.6-3.4 14.5"/><path d="M120 34c28 10 66 23 90 31.5 9 3.2 11 10.6 3.4 14.5"/></g><g fill="none" stroke="#8E857A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M120 34v-6c0-3.4 2.4-5.2 5.2-6.6 2.8-1.4 5-3.6 5-7.4 0-4.8-3.8-8.2-8.6-8.2-4.4 0-7.8 2.8-8.6 6.6"/><path d="M120 34C92 44 54 57 30 65.5c-9 3.2-11 10.6-3.4 14.5"/><path d="M120 34c28 10 66 23 90 31.5 9 3.2 11 10.6 3.4 14.5"/></g><text x="120" y="88" text-anchor="middle" textLength="166" lengthAdjust="spacingAndGlyphs" font-family="'Dancing Script', cursive" font-weight="700" font-size="31" fill="#8E857A" stroke="#111111" stroke-width=".7">My Gardrobe</text></svg>
+      <p class="motto">Style and organise your clothes</p>
+    </div>
+
+    <div class="section">
+      <h2>Today's look</h2>
+      <div class="card look">
+        <div class="art"><img src="assets/outfit.svg" alt=""></div>
+        <div>
+          <span class="tag">22°C · Sunny</span>
+          <h3>Easy summer</h3>
+          <p>Linen dress, straw hat and flats.</p>
+          <button class="btn">Wear this</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Your wardrobe</h2>
+      <div class="stats">
+        <div class="card stat"><b>48</b><span>Items</span></div>
+        <div class="card stat"><b>12</b><span>Outfits</span></div>
+        <div class="card stat"><b>7</b><span>Favourites</span></div>
+      </div>
+    </div>
+
+    <div class="section actions">
+      <button class="btn" data-go="wardrobe"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Add item</button>
+      <button class="btn ghost" data-go="inspo">Get inspired</button>
+    </div>
+  </main>
+
+  <!-- INSPIRATIONS -->
+  <main class="screen" id="inspo" aria-label="Inspirations">
+    <div class="topline">
+      <div><span class="kicker">Discover</span><h1>Inspirations</h1></div>
+      <button class="round" aria-label="Saved"><svg viewBox="0 0 24 24"><path d="M7 4h10v16l-5-3.5L7 20z"/></svg></button>
+    </div>
+    <div class="chips" data-chips>
+      <button class="chip on">All</button><button class="chip">Trends</button><button class="chip">Casual</button><button class="chip">Work</button><button class="chip">Evening</button><button class="chip">Weekend</button>
+    </div>
+
+    <div class="section">
+      <div class="feature">
+        <div class="txt"><span class="tag">This week</span><h3>Autumn neutrals</h3></div>
+        <img src="assets/magazine.svg" alt="">
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Looks from your clothes</h2>
+      <div class="grid">
+        <div class="tile tall"><div class="art" style="background:#E2DACD"><img src="assets/mannequin.svg" alt=""></div><div class="meta"><b>City classic</b><span>4 of your items</span></div></div>
+        <div class="tile"><div class="art" style="background:#EFE9DF"><img src="assets/outfit.svg" alt=""></div><div class="meta"><b>Office ready</b><span>3 of your items</span></div></div>
+        <div class="tile"><div class="art" style="background:#DCD3C6"><img src="assets/bags.svg" alt=""></div><div class="meta"><b>Bag edit</b><span>Trend</span></div></div>
+        <div class="tile tall"><div class="art" style="background:#E9E2D6"><img src="assets/step-dress.svg" alt=""></div><div class="meta"><b>Evening out</b><span>5 of your items</span></div></div>
+        <div class="tile"><div class="art" style="background:#E6DFD4"><img src="assets/swatches.svg" alt=""></div><div class="meta"><b>Colour match</b><span>Tip</span></div></div>
+        <div class="tile"><div class="art" style="background:#D8CFC2"><img src="assets/wardrobe.svg" alt=""></div><div class="meta"><b>Capsule closet</b><span>Guide</span></div></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- MY GARDROBE -->
+  <main class="screen" id="wardrobe" aria-label="My Gardrobe">
+    <div class="topline">
+      <div><span class="kicker">48 items</span><h1>My Gardrobe</h1></div>
+      <button class="round" aria-label="Filter"><svg viewBox="0 0 24 24"><path d="M4 7h16M7 12h10M10 17h4"/></svg></button>
+    </div>
+    <div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>Search your clothes</div>
+    <div class="chips" data-chips>
+      <button class="chip on">All</button><button class="chip">Tops</button><button class="chip">Bottoms</button><button class="chip">Dresses</button><button class="chip">Outerwear</button><button class="chip">Shoes</button><button class="chip">Bags</button>
+    </div>
+
+    <div class="section grid">
+      <div class="tile"><div class="art" style="background:#E2DACD"><img src="assets/step-coat.svg" alt=""></div><div class="meta"><b>Trench coat</b><span>Outerwear · Beige</span></div></div>
+      <div class="tile"><div class="art" style="background:#EFE9DF"><img src="assets/step-dress.svg" alt=""></div><div class="meta"><b>Wrap dress</b><span>Dresses · Black</span></div></div>
+      <div class="tile"><div class="art" style="background:#DCD3C6"><img src="assets/bags.svg" alt=""></div><div class="meta"><b>Leather bags</b><span>Bags · Brown</span></div></div>
+      <div class="tile"><div class="art" style="background:#E9E2D6"><img src="assets/outfit.svg" alt=""></div><div class="meta"><b>Weekend set</b><span>Outfit · 3 items</span></div></div>
+      <div class="tile"><div class="art" style="background:#E6DFD4"><img src="assets/mannequin.svg" alt=""></div><div class="meta"><b>Blazer</b><span>Outerwear · Navy</span></div></div>
+      <div class="tile"><div class="art" style="background:#D8CFC2"><img src="assets/swatches.svg" alt=""></div><div class="meta"><b>Knits</b><span>Tops · 6 colours</span></div></div>
+    </div>
+  </main>
+
+  <button class="fab" id="fab" aria-label="Add item"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+
+  <nav class="tabbar" aria-label="Main">
+    <button class="tab active" data-tab="home" aria-current="page">
+      <span class="pill"><svg viewBox="0 0 24 24"><path d="M3.5 11 12 4l8.5 7"/><path d="M5.5 9.5V20h13V9.5"/><path d="M10 20v-5.5h4V20"/></svg></span>Home
+    </button>
+    <button class="tab" data-tab="inspo">
+      <span class="pill"><svg viewBox="0 0 24 24"><path d="M11 4.5l1.8 5 5 1.8-5 1.8-1.8 5-1.8-5-5-1.8 5-1.8z"/><path d="M18.5 3v4M16.5 5h4"/></svg></span>Inspirations
+    </button>
+    <button class="tab" data-tab="wardrobe">
+      <span class="pill"><svg viewBox="0 0 24 24"><path d="M12 11V9.8c0-.9.6-1.3 1.2-1.7.6-.4 1.1-.9 1.1-1.8A2.3 2.3 0 0 0 12 4a2.3 2.3 0 0 0-2.2 1.7"/><path d="M12 11 3.4 17.2c-.9.7-.5 1.8.6 1.8h16c1.1 0 1.5-1.1.6-1.8z"/></svg></span>My Gardrobe
+    </button>
+  </nav>
+</div>
+
+<script>
+(function () {
+  var tabs = document.querySelectorAll('.tab');
+  var fab = document.getElementById('fab');
+
+  function show(id) {
+    document.querySelectorAll('.screen').forEach(function (s) { s.classList.toggle('active', s.id === id); });
+    tabs.forEach(function (t) {
+      var on = t.dataset.tab === id;
+      t.classList.toggle('active', on);
+      if (on) t.setAttribute('aria-current', 'page'); else t.removeAttribute('aria-current');
+    });
+    fab.classList.toggle('show', id === 'wardrobe');
+    document.getElementById(id).scrollTop = 0;
+    try { history.replaceState(null, '', '#' + id); } catch (e) {}
+  }
+
+  tabs.forEach(function (t) { t.addEventListener('click', function () { show(t.dataset.tab); }); });
+  document.querySelectorAll('[data-go]').forEach(function (b) { b.addEventListener('click', function () { show(b.dataset.go); }); });
+  document.querySelectorAll('[data-chips]').forEach(function (row) {
+    row.addEventListener('click', function (e) {
+      var c = e.target.closest('.chip'); if (!c) return;
+      row.querySelectorAll('.chip').forEach(function (x) { x.classList.toggle('on', x === c); });
+    });
+  });
+
+  var start = location.hash.slice(1);
+  if (document.getElementById(start) && document.getElementById(start).classList.contains('screen')) show(start);
+})();
+</script>
+</body>
+</html>
