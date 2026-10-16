@@ -66,17 +66,34 @@ h2{margin:0 0 12px;font-size:19px;font-weight:700;letter-spacing:-.02em}
 .gr-hang>svg{display:block;transform-origin:50.7% 5.8%;cursor:pointer}
 .gr-hang>svg.gr-swing{animation:grSwing 1.9s ease-in-out}
 @media (prefers-reduced-motion:reduce){.gr-hang,.gr-hang>svg.gr-swing{animation:none}}
-/* Welcome screen after the intro: Welcome, logo and motto, large and centred on white */
-.splash{position:absolute;inset:0;z-index:40;background:#FFFFFF;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:24px;text-align:center;cursor:pointer}
-.splash[hidden]{display:none}
-.splash.leaving{animation:grOut .5s both;pointer-events:none}
-.splash .greet{font-size:58px}
-.splash .gr-hang>svg{width:290px;max-width:78vw;height:auto}
-.splash .motto{margin:0;max-width:300px;font-size:21px;font-weight:700;letter-spacing:-.01em;line-height:1.3;color:var(--black)}
-.mg-wait .splash>*{visibility:hidden}
+/* Home: the logo on top; it swings when tapped */
+.home-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:-6px 0 10px}
+.home-logo{display:flex}
+.home-logo .gr-hang>svg{width:132px;height:auto}
+/* the weather and its warning sit centred under the header */
+.home-top{justify-content:center}
+.home-top .wx-wrap{flex:0 1 330px}
 /* Home: the weather sits beside the settings button */
 .home-top{align-items:flex-start;gap:10px}
 .wx-wrap{flex:1;min-width:0}
+.home-top .wx{padding:10px 0 9px;border-radius:18px}
+.home-top .wx:not(.open){padding-bottom:10px}
+.home-top .wx-slide{padding:0 12px}
+.home-top .wx-top{column-gap:8px;row-gap:3px}
+.home-top .wx-top .wx-ico{width:26px;height:26px}
+.home-top .wx-top .deg{font-size:24px}
+.home-top .wx-top .cond,.home-top .wx-top .day{font-size:11px}
+.home-top .wx-top .cond b,.home-top .wx-top .day b{font-size:12px}
+.home-top .wx-fold{top:9px;inset-inline-end:8px;width:26px;height:26px}
+.home-top .wx-warn{margin-top:6px;padding:6px 10px;gap:8px;border-radius:12px;font-size:11.5px;line-height:1.3}
+.home-top .wx-warn>svg{width:16px;height:16px}
+/* Home fits one screen: the Try on card takes whatever height is left */
+#home.active{display:flex;flex-direction:column;padding-top:16px;padding-bottom:14px}
+#home .home-top{margin-bottom:0}
+#home .try{flex:1;min-height:0;display:flex;flex-direction:column;margin-top:14px}
+#home .try h2{margin-bottom:8px;font-size:17px}
+#home .try .look{flex:1;min-height:236px}
+#home .try .look .art{height:auto}
 /* narrower card up here: day, date and city move to a second line */
 .home-top .wx-top{flex-wrap:wrap;row-gap:6px;padding-inline-end:34px}
 .home-top .wx-top .cond{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -180,7 +197,7 @@ h2{margin:0 0 12px;font-size:19px;font-weight:700;letter-spacing:-.02em}
 @keyframes grRise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 @keyframes grDoorL{0%{transform:rotateY(0)}100%{transform:rotateY(-105deg)}}
 @keyframes grDoorR{0%{transform:rotateY(0)}100%{transform:rotateY(105deg)}}
-@keyframes grDolly{from{transform:scale(1)}to{transform:scale(3.6)}}
+@keyframes grDolly{from{transform:scale(1)}to{transform:scale(5)}}
 .stage{position:absolute;inset:0;z-index:50;background:var(--bg);overflow:hidden}
 .stage[hidden]{display:none}
 .stage.leaving{animation:grOut .5s both}
@@ -194,7 +211,7 @@ h2{margin:0 0 12px;font-size:19px;font-weight:700;letter-spacing:-.02em}
 .gr-door-l>b{right:14px}
 .gr-door-r{border-left:1px solid #CFC5B6;transform-origin:right center;animation:grDoorR 1.4s .45s cubic-bezier(.65,0,.25,1) both}
 .gr-door-r>b{left:14px}
-.gr-flash{position:absolute;inset:0;background:var(--bg);pointer-events:none;animation:grFade .6s 3.7s both}
+.gr-flash{position:absolute;inset:0;background:var(--bg);pointer-events:none;animation:grFade .6s 5s both}
 @media (prefers-reduced-motion:reduce){.gr-dolly,.gr-front,.gr-door-l,.gr-door-r{animation-duration:.01s;animation-delay:0s}}
 /* My Gardrobe: search, categories, swipeable sub-category pages, colour rail */
 .search input{flex:1;min-width:0;height:100%;border:0;outline:none;background:transparent;font:inherit;font-size:15px;color:var(--ink)}
@@ -289,28 +306,7 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
 .sheet-head{display:flex;align-items:center;justify-content:space-between}
 .sheet-head h2{margin:0;font-size:22px;font-weight:800;letter-spacing:-.02em}
 
-/* Welcome on Home: handwritten, letters pop in one by one; hover or touch makes them bolder with white glints */
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-.greet{font-family:'Dancing Script',cursive;font-weight:700;font-size:40px;line-height:1.15;color:var(--black);-webkit-text-stroke:.8px var(--black);white-space:nowrap;cursor:default;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
-.greet .lt{display:inline-block;white-space:pre;animation:greetPop .7s cubic-bezier(.3,1.5,.5,1) both}
-.greet .lt i{position:relative;display:inline-block;font-style:normal;padding:.08em .1em;margin:-.08em -.1em;transition:-webkit-text-stroke-width .35s,transform .35s}
-.greet .lt i::before,.greet .lt i::after{content:'';position:absolute;pointer-events:none;background:#FFFFFF;opacity:0;clip-path:polygon(50% 0,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0 50%,39% 39%);filter:drop-shadow(0 0 1px rgba(176,141,87,.9))}
-.greet .lt i::after{width:.34em;height:.34em;top:14%;left:30%}
-.greet .lt i::before{width:.22em;height:.22em;top:56%;left:58%}
-.greet .lt:nth-child(3n+2) i::after{top:40%;left:8%}
-.greet .lt:nth-child(3n+2) i::before{top:12%;left:64%}
-.greet .lt:nth-child(3n) i::after{top:2%;left:52%}
-.greet .lt:nth-child(3n) i::before{top:62%;left:16%}
-.greet:hover .lt i,.greet.shine .lt i{-webkit-text-stroke-width:1.7px;transform:translateY(-1px);color:transparent;background-image:linear-gradient(105deg,#141414 0 42%,#8A8378 46%,#FFFFFF 49%,#FFF6DF 50%,#FFFFFF 51%,#8A8378 54%,#141414 58% 100%);background-size:320% 100%;-webkit-background-clip:text;background-clip:text;animation:greetGlint 1.9s calc(var(--i) * .09s) ease-in-out infinite}
-.greet:hover .lt i::after,.greet.shine .lt i::after{animation:greetTwinkle 1.5s calc(var(--i) * .23s) ease-in-out infinite}
-.greet:hover .lt i::before,.greet.shine .lt i::before{animation:greetTwinkle 1.5s calc(var(--i) * .23s + .7s) ease-in-out infinite}
-@keyframes greetPop{0%{opacity:0;transform:translateY(.6em) scale(.4)}55%{opacity:1;transform:translateY(-.2em) scale(1.12)}78%{transform:translateY(.04em) scale(.97)}100%{opacity:1;transform:none}}
-@keyframes greetGlint{0%{background-position:120% 0}60%,100%{background-position:-20% 0}}
-@keyframes greetTwinkle{0%,100%{opacity:0;transform:scale(.2) rotate(0)}45%{opacity:1;transform:scale(1) rotate(45deg)}70%{opacity:.25;transform:scale(.5) rotate(70deg)}}
-@media (prefers-reduced-motion:reduce){
-  .greet .lt,.greet:hover .lt i,.greet.shine .lt i{animation:none}
-  .greet:hover .lt i::before,.greet:hover .lt i::after,.greet.shine .lt i::before,.greet.shine .lt i::after{animation:none;opacity:.9;transform:none}
-}
 
 /* Settings */
 .set-group{display:flex;flex-direction:column;gap:8px}
@@ -409,15 +405,12 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
   <!-- INTRO: the walk-in closet from the website plays on open -->
   <div class="stage" id="stage" aria-hidden="true"></div>
 
-  <!-- WELCOME: shown for a few seconds after the intro, then Home -->
-  <div class="splash" id="splash">
-    <div class="greet" id="greet"><span class="sr" data-t="greeting">Welcome</span><span aria-hidden="true" id="greetLetters"></span></div>
-    <span class="gr-hang"><svg width="290" height="121" viewBox="0 0 240 100" role="img" aria-label="My Gardrobe"><g fill="none" stroke="#111111" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"><path d="M120 34v-6c0-3.4 2.4-5.2 5.2-6.6 2.8-1.4 5-3.6 5-7.4 0-4.8-3.8-8.2-8.6-8.2-4.4 0-7.8 2.8-8.6 6.6"/><path d="M120 34C92 44 54 57 30 65.5c-9 3.2-11 10.6-3.4 14.5"/><path d="M120 34c28 10 66 23 90 31.5 9 3.2 11 10.6 3.4 14.5"/></g><g fill="none" stroke="#8E857A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M120 34v-6c0-3.4 2.4-5.2 5.2-6.6 2.8-1.4 5-3.6 5-7.4 0-4.8-3.8-8.2-8.6-8.2-4.4 0-7.8 2.8-8.6 6.6"/><path d="M120 34C92 44 54 57 30 65.5c-9 3.2-11 10.6-3.4 14.5"/><path d="M120 34c28 10 66 23 90 31.5 9 3.2 11 10.6 3.4 14.5"/></g><text x="120" y="88" text-anchor="middle" textLength="166" lengthAdjust="spacingAndGlyphs" font-family="'Dancing Script', cursive" font-weight="700" font-size="31" fill="#8E857A" stroke="#111111" stroke-width=".7">My Gardrobe</text></svg></span>
-    <p class="motto" data-t="motto">Style and organise your clothes</p>
-  </div>
-
   <!-- HOME -->
   <main class="screen active" id="home" aria-label="Home" data-t-aria="home">
+    <div class="home-head">
+      <div class="home-logo"><span class="gr-hang"><svg width="150" height="63" viewBox="0 0 240 100" role="img" aria-label="My Gardrobe"><g fill="none" stroke="#111111" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"><path d="M120 34v-6c0-3.4 2.4-5.2 5.2-6.6 2.8-1.4 5-3.6 5-7.4 0-4.8-3.8-8.2-8.6-8.2-4.4 0-7.8 2.8-8.6 6.6"/><path d="M120 34C92 44 54 57 30 65.5c-9 3.2-11 10.6-3.4 14.5"/><path d="M120 34c28 10 66 23 90 31.5 9 3.2 11 10.6 3.4 14.5"/></g><g fill="none" stroke="#8E857A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M120 34v-6c0-3.4 2.4-5.2 5.2-6.6 2.8-1.4 5-3.6 5-7.4 0-4.8-3.8-8.2-8.6-8.2-4.4 0-7.8 2.8-8.6 6.6"/><path d="M120 34C92 44 54 57 30 65.5c-9 3.2-11 10.6-3.4 14.5"/><path d="M120 34c28 10 66 23 90 31.5 9 3.2 11 10.6 3.4 14.5"/></g><text x="120" y="88" text-anchor="middle" textLength="166" lengthAdjust="spacingAndGlyphs" font-family="'Dancing Script', cursive" font-weight="700" font-size="31" fill="#8E857A" stroke="#111111" stroke-width=".7">My Gardrobe</text></svg></span></div>
+      <button class="round" id="openSettings" aria-label="Settings" data-t-aria="settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+    </div>
     <div class="topline home-top">
       <div class="wx-wrap">
         <div class="wx" id="wx" aria-live="polite">
@@ -430,10 +423,9 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
         </div>
         <div class="wx-warn" id="wx-warn" role="status" hidden></div>
       </div>
-      <button class="round" id="openSettings" aria-label="Settings" data-t-aria="settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
     </div>
 
-    <div class="section">
+    <div class="section try">
       <h2 data-t="tryOn">Try on some clothes</h2>
       <div class="card look">
         <div class="art" id="cardAvatar"></div>
@@ -758,21 +750,13 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
   window.mgShow = show;
 
   tabs.forEach(function (t) { t.addEventListener('click', function () { show(t.dataset.tab); }); });
-  var logo = document.querySelector('#splash .gr-hang > svg');
+  var logo = document.querySelector('#home .gr-hang > svg');
   function swing() {
     if (logo.classList.contains('gr-swing')) return;
     logo.classList.add('gr-swing');
     logo.addEventListener('animationend', function () { logo.classList.remove('gr-swing'); }, { once: true });
   }
-  logo.addEventListener('mouseenter', swing);
   logo.addEventListener('click', swing);
-  // First swing once the walk-in closet intro has gone (or straight away when it is skipped)
-  var stage = document.getElementById('stage');
-  function firstSwing() { logo.parentNode.classList.add('go'); }
-  if (!stage || stage.hidden) setTimeout(firstSwing, 0);
-  else new MutationObserver(function (m, obs) {
-    if (stage.hidden || stage.classList.contains('leaving')) { obs.disconnect(); firstSwing(); }
-  }).observe(stage, { attributes: true, attributeFilter: ['class', 'hidden'] });
   document.querySelectorAll('[data-go]').forEach(function (b) { b.addEventListener('click', function () { show(b.dataset.go); }); });
   document.querySelectorAll('[data-chips]').forEach(function (row) {
     row.addEventListener('click', function (e) {
@@ -1484,6 +1468,27 @@ var GR_SCENE = (function () {
   var stage = document.getElementById('stage');
   var phone = document.querySelector('.phone');
 
+  // The end-wall mirror is 0.6 m wide, about 32 units in the scene; the camera ends on it
+  function mirrorFit(text) {
+    var n = Array.from(text).length, fs = Math.max(4.5, Math.min(8.5, 26 / (n * 0.5)));
+    return { fs: fs, squeeze: n * 0.5 * fs > 26 };
+  }
+  function mirrorWelcome() {
+    var text = MG.t('greeting'), f = mirrorFit(text);
+    return '<text id="mirrorWelcome" x="300" y="' + (500 + f.fs * 0.35).toFixed(1) + '" text-anchor="middle" font-family="\'Dancing Script\', cursive" font-weight="700" font-size="' + f.fs.toFixed(1) + '"' +
+      (f.squeeze ? ' textLength="26" lengthAdjust="spacingAndGlyphs"' : '') + ' fill="#2B2B2B" stroke="#2B2B2B" stroke-width=".15" opacity=".92">' +
+      text.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</text>';
+  }
+  MG.onLang(function () {
+    var el = document.getElementById('mirrorWelcome'); if (!el) return;
+    var text = MG.t('greeting'), f = mirrorFit(text);
+    el.textContent = text;
+    el.setAttribute('font-size', f.fs.toFixed(1));
+    el.setAttribute('y', (500 + f.fs * 0.35).toFixed(1));
+    if (f.squeeze) { el.setAttribute('textLength', '26'); el.setAttribute('lengthAdjust', 'spacingAndGlyphs'); }
+    else { el.removeAttribute('textLength'); el.removeAttribute('lengthAdjust'); }
+  });
+
   function buildStage() {
     var a = phone.clientWidth / Math.max(1, phone.clientHeight);
     var box = a > 0.6 ? (300 - 500 * a).toFixed(0) + ' 0 ' + (1000 * a).toFixed(0) + ' 1000' : '0 0 600 1000';
@@ -1494,6 +1499,7 @@ var GR_SCENE = (function () {
     }).join('');
     stage.innerHTML =
       '<div class="gr-dolly"><svg xmlns="' + NS + '" viewBox="' + box + '" preserveAspectRatio="xMidYMid slice">' + DEFS + paths +
+      mirrorWelcome() +
       '<rect x="-1500" y="0" width="3600" height="1000" fill="url(#grVig)"></rect></svg></div>' +
       '<div class="gr-front"><div class="gr-door gr-door-l"><i></i><b></b></div><div class="gr-door gr-door-r"><i></i><b></b></div></div>' +
       '<div class="gr-flash"></div>';
@@ -1505,7 +1511,7 @@ var GR_SCENE = (function () {
   setTimeout(function () {
     stage.classList.add('leaving');
     setTimeout(function () { stage.hidden = true; stage.innerHTML = ''; }, 500);
-  }, 4400);
+  }, 5700);
 })();
 
 // ---- Personal figure: drawn from gender, height, weight and (optional) body shape
@@ -2246,45 +2252,9 @@ var GR_SCENE = (function () {
 })();
 </script>
 <script>
-// Home: the handwritten Welcome, and the Settings sheet
+// Home: the Settings sheet
 (function () {
   var $ = function (id) { return document.getElementById(id); };
-
-  // Welcome letters pop in one by one; scripts whose letters join or stack (Arabic, Hindi, Thai…) stay whole
-  function letters(text) {
-    var split = true;
-    try { split = /^[\p{sc=Latin}\p{sc=Cyrillic}\p{sc=Greek}\p{sc=Armenian}\p{sc=Georgian}\p{sc=Han}\p{sc=Hiragana}\p{sc=Katakana}\p{sc=Hangul}\p{sc=Hebrew}\p{M}\p{P}\s]+$/u.test(text); } catch (e) {}
-    if (!split) return [text];
-    try { if (window.Intl && Intl.Segmenter) return Array.from(new Intl.Segmenter(undefined, { granularity: 'grapheme' }).segment(text), function (x) { return x.segment; }); } catch (e) {}
-    return Array.from(text);
-  }
-  function greet() {
-    $('greetLetters').innerHTML = letters(MG.t('greeting')).map(function (ch, i) {
-      return '<span class="lt" style="animation-delay:' + (0.25 + i * 0.09).toFixed(2) + 's;--i:' + i + '"><i>' + ch.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</i></span>';
-    }).join('');
-  }
-  greet();
-  // The white Welcome screen stays a few seconds after the intro (tap to skip), then shows Home
-  var splash = $('splash'), splashT;
-  function hideSplash() {
-    if (splash.hidden || splash.classList.contains('leaving')) return;
-    clearTimeout(splashT);
-    splash.classList.add('leaving');
-    setTimeout(function () { splash.hidden = true; }, 500);
-  }
-  splash.addEventListener('click', hideSplash);
-  function showSplash() { splashT = setTimeout(hideSplash, 3400); }
-  // Wait for the opening animation before the letters pop in
-  var stage = $('stage');
-  if (stage && !stage.hidden) {
-    $('greetLetters').style.visibility = 'hidden';
-    var wait = setInterval(function () { if (stage.hidden) { clearInterval(wait); $('greetLetters').style.visibility = ''; greet(); showSplash(); } }, 150);
-  } else showSplash();
-  var shineT;
-  $('greet').addEventListener('touchstart', function () {
-    var g = $('greet'); g.classList.add('shine');
-    clearTimeout(shineT); shineT = setTimeout(function () { g.classList.remove('shine'); }, 2600);
-  }, { passive: true });
 
   // Settings
   var box = $('settings');
@@ -2346,7 +2316,6 @@ var GR_SCENE = (function () {
   });
   $('setFigure').addEventListener('click', function () { closeSettings(); if (window.mgWardrobe && window.mgWardrobe.openFigure) window.mgWardrobe.openFigure(); });
 
-  MG.onLang(greet);
 })();
 </script>
 </body>
