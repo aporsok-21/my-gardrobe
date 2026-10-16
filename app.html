@@ -60,6 +60,13 @@ h2{margin:0 0 12px;font-size:19px;font-weight:700;letter-spacing:-.02em}
 
 /* Home */
 .hero{text-align:center;padding:4px 0 6px}
+/* Hanger swing, as on the website: once when Home appears after the intro, again on hover or tap */
+@keyframes grSwing{0%{transform:rotate(0)}14%{transform:rotate(7deg)}31%{transform:rotate(-5deg)}49%{transform:rotate(3.2deg)}67%{transform:rotate(-1.7deg)}84%{transform:rotate(.6deg)}100%{transform:rotate(0)}}
+.gr-hang{display:inline-block;transform-origin:50.7% 5.8%}
+.gr-hang.go{animation:grSwing 2.6s .4s ease-in-out both}
+.gr-hang>svg{display:block;transform-origin:50.7% 5.8%;cursor:pointer}
+.gr-hang>svg.gr-swing{animation:grSwing 1.9s ease-in-out}
+@media (prefers-reduced-motion:reduce){.gr-hang,.gr-hang>svg.gr-swing{animation:none}}
 .hero .motto{margin:2px 0 0;font-size:17px;font-weight:700;letter-spacing:-.01em}
 .look{position:relative;display:flex;gap:12px;align-items:stretch;padding:12px}
 .look .art{flex:1 1 56%;min-width:0;height:350px;border-radius:18px;background:#E9E2D6;display:flex;align-items:flex-end;justify-content:center;padding-top:6px;overflow:hidden}
@@ -281,7 +288,7 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
       <button class="round" aria-label="Notifications"><svg viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg></button>
     </div>
     <div class="hero">
-      <svg width="210" height="88" viewBox="0 0 240 100" role="img" aria-label="My Gardrobe"><g fill="none" stroke="#111111" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"><path d="M120 34v-6c0-3.4 2.4-5.2 5.2-6.6 2.8-1.4 5-3.6 5-7.4 0-4.8-3.8-8.2-8.6-8.2-4.4 0-7.8 2.8-8.6 6.6"/><path d="M120 34C92 44 54 57 30 65.5c-9 3.2-11 10.6-3.4 14.5"/><path d="M120 34c28 10 66 23 90 31.5 9 3.2 11 10.6 3.4 14.5"/></g><g fill="none" stroke="#8E857A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M120 34v-6c0-3.4 2.4-5.2 5.2-6.6 2.8-1.4 5-3.6 5-7.4 0-4.8-3.8-8.2-8.6-8.2-4.4 0-7.8 2.8-8.6 6.6"/><path d="M120 34C92 44 54 57 30 65.5c-9 3.2-11 10.6-3.4 14.5"/><path d="M120 34c28 10 66 23 90 31.5 9 3.2 11 10.6 3.4 14.5"/></g><text x="120" y="88" text-anchor="middle" textLength="166" lengthAdjust="spacingAndGlyphs" font-family="'Dancing Script', cursive" font-weight="700" font-size="31" fill="#8E857A" stroke="#111111" stroke-width=".7">My Gardrobe</text></svg>
+      <span class="gr-hang"><svg width="210" height="88" viewBox="0 0 240 100" role="img" aria-label="My Gardrobe"><g fill="none" stroke="#111111" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"><path d="M120 34v-6c0-3.4 2.4-5.2 5.2-6.6 2.8-1.4 5-3.6 5-7.4 0-4.8-3.8-8.2-8.6-8.2-4.4 0-7.8 2.8-8.6 6.6"/><path d="M120 34C92 44 54 57 30 65.5c-9 3.2-11 10.6-3.4 14.5"/><path d="M120 34c28 10 66 23 90 31.5 9 3.2 11 10.6 3.4 14.5"/></g><g fill="none" stroke="#8E857A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M120 34v-6c0-3.4 2.4-5.2 5.2-6.6 2.8-1.4 5-3.6 5-7.4 0-4.8-3.8-8.2-8.6-8.2-4.4 0-7.8 2.8-8.6 6.6"/><path d="M120 34C92 44 54 57 30 65.5c-9 3.2-11 10.6-3.4 14.5"/><path d="M120 34c28 10 66 23 90 31.5 9 3.2 11 10.6 3.4 14.5"/></g><text x="120" y="88" text-anchor="middle" textLength="166" lengthAdjust="spacingAndGlyphs" font-family="'Dancing Script', cursive" font-weight="700" font-size="31" fill="#8E857A" stroke="#111111" stroke-width=".7">My Gardrobe</text></svg></span>
       <p class="motto">Style and organise your clothes</p>
     </div>
 
@@ -475,6 +482,21 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
   window.mgShow = show;
 
   tabs.forEach(function (t) { t.addEventListener('click', function () { show(t.dataset.tab); }); });
+  var logo = document.querySelector('.hero .gr-hang > svg');
+  function swing() {
+    if (logo.classList.contains('gr-swing')) return;
+    logo.classList.add('gr-swing');
+    logo.addEventListener('animationend', function () { logo.classList.remove('gr-swing'); }, { once: true });
+  }
+  logo.addEventListener('mouseenter', swing);
+  logo.addEventListener('click', swing);
+  // First swing once the walk-in closet intro has gone (or straight away when it is skipped)
+  var stage = document.getElementById('stage');
+  function firstSwing() { logo.parentNode.classList.add('go'); }
+  if (!stage || stage.hidden) setTimeout(firstSwing, 0);
+  else new MutationObserver(function (m, obs) {
+    if (stage.hidden || stage.classList.contains('leaving')) { obs.disconnect(); firstSwing(); }
+  }).observe(stage, { attributes: true, attributeFilter: ['class', 'hidden'] });
   document.querySelectorAll('[data-go]').forEach(function (b) { b.addEventListener('click', function () { show(b.dataset.go); }); });
   document.querySelectorAll('[data-chips]').forEach(function (row) {
     row.addEventListener('click', function (e) {
