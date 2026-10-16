@@ -322,12 +322,23 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
 .tile .wash svg{width:16px;height:16px;fill:none;stroke:var(--muted);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .tile.item.washing .wash{background:#3F5F8C;border-color:#3F5F8C}
 .tile.item.washing .wash svg{stroke:#F6F2EA}
-.tile.item.washing .art>:not(.wash){opacity:.35}
+.tile.item.washing .art>:not(.wash):not(.fav){opacity:.35}
 .tile.item.washing .meta b{color:var(--muted)}
 .tile .badge.wash-badge{background:#3F5F8C}
 #category .tile .wash{top:6px;inset-inline-start:6px;width:26px;height:26px}
 #category .tile .wash svg{width:14px;height:14px}
 .tile .meta em{display:block;margin-top:2px;font-style:normal;font-size:11px;font-weight:600;color:var(--taupe)}
+/* Favourites: a heart on every piece, and a Favourites chip on My Gardrobe */
+.tile .fav{position:absolute;inset-inline-end:8px;bottom:8px;z-index:1;width:30px;height:30px;padding:0;border-radius:50%;border:1px solid var(--border);background:rgba(255,253,248,.92);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.tile .fav svg{width:16px;height:16px;fill:none;stroke:var(--muted);stroke-width:1.8;stroke-linejoin:round;transition:transform .2s}
+.tile .fav[aria-pressed="true"] svg{fill:#A9362F;stroke:#A9362F}
+.tile .fav:active svg{transform:scale(1.25)}
+#category .tile .fav{inset-inline-end:6px;bottom:6px;width:26px;height:26px}
+#category .tile .fav svg{width:14px;height:14px}
+.tile.item .art{position:relative}
+.chip.fav-chip{display:inline-flex;align-items:center;gap:6px}
+.chip.fav-chip svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round}
+.chip.fav-chip.on svg{fill:currentColor}
 .wash-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 8px}
 .wash-head .label{margin:0}
 .wash-head button{padding:6px 12px;border-radius:999px;border:1px solid var(--border);background:var(--surface);font:inherit;font-size:12px;font-weight:700;color:var(--ink);cursor:pointer}
@@ -891,6 +902,10 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
     if (on && W8.onWashed) W8.onWashed(it);
     W8.refresh();
   };
+  var favs = loadMap('mg-fav');
+  W8.isFav = function (it) { return !!favs[keyOf(it)]; };
+  W8.setFav = function (it, on) { if (on) favs[keyOf(it)] = 1; else delete favs[keyOf(it)]; saveMap('mg-fav', favs); W8.refresh(); };
+  var HEART = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 7.5 2.6C19.5 15.4 12 20 12 20z"/></svg>';
   W8.wornCount = function (it) { var w = wornLog[keyOf(it)]; return w ? w.n : 0; };
   W8.addWear = function (key, delta, day) {
     var w = wornLog[key] || { n: 0 };
@@ -937,7 +952,8 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
     var badge = washing ? '<span class="badge wash-badge">' + esc(MG.t('wash.badge')) + '</span>' : worn ? '<span class="badge">' + esc(MG.t('wearing')) + '</span>' : '';
     return '<div class="tile item' + (worn ? ' wearing' : '') + (washing ? ' washing' : '') + '" data-i="' + items.indexOf(it) + '">' + badge +
       '<button type="button" class="wash" aria-pressed="' + washing + '" aria-label="' + esc(MG.t(washing ? 'wash.off' : 'wash.on')) + '" title="' + esc(MG.t(washing ? 'wash.off' : 'wash.on')) + '">' + WASH_ICON + '</button>' +
-      '<div class="art" style="background:#EFE9DF">' + art + '</div><div class="meta"><b>' + esc(it.name) + '</b><span>' + esc([it.brand, it.size, colorName(col[0])].filter(Boolean).join(' · ')) + '</span>' +
+      '<div class="art" style="background:#EFE9DF">' + art + '<button type="button" class="fav" aria-pressed="' + W8.isFav(it) + '" aria-label="' + esc(MG.t(W8.isFav(it) ? 'fav.off' : 'fav.on')) + '" title="' + esc(MG.t(W8.isFav(it) ? 'fav.off' : 'fav.on')) + '">' + HEART + '</button></div>' +
+      '<div class="meta"><b>' + esc(it.name) + '</b><span>' + esc([it.brand, it.size, colorName(col[0])].filter(Boolean).join(' · ')) + '</span>' +
       '<em>' + esc(n ? MG.t('worn.n', { n: n }) : MG.t('worn.never')) + '</em></div></div>';
   }
   function catTile(c, subIndex, label) {
@@ -955,11 +971,19 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
   var wQ = '';
   var wBody = document.getElementById('wBody');
   var wChips = document.getElementById('wChips');
-  function renderChips() { wChips.innerHTML = '<button class="chip on">' + esc(MG.t('all')) + '</button>' + CATS.map(function (c) { return '<button class="chip" data-cat="' + c.id + '">' + esc(catName(c)) + '</button>'; }).join(''); }
+  var favOnly = false;
+  function renderChips() { wChips.innerHTML = '<button class="chip' + (favOnly ? '' : ' on') + '" data-all>' + esc(MG.t('all')) + '</button>' +
+    '<button class="chip fav-chip' + (favOnly ? ' on' : '') + '" data-fav aria-pressed="' + favOnly + '">' + HEART + esc(MG.t('fav.chip')) + '</button>' + CATS.map(function (c) { return '<button class="chip" data-cat="' + c.id + '">' + esc(catName(c)) + '</button>'; }).join(''); }
   renderChips();
   wireSearch(document.getElementById('wSearch'), function (v) { wQ = v; renderMain(); });
 
   function renderMain() {
+    if (favOnly) {
+      var fl = items.filter(function (it) { return W8.isFav(it) && (!tokens(wQ).length || matches(it, wQ)); }).sort(bySort);
+      wBody.innerHTML = fl.length ? '<div class="label">' + esc(MG.t('fav.chip')) + ' · ' + fl.length + '</div><div class="grid items3">' + fl.map(itemTile).join('') + '</div>'
+        : '<p class="empty">' + esc(MG.t(tokens(wQ).length ? 'noMatchAll' : 'fav.empty', { q: wQ.trim() })) + '</p>';
+      return;
+    }
     if (!tokens(wQ).length) {
       var washing = items.filter(W8.inWash).sort(bySort);
       wBody.innerHTML = (washing.length ? '<div class="wash-head"><div class="label">' + esc(MG.t('wash.title')) + ' · ' + washing.length + '</div><button type="button" id="allClean">' + esc(MG.t('wash.allClean')) + '</button></div>' +
@@ -982,6 +1006,8 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
   }
   // the basket on a tile puts that piece in the wash (or takes it out) instead of wearing it
   function washClick(e) {
+    var h = e.target.closest('.tile.item .fav');
+    if (h) { var fi = items[+h.closest('.tile.item').dataset.i]; W8.setFav(fi, !W8.isFav(fi)); return true; }
     var w = e.target.closest('.tile.item .wash'); if (!w) return false;
     var it = items[+w.closest('.tile.item').dataset.i];
     W8.setWash(it, !W8.inWash(it));
@@ -993,7 +1019,11 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
     var b = e.target.closest('.tile.cat'); if (b) return openCat(b.dataset.cat, +b.dataset.sub);
     var t = e.target.closest('.tile.item'); if (t && W8.onItem && W8.onItem(items[+t.dataset.i])) renderMain();
   });
-  wChips.addEventListener('click', function (e) { var b = e.target.closest('.chip[data-cat]'); if (b) openCat(b.dataset.cat, 0); });
+  wChips.addEventListener('click', function (e) {
+    if (e.target.closest('[data-fav]')) { favOnly = !favOnly; renderChips(); renderMain(); return; }
+    if (e.target.closest('[data-all]')) { if (favOnly) { favOnly = false; renderChips(); renderMain(); } return; }
+    var b = e.target.closest('.chip[data-cat]'); if (b) openCat(b.dataset.cat, 0);
+  });
 
   // ---------- One category: swipeable type pages, colour rail, add tile ----------
   var cur = null, cQ = '', pageIdx = 0;
