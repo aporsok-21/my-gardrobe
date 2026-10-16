@@ -100,7 +100,16 @@ h2{margin:0 0 12px;font-size:19px;font-weight:700;letter-spacing:-.02em}
 .wx-top .cond b{display:block;font-size:13px;color:var(--ink)}
 .wx-top .day{text-align:end;font-size:12px;font-weight:600;color:var(--muted);line-height:1.3;white-space:nowrap}
 .wx-top .day b{display:block;font-size:13px;color:var(--ink)}
-.wx-hours{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-top:12px;padding-top:10px;border-top:1px solid rgba(142,133,122,.25)}
+.wx-hours{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-top:12px;padding-top:10px;border-top:1px solid rgba(142,133,122,.25);max-height:90px;overflow:hidden;transition:max-height .3s ease,margin .3s ease,padding .3s ease,opacity .25s ease,border-color .3s}
+.wx-top{padding-inline-end:30px;cursor:pointer}
+.wx-fold{position:absolute;top:14px;inset-inline-end:10px;z-index:1;width:30px;height:30px;padding:0;border:0;border-radius:50%;background:rgba(255,253,248,.7);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.wx-fold svg{width:16px;height:16px;fill:none;stroke:var(--ink);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .3s ease}
+.wx.open .wx-fold svg{transform:rotate(180deg)}
+.wx:not(.open){padding-bottom:14px}
+.wx:not(.open) .wx-hours{max-height:0;margin-top:0;padding-top:0;opacity:0;border-color:transparent}
+.wx:not(.open) .wx-track{overflow-x:hidden}
+.wx:not(.open) .wx-dots,.wx:not(.open) .wx-note{display:none}
+@media (prefers-reduced-motion:reduce){.wx-hours,.wx-fold svg{transition:none}}
 .wx-h{text-align:center;line-height:1.2}
 .wx-h small{display:block;font-size:10px;font-weight:600;color:var(--muted)}
 .wx-h .wx-ico{display:block;width:18px;height:18px;margin:4px auto 3px}
@@ -388,6 +397,19 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
     </div>
 
     <div class="section">
+      <h2 data-t="weather">Weather</h2>
+      <div class="wx" id="wx" aria-live="polite">
+        <button type="button" class="wx-fold" id="wx-fold" aria-expanded="false" aria-controls="wx-track" aria-label="Show the hours" data-t-aria="wxShow"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="wx-track" id="wx-track" tabindex="0" aria-label="Weather by day, swipe for the next days" data-t-aria="wxAria">
+          <div class="wx-slide"><div class="wx-top"><span class="deg">–°</span><span class="cond"><b data-t="wxLoading">Loading forecast</b><span id="wx-city" data-t="wxFinding">Finding your location…</span></span><span class="day"><b data-t="today">Today</b><span id="wx-date"></span></span></div></div>
+        </div>
+        <div class="wx-dots" id="wx-dots"></div>
+        <p class="wx-note" id="wx-note" hidden></p>
+      </div>
+      <div class="wx-warn" id="wx-warn" role="status" hidden></div>
+    </div>
+
+    <div class="section">
       <h2 data-t="tryOn">Try on some clothes</h2>
       <div class="card look">
         <div class="art" id="cardAvatar"></div>
@@ -401,17 +423,6 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
       </div>
     </div>
 
-    <div class="section">
-      <h2 data-t="weather">Weather</h2>
-      <div class="wx" id="wx" aria-live="polite">
-        <div class="wx-track" id="wx-track" tabindex="0" aria-label="Weather by day, swipe for the next days" data-t-aria="wxAria">
-          <div class="wx-slide"><div class="wx-top"><span class="deg">–°</span><span class="cond"><b data-t="wxLoading">Loading forecast</b><span id="wx-city" data-t="wxFinding">Finding your location…</span></span><span class="day"><b data-t="today">Today</b><span id="wx-date"></span></span></div></div>
-        </div>
-        <div class="wx-dots" id="wx-dots"></div>
-        <p class="wx-note" id="wx-note" hidden></p>
-      </div>
-      <div class="wx-warn" id="wx-warn" role="status" hidden></div>
-    </div>
   </main>
 
   <!-- INSPIRATIONS -->
@@ -2119,9 +2130,27 @@ var GR_SCENE = (function () {
     track.scrollTo({ left: (MG.rtl() ? -1 : 1) * [].indexOf.call(b.parentNode.children, b) * track.clientWidth, behavior: 'smooth' });
   });
   // Mouse drag on computers (touch already swipes natively)
+  // Folded by default to the top row; the arrow (or a tap on the top row) shows the hours and the other days
+  var wx = $('wx'), fold = $('wx-fold'), dragged = false;
+  function setOpen(on, remember) {
+    wx.classList.toggle('open', on);
+    fold.setAttribute('aria-expanded', on ? 'true' : 'false');
+    fold.setAttribute('aria-label', MG.t(on ? 'wxHide' : 'wxShow'));
+    fold.dataset.tAria = on ? 'wxHide' : 'wxShow';
+    if (!on) track.scrollTo({ left: 0 });
+    if (remember) try { localStorage.setItem('mg-wx-open', on ? '1' : '0'); } catch (e) {}
+  }
+  var wasOpen = false; try { wasOpen = localStorage.getItem('mg-wx-open') === '1'; } catch (e) {}
+  setOpen(wasOpen);
+  fold.addEventListener('click', function () { setOpen(!wx.classList.contains('open'), true); });
+  track.addEventListener('click', function (e) {
+    if (dragged) { dragged = false; return; }
+    if (e.target.closest('.wx-top')) setOpen(!wx.classList.contains('open'), true);
+  });
+
   var drag = null;
-  track.addEventListener('pointerdown', function (e) { if (e.pointerType === 'mouse') { drag = { x: e.clientX, left: track.scrollLeft }; track.classList.add('drag'); } });
-  window.addEventListener('pointermove', function (e) { if (drag) track.scrollLeft = drag.left - (e.clientX - drag.x); });
+  track.addEventListener('pointerdown', function (e) { dragged = false; if (e.pointerType === 'mouse' && wx.classList.contains('open')) { drag = { x: e.clientX, left: track.scrollLeft }; track.classList.add('drag'); } });
+  window.addEventListener('pointermove', function (e) { if (drag) { if (Math.abs(e.clientX - drag.x) > 6) dragged = true; track.scrollLeft = drag.left - (e.clientX - drag.x); } });
   window.addEventListener('pointerup', function () {
     if (!drag) return;
     var i = Math.round(Math.abs(track.scrollLeft) / track.clientWidth); drag = null;
