@@ -115,6 +115,9 @@ h2{margin:0 0 12px;font-size:19px;font-weight:700;letter-spacing:-.02em}
 .flatlay svg{width:58%;height:58%}
 .fdot{position:absolute;right:6px;bottom:6px;width:11px;height:11px;border-radius:50%;border:1.5px solid #FFFDF8;box-shadow:0 0 0 1px rgba(0,0,0,.15)}
 .combo .btn{min-height:40px;font-size:14px;padding:0 12px}
+.combo .btn:disabled{opacity:.35;cursor:default}
+.combo .btn{min-height:36px}
+.combo .btn + .btn{margin-top:-2px}
 .combo small{font-size:11px;font-weight:600;color:var(--muted);text-align:center;line-height:1.3}
 /* Weather on Home: a compact card per day, swipe for the next days */
 .wx{position:relative;padding:14px 0 10px;overflow:hidden;border-radius:22px;border:1px solid #E2D9CB;background:linear-gradient(160deg,#F4EFE6,#EEE7DC)}
@@ -448,6 +451,7 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
           <span class="tag" data-t="lookOfDay">Look of the day</span>
           <div class="flatlay" id="flatlay"></div>
           <button class="btn" id="recreate">Recreate</button>
+          <button class="btn ghost" id="takeOff" data-t="takeOff">Take off</button>
           <small id="comboNote"></small>
         </div>
       </div>
@@ -1985,10 +1989,15 @@ var GR_SCENE = (function () {
     if (slot === 'top' || slot === 'bottom') delete outfit.dress;
   }
   try { var saved = JSON.parse(localStorage.getItem('mg-outfit')) || {}; Object.keys(saved).forEach(function (sl) { var it = findKey(saved[sl]); if (it) wear(SLOT_OF[it.cat] === 'jewelry' ? jewelKey(it) : sl, it); }); } catch (e) {}
+  function keysOf(o) { var keys = {}; Object.keys(o).forEach(function (sl) { keys[sl] = o[sl].key; }); return keys; }
   function saveOutfit() {
-    var keys = {}; Object.keys(outfit).forEach(function (sl) { keys[sl] = outfit[sl].key; });
-    try { localStorage.setItem('mg-outfit', JSON.stringify(keys)); } catch (e) {}
+    try { localStorage.setItem('mg-outfit', JSON.stringify(keysOf(outfit))); localStorage.setItem('mg-outfit-prev', prev ? JSON.stringify(keysOf(prev)) : ''); } catch (e) {}
   }
+  // The look before the last change, so the button can bring it back (and forth)
+  var prev = null;
+  try { var pk = JSON.parse(localStorage.getItem('mg-outfit-prev') || 'null'); if (pk) { prev = {}; Object.keys(pk).forEach(function (sl) { var it = findKey(pk[sl]); if (it) { var k = keyOf(it); prev[sl] = cache[k] || (cache[k] = garment(it)); } }); } } catch (e) {}
+  function remember() { prev = Object.assign({}, outfit); }
+  function sameLook(a, b) { return JSON.stringify(keysOf(a)) === JSON.stringify(keysOf(b)); }
   // each kind of jewellery has its own place, so a new necklace replaces the old one
   function jewelKey(it) { return JEWEL_OF[it.sub] || 'jewelry'; }
   function isCombo() { return !outfit.dress && SLOTS.every(function (s) { return !COMBO[s.slot] || (outfit[s.slot] && outfit[s.slot].name === COMBO[s.slot]); }); }
@@ -2001,16 +2010,22 @@ var GR_SCENE = (function () {
       return '<button style="background:' + s.bg + '" data-cat="' + s.cat + '" aria-label="' + MG.t('cat.' + s.cat) + '">' + W8.lineIcon(cat.icon) +
         (w ? '<i class="fdot" style="background:' + w.color + '"></i>' : '') + '</button>';
     }).join('');
-    $('recreate').textContent = MG.t(isCombo() ? 'takeOff' : 'recreate');
+    $('recreate').textContent = MG.t('prevLook');
+    $('recreate').disabled = !prev || sameLook(prev, outfit);
+    $('takeOff').disabled = !Object.keys(outfit).length;
     $('comboNote').textContent = MG.t(Object.keys(outfit).length ? 'tapSwap' : 'tapPick');
   }
   function showCard() { cardFig.set(Object.assign({}, fig, { outfit: outfit })); }
   function refresh() { saveOutfit(); renderCombo(); showCard(); W8.refresh(); }
 
+  // Take off: everything comes off (and Previous look can bring it back)
+  $('takeOff').addEventListener('click', function () {
+    if (!Object.keys(outfit).length) return;
+    remember(); outfit = {}; refresh();
+  });
   $('recreate').addEventListener('click', function () {
-    var clear = isCombo();
-    SLOTS.forEach(function (s) { wear(s.slot, clear ? null : findName(COMBO[s.slot])); });
-    delete outfit.jewelry2; delete outfit.jewelry3; delete outfit.jewelry4;
+    if (!prev) return;
+    var now = outfit; outfit = Object.assign({}, prev); prev = now;   // swap, so pressing again returns
     refresh();
   });
 
@@ -2035,6 +2050,7 @@ var GR_SCENE = (function () {
   };
   function putOn(it, slot) {
     if (slot === 'jewelry') slot = jewelKey(it);
+    remember();
     if (picking) {
       wear(slot, it); stopPicking(); saveOutfit(); renderCombo(); W8.refresh();
       window.mgShow('home');
@@ -2052,6 +2068,7 @@ var GR_SCENE = (function () {
   // "None" tile at the bottom of the list: take that piece off the figure (e.g. no hat at all)
   W8.onNone = function () {
     var slot = picking && picking.slot; if (!slot) return;
+    remember();
     if (slot === 'jewelry') JEWELS.forEach(function (j) { delete outfit[j]; }); else wear(slot, null);
     stopPicking(); saveOutfit(); renderCombo(); W8.refresh();
     window.mgShow('home');

@@ -27,6 +27,7 @@ MG_STRINGS["hu"] = {
   editFigure: "Alakod szerkesztése",
   lookOfDay: "A nap szettje",
   recreate: "Összeállítom",
+  prevLook: "Előző szett",
   takeOff: "Levétel",
   tapSwap: "Koppints egy darabra a cseréhez",
   tapPick: "Koppints egy darabra, és válaszd ki a sajátodat",
