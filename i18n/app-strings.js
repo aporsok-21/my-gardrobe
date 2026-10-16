@@ -98,6 +98,10 @@ window.MG_STRINGS = {
     pick: { outer: 'Choose a coat', top: 'Choose a top', bottom: 'Choose trousers', shoes: 'Choose shoes', bag: 'Choose a bag', hat: 'Choose a hat', jewelry: 'Choose jewellery' },
     language: 'Language', searchLang: 'Search languages', temperature: 'Temperature', celsius: 'Celsius', fahrenheit: 'Fahrenheit',
     intro: 'Opening animation', introSub: 'Play the walk-in closet when the app opens', figureRowSub: 'Height, shape, skin and hair', done: 'Done',
+    pw: { row: 'Change password', rowSub: 'Update the password you sign in with', title: 'Change password', current: 'Current password', 'new': 'New password',
+      hint: 'At least 8 characters', confirm: 'Repeat new password', show: 'Show passwords', save: 'Save new password',
+      errCurrent: 'Enter your current password.', errShort: 'The new password needs at least 8 characters.', errSame: 'The new password must be different from the current one.',
+      errMatch: 'The two new passwords don\'t match.', done: 'Password updated.' },
     cat: { coats: 'Coats', sweaters: 'Sweaters', tshirts: 'T-shirts', trousers: 'Trousers', sweatpants: 'Sweatpants', shoes: 'Shoes', jewellery: 'Jewellery', bags: 'Bags', accessories: 'Accessories' },
     n: { coats: ['coat', 'coats'], sweaters: ['sweater', 'sweaters'], tshirts: ['T-shirt', 'T-shirts'], trousers: ['pair of trousers', 'pairs of trousers'], sweatpants: ['pair of sweatpants', 'pairs of sweatpants'], shoes: ['pair of shoes', 'pairs of shoes'], jewellery: ['piece of jewellery', 'pieces of jewellery'], bags: ['bag', 'bags'], accessories: ['accessory', 'accessories'] },
     sub: {

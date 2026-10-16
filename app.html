@@ -306,6 +306,11 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
 .langs button[aria-checked="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink);font-weight:800}
 .set-row{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;padding:14px 16px;border-radius:16px;border:1px solid var(--border);background:var(--surface);text-align:start;cursor:pointer}
 .set-row b{display:block;font-size:15px;font-weight:700}
+.pw-hint{font-size:12px;font-weight:600;color:var(--taupe)}
+.pw-show{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--muted)}
+.pw-show input{width:18px;height:18px;accent-color:#2B2B2B}
+.pw-msg{margin:0;padding:10px 14px;border-radius:12px;font-size:14px;font-weight:600;background:#F3E1DD;color:#8A2F25}
+.pw-msg.ok{background:#E3EADB;color:#3F5A34}
 .set-row small{display:block;margin-top:2px;font-size:12px;font-weight:600;color:var(--muted)}
 .set-row>svg{flex:0 0 auto;width:20px;height:20px;stroke:var(--ink);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .switch{appearance:none;-webkit-appearance:none;flex:0 0 auto;position:relative;width:50px;height:30px;margin:0;border-radius:999px;background:#D8CFC2;cursor:pointer;transition:background .2s}
@@ -357,6 +362,10 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
 .g-row input{flex:1;min-width:0;height:44px;padding:0 12px;border-radius:12px;border:1px solid var(--border);background:var(--surface);font:inherit;font-size:14px;color:var(--ink)}
 .g-row .btn{min-height:44px;padding:0 16px;font-size:14px}
 .g-bad{color:#A9362F!important}
+.opt-chips{display:flex;flex-wrap:wrap;gap:6px}
+.opt-chips button{min-width:44px;height:36px;padding:0 12px;border-radius:999px;border:1px solid var(--border);background:var(--surface);font:inherit;font-size:13px;font-weight:600;color:var(--ink);transition:background .15s,color .15s,border-color .15s}
+.opt-chips button.on{background:var(--ink);border-color:var(--ink);color:#F6F2EA}
+.c-name{color:var(--ink)}
 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .field-row>.field{min-width:0}
 .field-row input{width:100%;min-width:0}
@@ -504,11 +513,9 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
       <label class="field" id="fSubWrap"><span data-t="type">Type</span><select id="fSub"></select></label>
       <label class="field"><span data-t="name">Name</span><input id="fName" required placeholder="e.g. Camel wrap coat" autocomplete="off"></label>
       <label class="field"><span data-t="brand">Brand</span><input id="fBrand" placeholder="e.g. Guess" autocomplete="off"></label>
-      <div class="field-row">
-        <label class="field" id="fFitWrap"><span data-t="add2.fit">Fit</span><input id="fFit" list="fFitList" autocomplete="off"><datalist id="fFitList"></datalist></label>
-        <label class="field"><span data-t="add2.size">Size</span><input id="fSize" list="fSizeList" autocomplete="off"><datalist id="fSizeList"></datalist></label>
-      </div>
-      <div class="field"><span data-t="colour">Colour</span><div class="swatches" id="fColor"></div></div>
+      <div class="field" id="fFitWrap"><span data-t="add2.fit">Fit</span><div class="opt-chips" id="fFitChips" role="radiogroup"></div><input type="hidden" id="fFit"></div>
+      <div class="field"><span data-t="add2.size">Size</span><div class="opt-chips" id="fSizeChips" role="radiogroup"></div><input type="hidden" id="fSize"></div>
+      <div class="field"><span><span data-t="colour">Colour</span> · <b class="c-name" id="fColorName"></b></span><div class="swatches" id="fColor"></div></div>
       <button class="btn" type="submit" data-t="save">Save</button>
     </form>
   </div>
@@ -590,8 +597,23 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
       <div class="set-group"><div class="set-label" data-t="temperature">Temperature</div><div class="seg" id="unitSeg"><button type="button" data-u="c">°C <span data-t="celsius">Celsius</span></button><button type="button" data-u="f">°F <span data-t="fahrenheit">Fahrenheit</span></button></div></div>
       <label class="set-row"><span><b data-t="intro">Opening animation</b><small data-t="introSub">Play the walk-in closet when the app opens</small></span><input type="checkbox" class="switch" id="introToggle"></label>
       <button type="button" class="set-row" id="setFigure"><span><b data-t="yourFigure">Your figure</b><small data-t="figureRowSub">Height, shape, skin and hair</small></span><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+      <button type="button" class="set-row" id="setPassword"><span><b data-t="pw.row">Change password</b><small data-t="pw.rowSub">Update the password you sign in with</small></span><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
       <button type="button" class="btn" data-close data-t="done">Done</button>
     </div>
+  </div>
+
+  <!-- CHANGE PASSWORD (UI only for now: there is no account backend yet, nothing is stored) -->
+  <div class="sheet-wrap" id="pwBox" hidden>
+    <div class="sheet-bg" data-close></div>
+    <form class="sheet" id="pwForm" role="dialog" aria-modal="true" aria-labelledby="pwTitle" novalidate>
+      <div class="sheet-head"><h2 id="pwTitle" data-t="pw.title">Change password</h2><button type="button" class="round" data-close aria-label="Close" data-t-aria="close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+      <label class="field"><span data-t="pw.current">Current password</span><input type="password" id="pwCur" autocomplete="current-password" required></label>
+      <label class="field"><span data-t="pw.new">New password</span><input type="password" id="pwNew" autocomplete="new-password" minlength="8" required><small class="pw-hint" data-t="pw.hint">At least 8 characters</small></label>
+      <label class="field"><span data-t="pw.confirm">Repeat new password</span><input type="password" id="pwRep" autocomplete="new-password" required></label>
+      <label class="pw-show"><input type="checkbox" id="pwShow"> <span data-t="pw.show">Show passwords</span></label>
+      <p class="pw-msg" id="pwMsg" role="alert" hidden></p>
+      <button type="submit" class="btn" data-t="pw.save">Save new password</button>
+    </form>
   </div>
 
   <nav class="tabbar" aria-label="Main">
@@ -1048,6 +1070,7 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
     if (keep) fCat.value = keep;
     fColor.innerHTML = COLORS.map(function (c) { return '<button type="button" data-color="' + c[0] + '" aria-label="' + esc(colorName(c[0])) + '" style="background:' + c[2] + '"' + (c[0] === pick.color ? ' class="on"' : '') + '></button>'; }).join('');
     document.getElementById('fBrand').placeholder = MG.t('eg', { x: 'Guess' });
+    document.getElementById('fColorName').textContent = colorName(pick.color);
   }
   labelForm();
   function fillSubs(sub) {
@@ -1057,13 +1080,31 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
     document.getElementById('fName').placeholder = ex ? MG.t('eg', { x: ex.name }) : MG.t('name');
     fSub.innerHTML = c.subs.map(function (s) { return '<option value="' + esc(s) + '"' + (s === sub ? ' selected' : '') + '>' + esc(subName(s)) + '</option>'; }).join('');
   }
-  function setColor(id) { pick.color = id; fColor.querySelectorAll('button').forEach(function (b) { b.classList.toggle('on', b.dataset.color === id); }); }
+  function setColor(id) {
+    pick.color = id;
+    fColor.querySelectorAll('button').forEach(function (b) { b.classList.toggle('on', b.dataset.color === id); b.setAttribute('aria-pressed', b.dataset.color === id); });
+    document.getElementById('fColorName').textContent = colorName(id);
+  }
   function fillFitSize() {
     var c = fCat.value, kind = FIT_OF[c], fits = kind ? MG.t('add2.fits.' + kind) : [];
     document.getElementById('fFitWrap').hidden = !kind;
-    document.getElementById('fFitList').innerHTML = (Array.isArray(fits) ? fits : []).map(function (f) { return '<option value="' + esc(f) + '">'; }).join('');
-    document.getElementById('fSizeList').innerHTML = (SIZES[c] || [MG.t('add2.oneSize')]).map(function (z) { return '<option value="' + esc(z) + '">'; }).join('');
+    // tappable chips instead of a datalist, which phones show unreliably
+    chips('fFitChips', 'fFit', Array.isArray(fits) ? fits : []);
+    chips('fSizeChips', 'fSize', SIZES[c] || [MG.t('add2.oneSize')]);
   }
+  function chips(boxId, inputId, list) {
+    var input = document.getElementById(inputId);
+    input.value = '';
+    document.getElementById(boxId).innerHTML = list.map(function (v) { return '<button type="button" role="radio" aria-checked="false" data-v="' + esc(v) + '">' + esc(v) + '</button>'; }).join('');
+  }
+  [['fFitChips', 'fFit'], ['fSizeChips', 'fSize']].forEach(function (pair) {
+    document.getElementById(pair[0]).addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      var input = document.getElementById(pair[1]), on = input.value !== b.dataset.v;   // tap again to clear
+      input.value = on ? b.dataset.v : '';
+      this.querySelectorAll('button').forEach(function (x) { var sel = on && x === b; x.classList.toggle('on', sel); x.setAttribute('aria-checked', sel); });
+    });
+  });
   fCat.addEventListener('change', function () { fillSubs(''); fillFitSize(); });
   fSub.addEventListener('change', function () { fillSubs(fSub.value); });
   fColor.addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) setColor(b.dataset.color); });
@@ -1939,7 +1980,8 @@ var GR_SCENE = (function () {
   W8.isWorn = function (it) { var sl = SLOT_OF[it.cat]; return !!(sl && outfit[sl] && outfit[sl].key === keyOf(it)); };
   $('pickCancel').addEventListener('click', function () { stopPicking(); window.mgShow('home'); });
   document.querySelectorAll('.tab').forEach(function (t) { t.addEventListener('click', stopPicking); });
-  $('cBack').addEventListener('click', stopPicking);
+  // came from Home to pick a piece: the back arrow goes back to Home, not My Gardrobe
+  $('cBack').addEventListener('click', function () { if (picking) { stopPicking(); window.mgShow('home'); } });
 
   MG.onLang(function () {
     thumbsFor = null; syncControls(); renderCombo();
@@ -2255,6 +2297,28 @@ var GR_SCENE = (function () {
     MG.set('unit', b.dataset.u); paint();
   });
   $('introToggle').addEventListener('change', function () { MG.set('intro', this.checked ? 'on' : 'off'); });
+  // Change password: checks the form; saving needs the account backend, which doesn't exist yet
+  var pwBox = $('pwBox'), pwForm = $('pwForm'), pwMsg = $('pwMsg');
+  function pwSay(key, ok) { pwMsg.textContent = MG.t(key); pwMsg.className = 'pw-msg' + (ok ? ' ok' : ''); pwMsg.hidden = false; }
+  $('setPassword').addEventListener('click', function () {
+    closeSettings(); pwForm.reset(); pwMsg.hidden = true;
+    ['pwCur', 'pwNew', 'pwRep'].forEach(function (id) { $(id).type = 'password'; });
+    pwBox.hidden = false; setTimeout(function () { $('pwCur').focus(); }, 50);
+  });
+  pwBox.addEventListener('click', function (e) { if (e.target.closest('[data-close]')) pwBox.hidden = true; });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !pwBox.hidden) pwBox.hidden = true; });
+  $('pwShow').addEventListener('change', function () { var t = this.checked ? 'text' : 'password'; ['pwCur', 'pwNew', 'pwRep'].forEach(function (id) { $(id).type = t; }); });
+  pwForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var cur = $('pwCur').value, nw = $('pwNew').value, rep = $('pwRep').value;
+    if (!cur) return pwSay('pw.errCurrent');
+    if (nw.length < 8) return pwSay('pw.errShort');
+    if (nw === cur) return pwSay('pw.errSame');
+    if (nw !== rep) return pwSay('pw.errMatch');
+    pwForm.reset();
+    pwSay('pw.done', true);
+    setTimeout(function () { pwBox.hidden = true; }, 1400);
+  });
   $('setFigure').addEventListener('click', function () { closeSettings(); if (window.mgWardrobe && window.mgWardrobe.openFigure) window.mgWardrobe.openFigure(); });
 
   MG.onLang(greet);
