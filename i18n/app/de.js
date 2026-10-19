@@ -83,6 +83,7 @@ MG_STRINGS["de"] = {
   name: "Name",
   brand: "Marke",
   colour: "Farbe",
+  moreColours: "Weitere Farben",
   save: "Speichern",
   eg: "z. B. {x}",
   yourFigure: "Deine Figur",

@@ -444,6 +444,12 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
 .swatches{display:flex;flex-wrap:wrap;gap:10px}
 .swatches button{width:34px;height:34px;padding:0;border-radius:50%;border:1px solid rgba(43,43,43,.25)}
 .swatches button.on{box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--ink)}
+/* "+" circle: opens the device colour picker */
+.sw-more{position:relative;flex:0 0 auto;width:34px;height:34px;border-radius:50%;border:1.5px dashed var(--hover);background:var(--surface);color:var(--ink);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.sw-more input{position:absolute;inset:0;width:100%;height:100%;margin:0;padding:0;border:0;opacity:0;cursor:pointer}
+.sw-more svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;pointer-events:none}
+.sw-more.on{border:1px solid rgba(43,43,43,.25);box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--ink)}
+.sw-more:focus-within{outline:2px solid #444444;outline-offset:3px}
 @media (prefers-reduced-motion:reduce){.sheet,.sheet-bg{animation:none}}
 </style>
 </head>
@@ -949,7 +955,7 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
   }
   function itemTile(it) {
     var col = colorOf(it.color);
-    var art = it.photo ? '<img class="photo" src="' + esc(it.photo) + '" alt="">' : icon(catById(it.cat).icon, col[2]);
+    var art = it.photo ? '<img class="photo" src="' + esc(it.photo) + '" alt="">' : icon(catById(it.cat).icon, it.hex || col[2]);
     var worn = W8.isWorn && W8.isWorn(it), washing = W8.inWash(it), n = W8.wornCount(it);
     var badge = washing ? '<span class="badge wash-badge">' + esc(MG.t('wash.badge')) + '</span>' : worn ? '<span class="badge">' + esc(MG.t('wearing')) + '</span>' : '';
     return '<div class="tile item' + (worn ? ' wearing' : '') + (washing ? ' washing' : '') + '" data-i="' + items.indexOf(it) + '">' + badge +
@@ -1189,12 +1195,15 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
   var SIZES = { coats: [LETTERS, EU], sweaters: [LETTERS, EU], tshirts: [LETTERS, EU],
     trousers: [LETTERS, EU, WAIST], jeans: [WAIST, EU],
     shoes: [['35', '36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46']] };
-  var pick = { color: 'black', photo: '' };
+  var pick = { color: 'black', hex: '', photo: '' };
   function labelForm() {
     var keep = fCat.value;
     fCat.innerHTML = CATS.map(function (c) { return '<option value="' + c.id + '">' + esc(catName(c)) + '</option>'; }).join('');
     if (keep) fCat.value = keep;
-    fColor.innerHTML = COLORS.map(function (c) { return '<button type="button" data-color="' + c[0] + '" aria-label="' + esc(colorName(c[0])) + '" style="background:' + c[2] + '"' + (c[0] === pick.color ? ' class="on"' : '') + '></button>'; }).join('');
+    fColor.innerHTML = COLORS.map(function (c) { return '<button type="button" data-color="' + c[0] + '" aria-label="' + esc(colorName(c[0])) + '" style="background:' + c[2] + '"' + (c[0] === pick.color && !pick.hex ? ' class="on"' : '') + '></button>'; }).join('') +
+      '<label class="sw-more" title="' + esc(MG.t('moreColours')) + '"><input type="color" id="fHex" value="' + (pick.hex || '#8B7D6B') + '" aria-label="' + esc(MG.t('moreColours')) + '">' +
+      '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6v12M6 12h12"/></svg></label>';
+    paintMore();
     document.getElementById('fBrand').placeholder = MG.t('eg', { x: 'Guess' });
     document.getElementById('fColorName').textContent = colorName(pick.color);
   }
@@ -1204,8 +1213,40 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
     document.getElementById('fSubWrap').hidden = !c.subs.length;
     fSub.innerHTML = c.subs.map(function (s) { return '<option value="' + esc(s) + '"' + (s === sub ? ' selected' : '') + '>' + esc(subName(s)) + '</option>'; }).join('');
   }
+  // A colour from the palette keeps its exact shade (pick.hex) and counts as the nearest base colour for sorting and search
+  function nearestColor(hex) {
+    // by hue, lightness and saturation, so a turquoise counts as blue and a camel as brown
+    var n = parseInt(hex.slice(1), 16), r = (n >> 16) / 255, g = (n >> 8 & 255) / 255, b = (n & 255) / 255;
+    var mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2, d = mx - mn, sat = d ? d / (1 - Math.abs(2 * l - 1)) : 0, h = 0;
+    if (d) h = mx === r ? 60 * (((g - b) / d) % 6) : mx === g ? 60 * ((b - r) / d + 2) : 60 * ((r - g) / d + 4);
+    if (h < 0) h += 360;
+    if (l > 0.92) return 'white';
+    if (l < 0.12) return 'black';
+    if (sat < 0.14 || (sat < 0.25 && l < 0.35)) return l > 0.8 ? 'white' : l < 0.2 ? 'black' : 'grey';
+    if (h < 15 || h >= 345) return l > 0.75 ? 'pink' : 'red';
+    if (h < 45) return l > 0.7 ? 'beige' : sat > 0.6 && l >= 0.45 ? (h < 25 ? 'red' : 'yellow') : 'brown';
+    if (h < 70) return l > 0.8 && sat < 0.5 ? 'beige' : 'yellow';
+    if (h < 170) return 'green';
+    if (h < 290) return 'blue';
+    return 'pink';
+  }
+  function paintMore() {
+    var more = fColor.querySelector('.sw-more'); if (!more) return;
+    more.classList.toggle('on', !!pick.hex);
+    more.style.background = pick.hex || '';
+    more.style.color = pick.hex && isDark(pick.hex) ? '#FFFDF8' : '';
+  }
+  function setCustom(hex) {
+    pick.hex = hex; pick.color = nearestColor(hex);
+    fColor.querySelectorAll('button').forEach(function (b) { b.classList.remove('on'); b.setAttribute('aria-pressed', 'false'); });
+    paintMore();
+    document.getElementById('fColorName').textContent = colorName(pick.color);
+  }
+  fColor.addEventListener('input', function (e) { if (e.target.id === 'fHex') setCustom(e.target.value); });
+  fColor.addEventListener('change', function (e) { if (e.target.id === 'fHex') setCustom(e.target.value); });
   function setColor(id) {
-    pick.color = id;
+    pick.color = id; pick.hex = '';
+    paintMore();
     fColor.querySelectorAll('button').forEach(function (b) { b.classList.toggle('on', b.dataset.color === id); b.setAttribute('aria-pressed', b.dataset.color === id); });
     document.getElementById('fColorName').textContent = colorName(id);
   }
@@ -1351,7 +1392,7 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
     // No name to type: a new piece is called by its type ("Heels", "Fur coats"), and gets its own id
     var sub = c.subs.length ? fSub.value : '';
     var it = { id: 'u' + Date.now().toString(36), autoName: true, cat: c.id, sub: sub, name: sub ? subName(sub) : catName(c), brand: document.getElementById('fBrand').value.trim(),
-      fit: FIT_OF[c.id] ? document.getElementById('fFit').value.trim() : '', size: document.getElementById('fSize').value.trim(), color: pick.color, photo: pick.photo, mine: true };
+      fit: FIT_OF[c.id] ? document.getElementById('fFit').value.trim() : '', size: document.getElementById('fSize').value.trim(), color: pick.color, hex: pick.hex || '', photo: pick.photo, mine: true };
     items.push(it);
     try { localStorage.setItem(STORE, JSON.stringify(items.filter(function (x) { return x.mine; }))); } catch (err) {}
     closeSheet();
@@ -2081,7 +2122,7 @@ var GR_SCENE = (function () {
     if (it.cat === 'tshirts') style = 'tee';
     else if (it.cat === 'accessories') style = /cap/.test(n) ? 'cap' : /bucket/.test(n) ? 'bucket' : 'fedora';
     else if (it.cat === 'jewellery') style = /pearl/.test(n) && /neck/.test(n) ? 'pearls' : /hoop/.test(n) ? 'hoops' : /stud|earring/.test(n) ? 'studs' : /bangle|bracelet/.test(n) ? 'bangle' : /ring/.test(n) ? 'ring' : 'chain';
-    return { type: SLOT_OF[it.cat], style: style, name: it.name, color: W8.colorOf(it.color)[2], key: keyOf(it) };
+    return { type: SLOT_OF[it.cat], style: style, name: it.name, color: it.hex || W8.colorOf(it.color)[2], key: keyOf(it) };
   }
 
   var outfit = {}, cache = {};

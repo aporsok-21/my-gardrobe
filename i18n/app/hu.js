@@ -84,6 +84,7 @@ MG_STRINGS["hu"] = {
   name: "Név",
   brand: "Márka",
   colour: "Szín",
+  moreColours: "További színek",
   save: "Mentés",
   eg: "pl. {x}",
   yourFigure: "Az alakod",

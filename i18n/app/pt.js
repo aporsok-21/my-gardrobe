@@ -83,6 +83,7 @@ MG_STRINGS["pt"] = {
   name: "Nome",
   brand: "Marca",
   colour: "Cor",
+  moreColours: "Mais cores",
   save: "Guardar",
   eg: "p. ex. {x}",
   yourFigure: "A tua silhueta",

@@ -94,7 +94,7 @@ window.MG_STRINGS = {
     back: 'Back to My Gardrobe', tapToWear: 'Tap a piece to put it on your figure', cancel: 'Cancel', searchCat: 'Search {cat} by brand or colour',
     jumpColour: 'Jump to colour', noMatch: 'Nothing matches “{q}”.', emptyHere: 'Nothing here yet.', add: 'Add', allOf: 'All {cat}', wearing: 'Wearing',
     addItem: 'Add item', addAnItem: 'Add an item', addTo: 'Add to {cat}', close: 'Close', addPhoto: 'Add a photo',
-    category: 'Category', type: 'Type', name: 'Name', brand: 'Brand', colour: 'Colour', save: 'Save', eg: 'e.g. {x}',
+    category: 'Category', type: 'Type', name: 'Name', brand: 'Brand', colour: 'Colour', moreColours: 'More colours', save: 'Save', eg: 'e.g. {x}',
     yourFigure: 'Your figure', figureSub: 'Make the figure look like you. You can change it any time.', iAm: 'I am', woman: 'Woman', man: 'Man',
     skin: 'Skin tone', hair: 'Hair colour', height: 'Height', weight: 'Weight', bodyShape: 'Body shape', optional: 'Optional · you can skip this',
     skip: 'Skip for now', notSure: 'Not sure',

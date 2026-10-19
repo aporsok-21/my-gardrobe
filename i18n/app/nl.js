@@ -83,6 +83,7 @@ MG_STRINGS["nl"] = {
   name: "Naam",
   brand: "Merk",
   colour: "Kleur",
+  moreColours: "Meer kleuren",
   save: "Opslaan",
   eg: "bijv. {x}",
   yourFigure: "Je figuur",
