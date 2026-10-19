@@ -11,16 +11,26 @@ Landing page for **My Gardrobe** — *Style and organise your clothes.*
 
 ## Run it locally
 
-Because the page loads `i18n/translations.json`, open it through a local web server rather than double-clicking the file:
+Start the server (Node 22.5 or newer, no packages to install). It serves the website and the app and holds the accounts:
 
 ```sh
-python3 -m http.server 8000
+node server/server.js
 ```
 
-Then visit http://localhost:8000.
+Then visit http://localhost:8000 (the app is at /app.html). Another port: `node server/server.js 8001`.
+
+## Backend
+
+`server/server.js` keeps accounts and each person's wardrobe in one SQLite file, `server/data/gardrobe.db` (not in git).
+
+- Passwords are hashed with scrypt; sign-in uses an HttpOnly session cookie (60 days).
+- The app still works from localStorage; while someone is signed in, changes to their wardrobe keys (`mg-items`, `mg-fav`, `mg-outfit`, …) are sent to `/api/data/<key>`, and on opening the app the account's data is loaded. Theme, units and language stay per device.
+- API: `POST /api/signup`, `POST /api/login`, `POST /api/logout`, `GET /api/me`, `POST /api/password`, `PUT|DELETE /api/data/<key>`.
 
 ## Still to do
 
 - Replace the placeholder phone number (+43 660 123 4567) with the real one.
 - Add the real App Store / Google Play links on the download screen.
+- Password reset by email and Google / Apple sign-in (the server has no email sending yet).
+- Run the server on HTTPS when it goes online (then mark the session cookie `Secure`).
 - Finish translations for the remaining languages and have the less common ones checked by native speakers.

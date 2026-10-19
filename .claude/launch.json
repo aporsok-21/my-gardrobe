@@ -5,6 +5,12 @@
       "name": "my-gardrobe",
       "url": "http://localhost:8000",
       "port": 8000
+    },
+    {
+      "name": "my-gardrobe-server",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["server/server.js", "8001"],
+      "port": 8001
     }
   ]
 }

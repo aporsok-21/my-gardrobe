@@ -18,6 +18,68 @@
   if (mq) { if (mq.addEventListener) mq.addEventListener('change', apply); else if (mq.addListener) mq.addListener(apply); }
   document.addEventListener('mg-setting', function (e) { if (e.detail.key === 'theme') apply(); });
 })();
+
+// Account sync with the server (server/server.js). The app keeps working with localStorage as before;
+// while someone is signed in, every change to their wardrobe keys is also sent to their account.
+// It runs before the rest of the app, so a reload is all it takes to show another account's data.
+(function () {
+  var KEYS = ['mg-items', 'mg-wash', 'mg-worn', 'mg-fav', 'mg-figure', 'mg-outfit', 'mg-outfit-prev', 'mg-worn-day'];
+  var DIRTY = 'mg-sync-dirty', ls; try { ls = window.localStorage; } catch (e) { return; }
+  var proto = Storage.prototype, rawSet = proto.setItem, rawRemove = proto.removeItem, timers = {};
+  function signedIn() { return !!rawGet('mg-session'); }
+  function rawGet(k) { try { return ls.getItem(k); } catch (e) { return null; } }
+  function dirty() { try { return JSON.parse(rawGet(DIRTY) || '{}') || {}; } catch (e) { return {}; } }
+  function mark(k, on) { var d = dirty(); if (on) d[k] = 1; else delete d[k]; try { rawSet.call(ls, DIRTY, JSON.stringify(d)); } catch (e) {} }
+  function api(method, url, body) {
+    return fetch(url, { method: method, credentials: 'same-origin', headers: body == null ? {} : { 'Content-Type': 'application/json' }, body: body == null ? undefined : body })
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { j.status = r.status; return j; }); });
+  }
+  // Send one key; if the server can't be reached it stays marked and goes up on the next open
+  function push(k) {
+    mark(k, true);
+    var v = rawGet(k);
+    return api(v == null ? 'DELETE' : 'PUT', '/api/data/' + k, v).then(function (r) {
+      if (r.status === 200) mark(k, false);
+      else if (r.status === 401) signedOut();
+    }).catch(function () {});
+  }
+  function later(k) { mark(k, true); clearTimeout(timers[k]); timers[k] = setTimeout(function () { push(k); }, 600); }
+  proto.setItem = function (k, v) { rawSet.call(this, k, v); if (this === ls && KEYS.indexOf(k) >= 0 && signedIn()) later(k); };
+  proto.removeItem = function (k) { rawRemove.call(this, k); if (this === ls && KEYS.indexOf(k) >= 0 && signedIn()) later(k); };
+  // Whatever is still waiting goes out when the page is closed
+  addEventListener('pagehide', function () {
+    if (!signedIn()) return;
+    Object.keys(timers).forEach(function (k) { clearTimeout(timers[k]); var v = rawGet(k); if (v != null) fetch('/api/data/' + k, { method: 'PUT', body: v, keepalive: v.length < 60000, credentials: 'same-origin' }).catch(function () {}); });
+  });
+
+  function clearLocal() { KEYS.concat(['mg-session', DIRTY]).forEach(function (k) { try { rawRemove.call(ls, k); } catch (e) {} }); }
+  function load(data) { KEYS.forEach(function (k) { try { if (data[k] != null) rawSet.call(ls, k, data[k]); else rawRemove.call(ls, k); } catch (e) {} }); }
+  // Reload without replaying the opening animation
+  function reload() { try { sessionStorage.setItem('mg-no-intro', '1'); } catch (e) {} location.reload(); }
+  function signedOut() { clearLocal(); reload(); }
+
+  window.mgAccount = {
+    api: api,
+    // Signed in: keep the session, take the account's wardrobe and start fresh with it
+    signedIn: function (user, data) { clearLocal(); rawSet.call(ls, 'mg-session', JSON.stringify(user)); load(data || {}); reload(); },
+    // New account: what was already made on this device goes into it
+    signedUp: function (user) {
+      rawSet.call(ls, 'mg-session', JSON.stringify(user));
+      return Promise.all(KEYS.filter(function (k) { return rawGet(k) != null; }).map(push));
+    },
+    logout: function () { return api('POST', '/api/logout').catch(function () {}).then(signedOut); }
+  };
+
+  // On open: send changes made offline, then take what the account has (it may have changed on another device)
+  if (!signedIn()) return;
+  Promise.all(Object.keys(dirty()).map(push)).then(function () { return api('GET', '/api/me'); }).then(function (r) {
+    if (r.status === 401) return signedOut();
+    if (r.status !== 200 || Object.keys(dirty()).length) return;
+    rawSet.call(ls, 'mg-session', JSON.stringify(r.user));
+    var changed = KEYS.some(function (k) { return (r.data[k] == null ? null : r.data[k]) !== rawGet(k); });
+    if (changed) { load(r.data); reload(); }
+  }).catch(function () {});   // offline: carry on with what is on this device
+})();
 </script>
 <title>My Gardrobe</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -377,6 +439,38 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
 .wash-list{margin-bottom:18px}
 .tile .badge{position:absolute;top:8px;inset-inline-end:8px;z-index:1;background:var(--ink);color:var(--on-ink);font-size:11px;font-weight:700;padding:4px 9px;border-radius:999px}
 
+
+/* Sign in / sign up */
+.auth{position:absolute;inset:0;z-index:45;background:var(--bg);overflow-y:auto;animation:grFade .4s both}
+.auth[hidden]{display:none}
+.auth.leaving{animation:grOut .4s both}
+.auth-in{min-height:100%;display:flex;flex-direction:column;justify-content:center;gap:12px;padding:40px 24px calc(28px + env(safe-area-inset-bottom));max-width:420px;margin:0 auto}
+.auth-logo{display:flex;justify-content:center;margin-bottom:4px}
+.auth-logo svg{max-width:70%;height:auto}
+.auth h1{margin:0;text-align:center;font-size:28px;font-weight:800;letter-spacing:-.03em;color:var(--black)}
+.auth-sub{margin:-4px 0 6px;text-align:center;font-size:15px;color:var(--muted)}
+.auth-tabs{margin-bottom:4px}
+#authForm{display:flex;flex-direction:column;gap:12px}
+.af{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700;color:var(--muted)}
+.af[hidden]{display:none}
+.af input{width:100%;height:50px;padding:0 14px;border-radius:14px;border:1px solid var(--border);background:var(--surface);font:inherit;font-size:16px;font-weight:500;color:var(--ink)}
+.af input:focus{outline:2px solid var(--ink);outline-offset:1px}
+.pw-wrap{position:relative;display:block}
+.pw-wrap input{padding-right:48px}
+.eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:38px;height:38px;border:0;border-radius:50%;background:none;display:flex;align-items:center;justify-content:center;padding:0}
+.eye svg{width:20px;height:20px;stroke:var(--muted);stroke-width:1.8;fill:none}
+.eye.on svg{stroke:var(--ink)}
+.auth-link{align-self:flex-end;background:none;border:0;padding:2px 0;font:inherit;font-size:13px;font-weight:700;color:var(--ink);text-decoration:underline}
+.auth-link[hidden]{display:none}
+.auth-go{min-height:52px;font-size:16px;margin-top:2px}
+.auth-or{display:flex;align-items:center;gap:12px;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--taupe);margin:6px 0}
+.auth-or::before,.auth-or::after{content:"";flex:1;height:1px;background:var(--border)}
+.auth-social{display:flex;flex-direction:column;gap:10px}
+.auth-social .btn{min-height:50px;gap:10px;font-size:15px}
+.auth-social svg{width:20px;height:20px}
+.auth-terms{margin:4px 0 0;text-align:center;font-size:12px;color:var(--muted)}
+.auth-terms[hidden]{display:none}
+.set-row.logout b{color:#A33A2E}
 /* Add-item sheet */
 .sheet-wrap{position:absolute;inset:0;z-index:20;display:flex;align-items:flex-end}
 .sheet-wrap[hidden]{display:none}
@@ -523,6 +617,36 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
 
 
   <!-- INTRO: the walk-in closet from the website plays on open -->
+
+  <!-- SIGN IN / SIGN UP (shown after the intro until someone is signed in).
+       Accounts live on the server (server/server.js). -->
+  <section class="auth" id="auth" aria-labelledby="authTitle" hidden>
+    <div class="auth-in">
+      <div class="auth-logo"><svg width="220" height="92" viewBox="0 0 240 100" role="img" aria-label="My Gardrobe"><g fill="none" stroke="#111111" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"><path d="M120 34v-6c0-3.4 2.4-5.2 5.2-6.6 2.8-1.4 5-3.6 5-7.4 0-4.8-3.8-8.2-8.6-8.2-4.4 0-7.8 2.8-8.6 6.6"/><path d="M120 34C92 44 54 57 30 65.5c-9 3.2-11 10.6-3.4 14.5"/><path d="M120 34c28 10 66 23 90 31.5 9 3.2 11 10.6 3.4 14.5"/></g><g fill="none" stroke="#8E857A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M120 34v-6c0-3.4 2.4-5.2 5.2-6.6 2.8-1.4 5-3.6 5-7.4 0-4.8-3.8-8.2-8.6-8.2-4.4 0-7.8 2.8-8.6 6.6"/><path d="M120 34C92 44 54 57 30 65.5c-9 3.2-11 10.6-3.4 14.5"/><path d="M120 34c28 10 66 23 90 31.5 9 3.2 11 10.6 3.4 14.5"/></g><text x="120" y="88" text-anchor="middle" textLength="166" lengthAdjust="spacingAndGlyphs" font-family="'Dancing Script', cursive" font-weight="700" font-size="31" fill="#8E857A" stroke="#111111" stroke-width=".7">My Gardrobe</text></svg></div>
+      <h1 id="authTitle" data-t="auth.welcome">Welcome back</h1>
+      <p class="auth-sub" id="authSub" data-t="auth.sub">Sign in to your wardrobe</p>
+      <div class="seg auth-tabs" role="tablist">
+        <button type="button" role="tab" data-mode="in" class="on" data-t="auth.login">Log in</button><button type="button" role="tab" data-mode="up" data-t="auth.signup">Sign up</button>
+      </div>
+      <form id="authForm" novalidate>
+        <label class="af" id="afName" hidden><span data-t="auth.name">Name</span><input id="auName" autocomplete="name"></label>
+        <label class="af"><span data-t="auth.email">Email</span><input id="auEmail" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com"></label>
+        <label class="af"><span data-t="auth.password">Password</span>
+          <span class="pw-wrap"><input id="auPw" type="password" autocomplete="current-password"><button type="button" class="eye" id="auEye" aria-label="Show password" data-t-aria="pw.show"><svg viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></svg></button></span>
+          <small class="pw-hint" id="auHint" data-t="pw.hint" hidden>At least 8 characters</small>
+        </label>
+        <button type="button" class="auth-link forgot" id="auForgot" data-t="auth.forgot">Forgot password?</button>
+        <p class="pw-msg" id="auMsg" role="alert" hidden></p>
+        <button type="submit" class="btn auth-go" id="auGo" data-t="auth.login">Log in</button>
+      </form>
+      <div class="auth-or"><span data-t="auth.or">or</span></div>
+      <div class="auth-social">
+        <button type="button" class="btn ghost" data-social><svg viewBox="0 0 24 24"><path d="M21 12.2c0-.7-.1-1.3-.2-1.9H12v3.6h5.1a4.4 4.4 0 0 1-1.9 2.9v2.4h3.1c1.8-1.7 2.7-4.1 2.7-7z" fill="#4285F4"/><path d="M12 21.5c2.6 0 4.7-.9 6.3-2.3l-3.1-2.4c-.9.6-2 .9-3.2.9-2.5 0-4.6-1.7-5.3-3.9H3.5v2.5A9.5 9.5 0 0 0 12 21.5z" fill="#34A853"/><path d="M6.7 13.8a5.7 5.7 0 0 1 0-3.6V7.7H3.5a9.5 9.5 0 0 0 0 8.6z" fill="#FBBC05"/><path d="M12 6.3c1.4 0 2.6.5 3.6 1.4l2.7-2.7A9.5 9.5 0 0 0 3.5 7.7l3.2 2.5C7.4 8 9.5 6.3 12 6.3z" fill="#EA4335"/></svg><span data-t="auth.google">Continue with Google</span></button>
+        <button type="button" class="btn ghost" data-social><svg viewBox="0 0 24 24"><path d="M16.4 12.6c0-2.3 1.9-3.4 2-3.5a4.3 4.3 0 0 0-3.4-1.8c-1.4-.1-2.8.9-3.5.9s-1.8-.8-3-.8a4.5 4.5 0 0 0-3.8 2.3c-1.6 2.8-.4 7 1.2 9.3.8 1.1 1.7 2.4 2.9 2.3 1.2 0 1.6-.7 3-.7s1.8.7 3 .7c1.3 0 2.1-1.1 2.8-2.3a10 10 0 0 0 1.3-2.6 4 4 0 0 1-2.5-3.8zM14.1 5.8a4 4 0 0 0 .9-2.9 4.1 4.1 0 0 0-2.7 1.4 3.8 3.8 0 0 0-1 2.8 3.4 3.4 0 0 0 2.8-1.3z" fill="currentColor"/></svg><span data-t="auth.apple">Continue with Apple</span></button>
+      </div>
+      <p class="auth-terms" id="auTerms" data-t="auth.terms" hidden>By signing up you agree to our Terms and Privacy Policy.</p>
+    </div>
+  </section>
   <div class="stage" id="stage" aria-hidden="true"></div>
 
   <!-- HOME -->
@@ -721,11 +845,12 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
       <label class="set-row"><span><b data-t="intro">Opening animation</b><small data-t="introSub">Play the walk-in closet when the app opens</small></span><input type="checkbox" class="switch" id="introToggle"></label>
       <button type="button" class="set-row" id="setFigure"><span><b data-t="yourFigure">Your figure</b><small data-t="figureRowSub">Height, shape, skin and hair</small></span><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
       <button type="button" class="set-row" id="setPassword"><span><b data-t="pw.row">Change password</b><small data-t="pw.rowSub">Update the password you sign in with</small></span><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+      <button type="button" class="set-row logout" id="setLogout"><span><b data-t="auth.logout">Log out</b><small id="setWho"></small></span><svg viewBox="0 0 24 24"><path d="M15 4h4v16h-4M10 16l4-4-4-4M14 12H4"/></svg></button>
       <button type="button" class="btn" data-close data-t="done">Done</button>
     </div>
   </div>
 
-  <!-- CHANGE PASSWORD (UI only for now: there is no account backend yet, nothing is stored) -->
+  <!-- CHANGE PASSWORD -->
   <div class="sheet-wrap" id="pwBox" hidden>
     <div class="sheet-bg" data-close></div>
     <form class="sheet" id="pwForm" role="dialog" aria-modal="true" aria-labelledby="pwTitle" novalidate>
@@ -1732,7 +1857,9 @@ var GR_SCENE = (function () {
   }
 
   // The intro plays every time the app opens (unless it is switched off in Settings); a link to a tab (app.html#inspo) still lands there afterwards
-  if (MG.get('intro', 'on') === 'off') { stage.hidden = true; return; }
+  // (not after signing in or out, which reloads the page)
+  var quiet = false; try { quiet = sessionStorage.getItem('mg-no-intro') === '1'; sessionStorage.removeItem('mg-no-intro'); } catch (e) {}
+  if (quiet || MG.get('intro', 'on') === 'off') { stage.hidden = true; return; }
   buildStage();
   setTimeout(function () {
     stage.classList.add('leaving');
@@ -2697,7 +2824,7 @@ var GR_SCENE = (function () {
     MG.set('theme', b.dataset.th); paint();
   });
   $('introToggle').addEventListener('change', function () { MG.set('intro', this.checked ? 'on' : 'off'); });
-  // Change password: checks the form; saving needs the account backend, which doesn't exist yet
+  // Change password: checked here, then on the server (which also signs the other devices out)
   var pwBox = $('pwBox'), pwForm = $('pwForm'), pwMsg = $('pwMsg');
   function pwSay(key, ok) { pwMsg.textContent = MG.t(key); pwMsg.className = 'pw-msg' + (ok ? ' ok' : ''); pwMsg.hidden = false; }
   $('setPassword').addEventListener('click', function () {
@@ -2715,12 +2842,75 @@ var GR_SCENE = (function () {
     if (nw.length < 8) return pwSay('pw.errShort');
     if (nw === cur) return pwSay('pw.errSame');
     if (nw !== rep) return pwSay('pw.errMatch');
-    pwForm.reset();
-    pwSay('pw.done', true);
-    setTimeout(function () { pwBox.hidden = true; }, 1400);
+    var go = pwForm.querySelector('[type=submit]'); go.disabled = true;
+    window.mgAccount.api('POST', '/api/password', JSON.stringify({ current: cur, next: nw })).then(function (r) {
+      if (r.status === 400 && r.error === 'current') return pwSay('pw.errWrong');
+      if (r.status !== 200) return pwSay('auth.errServer');
+      pwForm.reset();
+      pwSay('pw.done', true);
+      setTimeout(function () { pwBox.hidden = true; }, 1400);
+    }, function () { pwSay('auth.errServer'); }).then(function () { go.disabled = false; });
   });
   $('setFigure').addEventListener('click', function () { closeSettings(); if (window.mgWardrobe && window.mgWardrobe.openFigure) window.mgWardrobe.openFigure(); });
 
+})();
+
+// ---- Sign in / sign up against the server. This device remembers who is signed in (name + email)
+// in mg-session; the password only ever goes to the server.
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var box = $('auth'), form = $('authForm'), msg = $('auMsg'), mode = 'in';
+  function session() { try { return JSON.parse(localStorage.getItem('mg-session') || 'null'); } catch (e) { return null; } }
+  function say(key, ok) { msg.textContent = MG.t(key); msg.className = 'pw-msg' + (ok ? ' ok' : ''); msg.hidden = false; }
+  function setMode(m) {
+    mode = m; msg.hidden = true;
+    box.querySelectorAll('.auth-tabs button').forEach(function (b) { b.classList.toggle('on', b.dataset.mode === m); b.setAttribute('aria-selected', b.dataset.mode === m); });
+    $('afName').hidden = m !== 'up'; $('auHint').hidden = m !== 'up'; $('auTerms').hidden = m !== 'up'; $('auForgot').hidden = m !== 'in';
+    $('auPw').autocomplete = m === 'up' ? 'new-password' : 'current-password';
+    $('authTitle').textContent = MG.t(m === 'up' ? 'auth.create' : 'auth.welcome');
+    $('authSub').textContent = MG.t(m === 'up' ? 'auth.subUp' : 'auth.sub');
+    $('auGo').textContent = MG.t(m === 'up' ? 'auth.signup' : 'auth.login');
+  }
+  function show() { form.reset(); setMode('in'); box.classList.remove('leaving'); box.hidden = false; box.scrollTop = 0; }
+  function leave() {
+    box.classList.add('leaving');
+    setTimeout(function () { box.hidden = true; box.classList.remove('leaving'); window.mgShow && window.mgShow('home'); }, 400);
+  }
+  var ERR = { name: 'auth.errName', email: 'auth.errEmail', 'short': 'auth.errShort', taken: 'auth.errTaken', login: 'auth.errLogin', wait: 'auth.errWait' };
+  box.querySelector('.auth-tabs').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) setMode(b.dataset.mode); });
+  $('auEye').addEventListener('click', function () { var on = $('auPw').type === 'password'; $('auPw').type = on ? 'text' : 'password'; this.classList.toggle('on', on); });
+  $('auForgot').addEventListener('click', function () {
+    var em = $('auEmail').value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) return say('auth.errEmail');
+    say('auth.resetSent', true);
+  });
+  box.querySelectorAll('[data-social]').forEach(function (b) { b.addEventListener('click', function () { say('auth.soon'); }); });
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var name = $('auName').value.trim(), em = $('auEmail').value.trim(), pw = $('auPw').value;
+    if (mode === 'up' && !name) return say('auth.errName');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) return say('auth.errEmail');
+    if (!pw) return say('auth.errPw');
+    if (mode === 'up' && pw.length < 8) return say('auth.errShort');
+    var up = mode === 'up', go = $('auGo'); go.disabled = true; msg.hidden = true;
+    window.mgAccount.api('POST', up ? '/api/signup' : '/api/login', JSON.stringify(up ? { name: name, email: em, password: pw } : { email: em, password: pw }))
+      .then(function (r) {
+        if (!r.user) { go.disabled = false; return say(ERR[r.error] || 'auth.errServer'); }
+        // a new account keeps what is on this device; signing in loads the account's own wardrobe (and reloads)
+        if (up) return window.mgAccount.signedUp(r.user).then(function () { go.disabled = false; leave(); });
+        window.mgAccount.signedIn(r.user, r.data);
+      }, function () { go.disabled = false; say('auth.errServer'); });
+  });
+  $('setLogout').addEventListener('click', function () {
+    var st = $('settings'); if (st) st.hidden = true;
+    window.mgAccount.logout();
+  });
+  function who() { var s = session(); $('setWho').textContent = s ? s.email : ''; }
+  $('openSettings').addEventListener('click', who);
+  MG.onLang(function () { if (!box.hidden) setMode(mode); });
+
+  // shown under the intro, so the doors open onto the sign-in page
+  if (!session()) show();
 })();
 </script>
 </body>
