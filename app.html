@@ -527,6 +527,8 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
 .st-ok{color:var(--okmsg)}
 .st-open{position:absolute;bottom:8px;inset-inline-end:8px;display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:rgba(17,17,17,.55)}
 .st-open svg{width:15px;height:15px;fill:none;stroke:#FFFFFF;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.st-loading{display:flex;align-items:center;justify-content:center;padding:8px;text-align:center}
+.st-loading span{font-size:12px;font-weight:700;color:var(--muted);animation:fade 1s ease-in-out infinite alternate}
 .st-linkonly{display:flex;align-items:center;justify-content:center;background:var(--soft)}
 .st-linkcard{padding:0 12px;font-size:13px;font-weight:700;color:var(--muted);text-align:center;word-break:break-all}
 .field textarea{padding:12px 14px;border-radius:14px;border:1px solid var(--border);background:var(--surface);font:inherit;font-size:15px;font-weight:500;color:var(--ink);resize:vertical}
@@ -3075,16 +3077,20 @@ var GR_SCENE = (function () {
     r.onload = function () {
       var data; try { data = JSON.parse(r.result); } catch (e) {}
       if (!data || data.app !== 'my-gardrobe' || typeof data.local !== 'object') { alert(MG.t('bk.bad')); return; }
-      if (!confirm(MG.t('bk.confirm'))) return;
+      var go = function () { restoreFrom(data); };
+      if (window.mgConfirm) window.mgConfirm(MG.t('bk.confirm'), go, { title: MG.t('warn.sure'), yes: 'OK', no: MG.t('cancel') });
+      else if (confirm(MG.t('bk.confirm'))) go();
+    };
+    r.readAsText(f);
+  });
+  function restoreFrom(data) {
       Object.keys(localStorage).filter(function (k) { return /^(mg-|gr-)/.test(k); }).forEach(function (k) { localStorage.removeItem(k); });
       try { Object.keys(data.local).forEach(function (k) { if (/^(mg-|gr-)/.test(k)) localStorage.setItem(k, data.local[k]); }); } catch (e) { alert(MG.t('storageFull')); }
       var store = data.store || {};
       MGStore.clear().then(function () { return Promise.all(Object.keys(store).map(function (k) { return MGStore.set(k, store[k]); })); })
         ['catch'](function () { alert(MG.t('storageFull')); })
         .then(function () { location.reload(); });
-    };
-    r.readAsText(f);
-  });
+  }
   $('introToggle').addEventListener('change', function () { MG.set('intro', this.checked ? 'on' : 'off'); });
   // Change password: checks the form; saving needs the account backend, which doesn't exist yet
   var pwBox = $('pwBox'), pwForm = $('pwForm'), pwMsg = $('pwMsg');
@@ -3505,10 +3511,14 @@ var GR_SCENE = (function () {
   }
   $('sfGrid').addEventListener('click', function (e) {
     var b = e.target.closest('[data-del]'); if (!b || !cur) return;
-    if (!confirm(MG.t('st.delConfirm'))) return;
-    data[cur.kind] = data[cur.kind].filter(function (x) { return x.id !== b.dataset.del; });
-    save(cur.kind); renderAll();
-    if (!data[cur.kind].some(function (x) { return x.folder === cur.f; })) window.mgShow(cur.kind === 'mine' ? 'inspo' : 'inspoBoard');
+    var id = b.dataset.del, here = cur;
+    function gone() {
+      data[here.kind] = data[here.kind].filter(function (x) { return x.id !== id; });
+      save(here.kind); renderAll();
+      if (!data[here.kind].some(function (x) { return x.folder === here.f; })) window.mgShow(here.kind === 'mine' ? 'inspo' : 'inspoBoard');
+    }
+    if (window.mgConfirm) window.mgConfirm(MG.t('st.delConfirm'), gone, { title: MG.t('cap.del'), yes: MG.t('cap.del'), no: MG.t('cancel') });
+    else if (confirm(MG.t('st.delConfirm'))) gone();
   });
   document.addEventListener('click', function (e) {
     var t = e.target.closest('[data-sf]'); if (t) openFolder(t.dataset.sf, t.dataset.f);
@@ -3540,12 +3550,34 @@ var GR_SCENE = (function () {
     if (!left) return done(out);
     files.forEach(function (f, i) { shrink(f, function (src) { out[i] = src; if (--left === 0) done(out.filter(Boolean)); }); });
   }
+  // The picture behind a link (a Pinterest pin, a shop page): microlink.io finds it,
+  // images.weserv.nl serves it so a copy can be kept on the phone; if that fails, the picture's address is kept
+  var linkCache = {};
+  function linkImage(url) {
+    url = safeUrl(url);
+    if (!url) return Promise.resolve('');
+    if (!linkCache[url]) linkCache[url] = fetch('https://api.microlink.io/?url=' + encodeURIComponent(url))
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        var img = j && j.status === 'success' && j.data && j.data.image && safeUrl(j.data.image.url);
+        if (!img) return '';
+        return fetch('https://images.weserv.nl/?w=900&url=' + encodeURIComponent(img.replace(/^https?:\/\//, '')))
+          .then(function (r) { if (!r.ok) throw new Error(r.status); return r.blob(); })
+          .then(function (b) { return new Promise(function (ok) { shrink(new File([b], 'link', { type: b.type || 'image/jpeg' }), function (src) { ok(src || img); }); }); })
+          ['catch'](function () { return img; });
+      })['catch'](function () { delete linkCache[url]; return ''; });
+    return linkCache[url];
+  }
+  function debounce(fn, ms) { var t; return function () { clearTimeout(t); t = setTimeout(fn, ms); }; }
+  function loadingFig() { return '<figure class="st-loading"><span>' + esc(MG.t('st.loadingImg')) + '</span></figure>'; }
+
   function stMsg(t) { $('stMsg').textContent = t || ''; $('stMsg').hidden = !t; }
   function paintSheet() {
-    $('stPrev').innerHTML = sheet.photos.map(function (src, i) {
-      return '<figure><img src="' + esc(src) + '" alt=""><button type="button" class="cap-del" data-rm="' + i + '" aria-label="' + esc(MG.t('cap.del')) + '"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></figure>';
-    }).join('');
-    $('stPrev').hidden = !sheet.photos.length;
+    var shown = sheet.photos.length ? sheet.photos : sheet.linkImg ? [sheet.linkImg] : [];
+    $('stPrev').innerHTML = shown.map(function (src, i) {
+      return '<figure><img src="' + esc(src) + '" alt="" referrerpolicy="no-referrer"><button type="button" class="cap-del" data-rm="' + (sheet.photos.length ? i : 'link') + '" aria-label="' + esc(MG.t('cap.del')) + '"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></figure>';
+    }).join('') + (!shown.length && sheet.linkBusy ? loadingFig() : '');
+    $('stPrev').hidden = !shown.length && !sheet.linkBusy;
     var ids = PRESETS.slice();
     folders(data[sheet.kind]).forEach(function (f) { if (ids.indexOf(f.id) < 0) ids.push(f.id); });
     $('stFolders').innerHTML = ids.map(function (f) {
@@ -3554,21 +3586,32 @@ var GR_SCENE = (function () {
     $('stNewF').hidden = sheet.folder !== '+';
   }
   function openSheet(kind, photos, link) {
-    sheet = { kind: kind, photos: photos || [], folder: '' };
+    sheet = { kind: kind, photos: photos || [], folder: '', linkImg: '', linkBusy: false, linkP: null };
     $('stTitle').textContent = MG.t(kind === 'mine' ? 'st.addMine' : 'st.addBoard');
     $('stLinkF').hidden = kind === 'mine';
     $('stLink').value = link || '';
     $('stNew').value = '';
     stMsg(''); paintSheet();
     $('stSheet').hidden = false;
+    if (link) fetchLinkImg();
   }
+  function fetchLinkImg() {
+    var u = safeUrl($('stLink').value), mine = sheet;
+    mine.linkImg = ''; mine.linkBusy = !!u; mine.linkP = u ? linkImage(u) : Promise.resolve('');
+    paintSheet();
+    mine.linkP.then(function (src) {
+      if (sheet !== mine || safeUrl($('stLink').value) !== u) return;
+      mine.linkImg = src; mine.linkBusy = false; paintSheet();
+    });
+  }
+  $('stLink').addEventListener('input', debounce(fetchLinkImg, 600));
   function closeSheet() { $('stSheet').hidden = true; }
   $('stSheet').addEventListener('click', function (e) {
     if (e.target.closest('[data-close]')) return closeSheet();
     var f = e.target.closest('[data-folder]');
     if (f) { sheet.folder = f.dataset.folder; stMsg(''); paintSheet(); if (sheet.folder === '+') $('stNew').focus(); return; }
     var rm = e.target.closest('[data-rm]');
-    if (rm) { sheet.photos.splice(+rm.dataset.rm, 1); paintSheet(); }
+    if (rm) { if (rm.dataset.rm === 'link') { sheet.linkImg = ''; sheet.linkP = null; } else sheet.photos.splice(+rm.dataset.rm, 1); paintSheet(); }
   });
   $('stFile').addEventListener('change', function () {
     var files = Array.prototype.slice.call(this.files || []); this.value = '';
@@ -3581,12 +3624,18 @@ var GR_SCENE = (function () {
     var folder = sheet.folder;
     if (folder === '+') { var n = $('stNew').value.trim(); folder = n ? 'c:' + n : ''; }
     if (!folder) return stMsg(MG.t('st.needFolder'));
-    var now = Date.now(), add = sheet.photos.length
-      ? sheet.photos.map(function (src) { return { id: uid(), folder: folder, src: src, url: link, at: now }; })
-      : [{ id: uid(), folder: folder, src: '', url: link, at: now }];
-    data[sheet.kind] = data[sheet.kind].concat(add);
-    var kind = sheet.kind;
-    save(kind).then(function () { closeSheet(); renderAll(); openFolder(kind, folder); })['catch'](function () {});
+    var kind = sheet.kind, photos = sheet.photos, mine = sheet;
+    // a link without photos is saved together with its picture (waits for it if it is still loading)
+    var pic = photos.length || !link ? Promise.resolve('') : (mine.linkP && safeUrl($('stLink').value) === link ? mine.linkP : linkImage(link));
+    if (!photos.length && link && mine.linkBusy) stMsg(MG.t('st.loadingImg'));
+    pic.then(function (linkSrc) {
+      if (!photos.length && link && mine.linkP === null && !mine.linkBusy) linkSrc = mine.linkImg;   // picture removed by hand
+      var now = Date.now(), add = photos.length
+        ? photos.map(function (src) { return { id: uid(), folder: folder, src: src, url: link, at: now }; })
+        : [{ id: uid(), folder: folder, src: linkSrc || '', url: link, at: now }];
+      data[kind] = data[kind].concat(add);
+      return save(kind).then(function () { closeSheet(); renderAll(); openFolder(kind, folder); });
+    })['catch'](function () {});
   });
   // + on My style opens the gallery straight away, then asks for the category
   $('msAdd').addEventListener('click', function () { openSheet('mine', []); $('stFile').click(); });
@@ -3622,17 +3671,18 @@ var GR_SCENE = (function () {
   }
   $('wlList').addEventListener('click', function (e) {
     var b = e.target.closest('[data-wdel]'); if (!b) return;
-    if (!confirm(MG.t('wl.delConfirm'))) return;
-    data.wish = data.wish.filter(function (w) { return w.id !== b.dataset.wdel; });
-    save('wish'); renderWish();
+    // the app's own dialog: the browser's confirm() is ugly in the installed app and blocked in some in-app browsers
+    var id = b.dataset.wdel, gone = function () { data.wish = data.wish.filter(function (w) { return w.id !== id; }); save('wish'); renderWish(); };
+    if (window.mgConfirm) window.mgConfirm(MG.t('wl.delConfirm'), gone, { title: MG.t('wl.delete'), yes: MG.t('wl.delete'), no: MG.t('cancel') });
+    else if (confirm(MG.t('wl.delConfirm'))) gone();
   });
   function wlPreview() {
-    var src = wl.photo || safeUrl($('wlImg').value);
-    $('wlPrev').innerHTML = src ? '<figure><img src="' + esc(src) + '" alt="" referrerpolicy="no-referrer"></figure>' : '';
-    $('wlPrev').hidden = !src;
+    var src = wl.photo || safeUrl($('wlImg').value) || wl.linkImg;
+    $('wlPrev').innerHTML = src ? '<figure><img src="' + esc(src) + '" alt="" referrerpolicy="no-referrer"></figure>' : wl.linkBusy ? loadingFig() : '';
+    $('wlPrev').hidden = !src && !wl.linkBusy;
   }
   $('wlAdd').addEventListener('click', function () {
-    $('wlForm').reset(); wl.photo = ''; wlPreview(); $('wlErr').hidden = true; $('wlSheet').hidden = false;
+    $('wlForm').reset(); wl = { photo: '', linkImg: '', linkBusy: false, linkP: null }; wlPreview(); $('wlErr').hidden = true; $('wlSheet').hidden = false;
   });
   $('wlSheet').addEventListener('click', function (e) { if (e.target.closest('[data-close]')) $('wlSheet').hidden = true; });
   $('wlFile').addEventListener('change', function () {
@@ -3640,6 +3690,11 @@ var GR_SCENE = (function () {
     if (f) shrink(f, function (src) { if (src) { wl.photo = src; $('wlImg').value = ''; wlPreview(); } });
   });
   $('wlImg').addEventListener('input', function () { if (safeUrl(this.value)) wl.photo = ''; wlPreview(); });
+  $('wlLink').addEventListener('input', debounce(function () {
+    var u = safeUrl($('wlLink').value), mine = wl;
+    mine.linkImg = ''; mine.linkBusy = !!u; mine.linkP = u ? linkImage(u) : null; wlPreview();
+    if (mine.linkP) mine.linkP.then(function (src) { if (wl !== mine || safeUrl($('wlLink').value) !== u) return; mine.linkImg = src; mine.linkBusy = false; wlPreview(); });
+  }, 600));
   // Google Images in a new tab; long-press an image there, copy its address and paste it into Image link
   $('wlGoogle').addEventListener('click', function () {
     var q = [$('wlName').value, $('wlShop').value].filter(Boolean).join(' ').trim();
@@ -3649,9 +3704,15 @@ var GR_SCENE = (function () {
     e.preventDefault();
     var w = { id: uid(), photo: wl.photo, img: safeUrl($('wlImg').value), name: $('wlName').value.trim(), shop: $('wlShop').value.trim(),
       price: $('wlPrice').value.trim(), size: $('wlSize').value.trim(), link: safeUrl($('wlLink').value), note: $('wlNote').value.trim(), at: Date.now() };
-    if (!w.photo && !w.img && !w.name) { $('wlErr').textContent = MG.t('wl.need'); $('wlErr').hidden = false; return; }
-    data.wish.unshift(w);
-    save('wish').then(function () { $('wlSheet').hidden = true; renderWish(); })['catch'](function () {});
+    // no picture of its own: take the one behind the shop link
+    var pic = w.photo || w.img || !w.link ? Promise.resolve('') : (wl.linkP && !wl.linkBusy ? Promise.resolve(wl.linkImg) : wl.linkP || linkImage(w.link));
+    if (!w.photo && !w.img && !w.name && !w.link) { $('wlErr').textContent = MG.t('wl.need'); $('wlErr').hidden = false; return; }
+    if (!w.photo && !w.img && w.link) { $('wlErr').textContent = MG.t('st.loadingImg'); $('wlErr').hidden = false; }
+    pic.then(function (src) {
+      if (src) { if (src.indexOf('data:') === 0) w.photo = src; else w.img = src; }
+      data.wish.unshift(w);
+      return save('wish').then(function () { $('wlSheet').hidden = true; renderWish(); });
+    })['catch'](function () {});
   });
   // Share the whole wishlist: the phone's share sheet (WhatsApp, Messenger, Instagram…), or copy it as text
   function dataUrlFile(src, i) {
