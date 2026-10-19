@@ -64,10 +64,12 @@ button:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
 @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 
 /* Bottom navigation */
+.tab{min-width:0;font-size:11px!important;white-space:nowrap}
+.tab>span:last-child{max-width:100%;overflow:hidden;text-overflow:ellipsis}
 .tabbar{display:flex;background:var(--surface);border-top:1px solid var(--border);padding:8px 8px calc(10px + env(safe-area-inset-bottom))}
 .tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 0;background:none;border:0;border-radius:16px;color:var(--taupe);font-size:12px;font-weight:600;letter-spacing:.01em;transition:color .2s}
 .tab svg{width:26px;height:26px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round;transition:stroke-width .2s}
-.tab .pill{display:flex;align-items:center;justify-content:center;width:56px;height:32px;border-radius:999px;transition:background .2s}
+.tab .pill{display:flex;align-items:center;justify-content:center;width:48px;height:32px;border-radius:999px;transition:background .2s}
 .tab.active{color:var(--ink);font-weight:700}
 .tab.active svg{stroke-width:2}
 .tab.active .pill{background:var(--pill)}
@@ -233,6 +235,7 @@ h2{margin:0 0 12px;font-size:19px;font-weight:700;letter-spacing:-.02em}
 .fab{position:absolute;inset-inline-end:20px;bottom:96px;width:58px;height:58px;border-radius:50%;border:0;background:var(--ink);display:none;align-items:center;justify-content:center;box-shadow:0 10px 24px rgba(43,43,43,.3)}
 .fab svg{width:26px;height:26px;stroke:var(--on-ink);stroke-width:2;fill:none;stroke-linecap:round}
 .fab.show{display:flex}
+#msAdd,#ibAdd,#wlAdd{display:none}
 
 /* Intro: the walk-in closet from the website, played when the app opens */
 @keyframes grFade{from{opacity:0}to{opacity:1}}
@@ -277,6 +280,7 @@ h2{margin:0 0 12px;font-size:19px;font-weight:700;letter-spacing:-.02em}
 
 #category.active{display:flex;flex-direction:column;overflow:hidden;padding-bottom:0}
 .cat-top{display:flex;align-items:flex-end;gap:12px;margin-bottom:18px}
+.cat-top .sf-add{margin-inline-start:auto;flex:0 0 auto}
 .back{flex:0 0 auto}
 .cbody{position:relative;flex:1;min-height:0;margin:0 -20px}
 .pager{display:flex;height:100%;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;scrollbar-width:none}
@@ -448,6 +452,12 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
 .photo-pick .chg[hidden]{display:none}
 /* Ways to add the photo: camera, upload, or find it on Google */
 .photo-menu{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+/* Paste: an image copied in another app (e.g. Pinterest → Copy image), or its address */
+.st-picks{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.st-picks3{grid-template-columns:repeat(3,1fr)}
+.st-picks3 .st-pick{padding:0 8px;font-size:13px}
+.paste-hint{margin:-6px 0 0;font-size:12px;color:var(--muted);text-align:center}
+.paste-hint[hidden]{display:none}
 .photo-menu[hidden],.g-panel[hidden]{display:none}
 .photo-menu button{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 4px;border-radius:16px;border:1px solid var(--border);background:var(--surface);font:inherit;font-size:12px;font-weight:700;color:var(--ink);line-height:1.2;text-align:center}
 .photo-menu button.on{border-color:var(--ink)}
@@ -500,18 +510,16 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
 @media (prefers-reduced-motion:reduce){.sheet,.sheet-bg{animation:none}}
 
 /* Styles: the bar above the tabs, folders, the save sheet and the wishlist */
-.stylebar{display:flex;gap:6px;padding:6px 10px;background:var(--bg);border-top:1px solid var(--border)}
-.stylebar[hidden]{display:none}
-.stylebar button{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:52px;padding:5px 4px;border:1px solid var(--border);border-radius:16px;background:var(--surface);font:inherit;font-size:11.5px;font-weight:700;line-height:1.15;color:var(--muted);text-align:center}
-.stylebar button span{max-width:100%;overflow-wrap:anywhere}
-.stylebar svg{flex:0 0 auto;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.stylebar button.on{background:var(--ink);border-color:var(--ink);color:var(--on-ink)}
 .st-grid .tile[hidden]{display:none}
 .st-grid .empty{grid-column:1/-1}
 .st-folder .art{background:var(--soft)}
 .st-fold{width:46%!important;fill:#E3C98F;stroke:#B08D57;stroke-width:1.6;stroke-linejoin:round}
 .st-hint{margin:-4px 0 14px;font-size:13px;line-height:1.4;color:var(--muted)}
 .st-actions{display:flex;gap:8px}
+.st-find[aria-expanded="true"]{background:var(--ink);border-color:var(--ink)}
+.st-find[aria-expanded="true"] svg{stroke:var(--on-ink)}
+.st-findbox[hidden]{display:none}
+.st-findbox{animation:rise .2s ease-out}
 .st-prev{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .st-prev[hidden]{display:none}
 .st-prev figure{position:relative;margin:0;aspect-ratio:3/4;border-radius:14px;overflow:hidden;background:var(--soft)}
@@ -598,6 +606,17 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
 .cap-item.on .cap-check{background:#2B2B2B}
 .cap-item.on .cap-check::after{content:'';position:absolute;left:6px;top:2px;width:6px;height:11px;border:solid #FFFDF8;border-width:0 2.4px 2.4px 0;transform:rotate(45deg)}
 .cap-add{width:100%;cursor:pointer}
+/* A link opened in a small window over the app */
+.webv{position:absolute;inset:0;z-index:55;display:flex;align-items:center;justify-content:center;padding:28px 12px}
+.webv[hidden]{display:none}
+.webv-bg{position:absolute;inset:0;background:rgba(17,17,17,.4);animation:fade .2s}
+.webv-box{position:relative;display:flex;flex-direction:column;width:100%;height:100%;max-height:640px;border-radius:22px;overflow:hidden;background:var(--surface);box-shadow:0 24px 60px rgba(17,17,17,.3);animation:up .25s ease-out}
+.webv-head{display:flex;align-items:center;gap:8px;padding:10px 10px 10px 16px;border-bottom:1px solid var(--border)}
+.webv-head b{flex:1;min-width:0;font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.webv-head .round{width:36px;height:36px;flex:0 0 auto}
+.webv-head .round svg{width:17px;height:17px}
+.webv iframe{flex:1;width:100%;border:0;background:#fff}
+.webv-hint{margin:0;padding:8px 14px;font-size:11px;color:var(--muted);border-top:1px solid var(--border);background:var(--bg)}
 .cap-msg{margin:8px 0 0;font-size:13px;font-weight:600;color:#B5483A}
 .cap-looks{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .cap-looks .empty{grid-column:1/-1}
@@ -693,8 +712,9 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
     <div class="topline">
       <div><span class="kicker" data-t="styles">Styles</span><h1 data-t="st.mine">My style</h1></div>
       <button class="round" id="msAdd" aria-label="Add photos of your outfits" data-t-aria="st.addMine"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+      <button class="round st-find" type="button" data-find="msQ" aria-expanded="false" aria-controls="msQBox" aria-label="Search" data-t-aria="st.search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></button>
     </div>
-    <label class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input type="search" id="msQ" placeholder="Search" aria-label="Search" data-t-ph="st.search" data-t-aria="st.search" autocomplete="off"></label>
+    <label class="search st-findbox" id="msQBox" hidden><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input type="search" id="msQ" placeholder="Search" aria-label="Search" data-t-ph="st.search" data-t-aria="st.search" autocomplete="off"></label>
 
     <div class="section">
       <div class="grid st-grid" id="msGrid">
@@ -765,25 +785,27 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
   </main>
 
   <!-- INSPIRATIONS (Styles → Inspirations): saved ideas, e.g. shared from Pinterest, kept in folders -->
-  <main class="screen" id="inspoBoard" aria-label="Inspirations" data-t-aria="inspirations" data-parent="inspo">
+  <main class="screen" id="inspoBoard" aria-label="Inspirations" data-t-aria="inspirations">
     <div class="topline">
       <div><span class="kicker" data-t="styles">Styles</span><h1 data-t="inspirations">Inspirations</h1></div>
       <button class="round" id="ibAdd" aria-label="Save an inspiration" data-t-aria="st.addBoard"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+      <button class="round st-find" type="button" data-find="ibQ" aria-expanded="false" aria-controls="ibQBox" aria-label="Search" data-t-aria="st.search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></button>
     </div>
-    <label class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input type="search" id="ibQ" placeholder="Search" aria-label="Search" data-t-ph="st.search" data-t-aria="st.search" autocomplete="off"></label>
-    <p class="st-hint" data-t="st.shareHint">Seen a great outfit on Pinterest? Tap Share there, choose My Gardrobe, and save it into a folder here.</p>
+    <label class="search st-findbox" id="ibQBox" hidden><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input type="search" id="ibQ" placeholder="Search" aria-label="Search" data-t-ph="st.search" data-t-aria="st.search" autocomplete="off"></label>
     <div class="grid st-grid" id="ibGrid"></div>
   </main>
 
   <!-- WISHLIST (Styles → Wishlist) -->
-  <main class="screen" id="wishlist" aria-label="Wishlist" data-t-aria="st.wish" data-parent="inspo">
+  <main class="screen" id="wishlist" aria-label="Wishlist" data-t-aria="st.wish">
     <div class="topline">
       <div><span class="kicker" data-t="styles">Styles</span><h1 data-t="st.wish">Wishlist</h1></div>
       <div class="st-actions">
         <button class="round" id="wlShare" aria-label="Share my wishlist" data-t-aria="wl.share"><svg viewBox="0 0 24 24"><path d="M12 15V4M8 8l4-4 4 4"/><path d="M6 12v7a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-7"/></svg></button>
         <button class="round" id="wlAdd" aria-label="Add to wishlist" data-t-aria="wl.add"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+        <button class="round st-find" type="button" data-find="wlQ" aria-expanded="false" aria-controls="wlQBox" aria-label="Search" data-t-aria="st.search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></button>
       </div>
     </div>
+    <label class="search st-findbox" id="wlQBox" hidden><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input type="search" id="wlQ" placeholder="Search" aria-label="Search" data-t-ph="st.search" data-t-aria="st.search" autocomplete="off"></label>
     <p class="cap-msg st-ok" id="wlMsg" role="status" hidden></p>
     <div class="wl-list" id="wlList"></div>
   </main>
@@ -793,6 +815,7 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
     <div class="cat-top">
       <button class="round back" id="sfBack" data-back="inspo" aria-label="Back" data-t-aria="cap.back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
       <div><span class="kicker" id="sfKicker"></span><h1 id="sfTitle"></h1></div>
+      <button class="round sf-add" id="sfAdd" aria-label="Add to this folder"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
     </div>
     <div class="section cap-looks" id="sfGrid"></div>
   </main>
@@ -844,7 +867,6 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
       <label class="field" id="fCatWrap"><span data-t="category">Category</span><select id="fCat"></select></label>
       <label class="field" id="fSubWrap"><span data-t="type">Type</span><select id="fSub"></select></label>
       <label class="field"><span data-t="brand">Brand</span><input id="fBrand" placeholder="e.g. Guess" autocomplete="off"></label>
-      <div class="field" id="fFitWrap"><span data-t="add2.fit">Fit</span><div class="opt-chips" id="fFitChips" role="radiogroup"></div><input type="hidden" id="fFit"></div>
       <div class="field"><span data-t="add2.size">Size</span><div class="opt-chips" id="fSizeChips" role="radiogroup"></div><input type="hidden" id="fSize"></div>
       <div class="field"><span><span data-t="colour">Colour</span> · <b class="c-name" id="fColorName"></b></span><div class="swatches" id="fColor"></div></div>
       <label class="set-row cap-row"><span><b data-t="cap.toggle">Capsule closet</b><small data-t="cap.toggleSub">Add this piece to my capsule closet</small></span><input type="checkbox" class="switch" id="fCapsule"></label>
@@ -858,6 +880,19 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
       <button type="button" id="camClose" aria-label="Close camera" data-t-aria="add2.camClose"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
       <button type="button" class="shoot" id="camShoot" aria-label="Take photo" data-t-aria="add2.shoot"><i></i></button>
       <button type="button" id="camFlip" aria-label="Switch camera" data-t-aria="add2.flip" hidden><svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><path d="M9.5 12.5a2.6 2.6 0 0 1 4.6-1.6M14.5 13.5a2.6 2.6 0 0 1-4.6 1.6M14.3 9.3v1.8h-1.8M9.7 16.7v-1.8h1.8"/></svg></button>
+    </div>
+  </div>
+
+  <div class="webv" id="webv" role="dialog" aria-modal="true" aria-labelledby="webvHost" hidden>
+    <div class="webv-bg" data-wclose></div>
+    <div class="webv-box">
+      <div class="webv-head">
+        <b id="webvHost"></b>
+        <a class="round" id="webvOut" target="_blank" rel="noopener" aria-label="Open in browser" data-t-aria="web.open" title="Open in browser"><svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a>
+        <button type="button" class="round" data-wclose aria-label="Close" data-t-aria="close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      </div>
+      <iframe id="webvFrame" title="" referrerpolicy="no-referrer-when-downgrade" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"></iframe>
+      <p class="webv-hint" data-t="web.hint">Page stays empty? Some shops don't allow being shown inside other apps – open it in your browser with the arrow above.</p>
     </div>
   </div>
 
@@ -984,7 +1019,11 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
     <form class="sheet" id="stForm" role="dialog" aria-modal="true" aria-labelledby="stTitle" novalidate>
       <div class="sheet-head"><h2 id="stTitle"></h2><button type="button" class="round" data-close aria-label="Close" data-t-aria="close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
       <div class="st-prev" id="stPrev"></div>
-      <label class="btn ghost st-pick"><input type="file" id="stFile" accept="image/*" multiple hidden><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span data-t="st.pickPhotos">Choose photos</span></label>
+      <div class="st-picks">
+        <label class="btn ghost st-pick"><input type="file" id="stFile" accept="image/*" multiple hidden><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span data-t="st.pickPhotos">Choose photos</span></label>
+        <button type="button" class="btn ghost st-pick" data-paste="st"><svg viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9.5 4V3h5v1"/><path d="M9.5 11h5M9.5 15h3"/></svg><span data-t="paste.btn">Paste image</span></button>
+      </div>
+      <p class="paste-hint" data-paste-hint data-t="paste.hint">Copied an image? Press Ctrl+V or ⌘V.</p>
       <label class="field" id="stLinkF"><span data-t="st.link">Link (optional)</span><input type="url" id="stLink" placeholder="https://" inputmode="url" autocomplete="off"></label>
       <div class="field"><span data-t="st.chooseFolder">Choose a category</span><div class="opt-row st-folders" id="stFolders" role="radiogroup"></div></div>
       <label class="field" id="stNewF" hidden><span data-t="st.newName">Name of the new category</span><input type="text" id="stNew" maxlength="40" autocomplete="off"></label>
@@ -999,9 +1038,10 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
     <form class="sheet" id="wlForm" role="dialog" aria-modal="true" aria-labelledby="wlTitle" novalidate>
       <div class="sheet-head"><h2 id="wlTitle" data-t="wl.add">Add to wishlist</h2><button type="button" class="round" data-close aria-label="Close" data-t-aria="close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
       <div class="st-prev wl-prev" id="wlPrev"></div>
-      <div class="field-row">
+      <div class="field-row st-picks3">
         <label class="btn ghost st-pick"><input type="file" id="wlFile" accept="image/*" hidden><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="9.5" cy="9.5" r="1.6"/><path d="M5 17l4.5-4.5 3 3 2.5-2.5L20 18"/></svg><span data-t="wl.upload">Upload photo</span></label>
         <button type="button" class="btn ghost st-pick" id="wlGoogle"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><span data-t="wl.google">Find on Google</span></button>
+        <button type="button" class="btn ghost st-pick" data-paste="wl"><svg viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9.5 4V3h5v1"/><path d="M9.5 11h5M9.5 15h3"/></svg><span data-t="paste.btn">Paste image</span></button>
       </div>
       <label class="field"><span data-t="wl.img">Image link</span><input type="url" id="wlImg" placeholder="https://…" inputmode="url" autocomplete="off"></label>
       <label class="field"><span data-t="wl.name">What is it?</span><input type="text" id="wlName" maxlength="80" autocomplete="off" placeholder="Black leather boots" data-t-ph="wl.namePh"></label>
@@ -1017,17 +1057,18 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
     </form>
   </div>
 
-  <nav class="stylebar" id="stylebar" aria-label="Styles" data-t-aria="styles" hidden>
-    <button type="button" data-st="inspo"><svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="3.2"/><path d="M6 20.5c.4-4.6 2.8-7.2 6-7.2s5.6 2.6 6 7.2"/></svg><span data-t="st.mine">My style</span></button>
-    <button type="button" data-st="inspoBoard"><svg viewBox="0 0 24 24"><path d="M10 3.5c.6 3.7 2.3 5.4 6 6-3.7.6-5.4 2.3-6 6-.6-3.7-2.3-5.4-6-6 3.7-.6 5.4-2.3 6-6z"/><path d="M18 14.5c.3 1.6 1 2.3 2.5 2.5-1.5.2-2.2.9-2.5 2.5-.3-1.6-1-2.3-2.5-2.5 1.5-.2 2.2-.9 2.5-2.5z"/></svg><span data-t="inspirations">Inspirations</span></button>
-    <button type="button" data-st="wishlist"><svg viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 7.5 2.6C19.5 15.4 12 20 12 20z"/></svg><span data-t="st.wish">Wishlist</span></button>
-  </nav>
   <nav class="tabbar" aria-label="Main">
     <button class="tab active" data-tab="home" aria-current="page">
       <span class="pill"><svg viewBox="0 0 24 24"><path d="M3.5 11 12 4l8.5 7"/><path d="M5.5 9.5V20h13V9.5"/><path d="M10 20v-5.5h4V20"/></svg></span><span data-t="home">Home</span>
     </button>
     <button class="tab" data-tab="inspo">
-      <span class="pill"><svg viewBox="0 0 24 24"><path d="M10 3.5c.6 3.7 2.3 5.4 6 6-3.7.6-5.4 2.3-6 6-.6-3.7-2.3-5.4-6-6 3.7-.6 5.4-2.3 6-6z"/><path d="M18 14.5c.3 1.6 1 2.3 2.5 2.5-1.5.2-2.2.9-2.5 2.5-.3-1.6-1-2.3-2.5-2.5 1.5-.2 2.2-.9 2.5-2.5z"/><path d="M18.5 3.5v2.5M17.25 4.75h2.5"/></svg></span><span data-t="styles">Styles</span>
+      <span class="pill"><svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="3.2"/><path d="M6 20.5c.4-4.6 2.8-7.2 6-7.2s5.6 2.6 6 7.2"/></svg></span><span data-t="st.mine">My style</span>
+    </button>
+    <button class="tab" data-tab="inspoBoard">
+      <span class="pill"><svg viewBox="0 0 24 24"><path d="M10 3.5c.6 3.7 2.3 5.4 6 6-3.7.6-5.4 2.3-6 6-.6-3.7-2.3-5.4-6-6 3.7-.6 5.4-2.3 6-6z"/><path d="M18 14.5c.3 1.6 1 2.3 2.5 2.5-1.5.2-2.2.9-2.5 2.5-.3-1.6-1-2.3-2.5-2.5 1.5-.2 2.2-.9 2.5-2.5z"/></svg></span><span data-t="inspirations">Inspirations</span>
+    </button>
+    <button class="tab" data-tab="wishlist">
+      <span class="pill"><svg viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 7.5 2.6C19.5 15.4 12 20 12 20z"/></svg></span><span data-t="st.wish">Wishlist</span>
     </button>
     <button class="tab" data-tab="wardrobe">
       <span class="pill"><svg viewBox="0 0 24 24"><path d="M9 3.5 4.5 5.5 2.5 10l3 1.3 1.5-1.6V20.5h10V9.7l1.5 1.6 3-1.3-2-4.5L15 3.5c-.4 1.5-1.6 2.5-3 2.5S9.4 5 9 3.5z"/></svg></span>My Gardrobe
@@ -1174,6 +1215,14 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
   var tabs = document.querySelectorAll('.tab');
   var fab = document.getElementById('fab');
 
+  var lastId = 'home';
+  function remember(id) {
+    if (id) lastId = id;
+    try { localStorage.setItem('mg-last', JSON.stringify({ id: lastId, t: Date.now() })); } catch (e) {}
+  }
+  // leaving the app (another tab, the shop, the home screen) counts as the last moment it was used
+  document.addEventListener('visibilitychange', function () { if (document.hidden) remember(); });
+  window.addEventListener('pagehide', function () { remember(); });
   function show(id) {
     // pages opened from a tab (a category, the capsule closet…) keep that tab lit
     var tabId = document.getElementById(id).dataset.parent || id;
@@ -1183,9 +1232,10 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
       t.classList.toggle('active', on);
       if (on) t.setAttribute('aria-current', 'page'); else t.removeAttribute('aria-current');
     });
-    fab.classList.toggle('show', id === 'wardrobe');
+    fab.classList.toggle('show', /^(wardrobe|inspo|inspoBoard|wishlist)$/.test(id));
     document.getElementById(id).scrollTop = 0;
     try { history.replaceState(null, '', '#' + id); } catch (e) {}
+    remember(tabId);
     document.dispatchEvent(new CustomEvent('mg-show', { detail: id }));
   }
   window.mgShow = show;
@@ -1651,10 +1701,8 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
     document.getElementById('fColorName').textContent = colorName(id);
   }
   function fillFitSize() {
-    var c = fCat.value, kind = FIT_OF[c], fits = kind ? MG.t('add2.fits.' + kind) : [];
-    document.getElementById('fFitWrap').hidden = !kind;
+    var c = fCat.value;
     // tappable chips instead of a datalist, which phones show unreliably
-    chips('fFitChips', 'fFit', Array.isArray(fits) ? fits : []);
     chips('fSizeChips', 'fSize', SIZES[c] || [[MG.t('add2.oneSize')]]);
   }
   function chips(boxId, inputId, list) {
@@ -1666,7 +1714,7 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
       return '<div class="opt-row' + (rows.length > 1 && row.length <= 9 ? ' fill' : '') + '">' + row.map(function (v) { return '<button type="button" role="radio" aria-checked="false" data-v="' + esc(v) + '">' + esc(v) + '</button>'; }).join('') + '</div>';
     }).join('');
   }
-  [['fFitChips', 'fFit'], ['fSizeChips', 'fSize']].forEach(function (pair) {
+  [['fSizeChips', 'fSize']].forEach(function (pair) {
     document.getElementById(pair[0]).addEventListener('click', function (e) {
       var b = e.target.closest('button'); if (!b) return;
       var input = document.getElementById(pair[1]), on = input.value !== b.dataset.v;   // tap again to clear
@@ -1692,7 +1740,7 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
     var b = e.target.closest('button'); if (!b) return;
     if (b.dataset.way === 'camera') openCamera();
     else if (b.dataset.way === 'upload') fPhoto.click();
-    else { showWays(true, 'google'); googleLink(); fLink.focus(); }
+    else if (b.dataset.way === 'google') { showWays(true, 'google'); googleLink(); fLink.focus(); }
   });
   // Google Images, searching for what has been typed so far
   function googleLink() {
@@ -1702,6 +1750,12 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
   document.getElementById('fGoogleOpen').addEventListener('click', googleLink);
   function useLink() {
     var url = fLink.value.trim(); if (!/^https?:\/\/\S+$/i.test(url)) { linkMsg(true); return; }
+    if (window.mgLinkImage && !/\.(jpe?g|png|webp|gif|avif)(\?\S*)?$/i.test(url) && !/^https?:\/\/i\.pinimg\.com\//i.test(url)) {
+      // a page (a Pinterest pin, a shop), not a picture: find the picture behind it
+      fLinkMsg.hidden = false; fLinkMsg.className = ''; fLinkMsg.textContent = MG.t('st.loadingImg');
+      window.mgLinkImage(url).then(function (src) { if (src) { linkMsg(false); setPhoto(src); } else linkMsg(true); });
+      return;
+    }
     var img = new Image();
     img.onload = function () { linkMsg(false); setPhoto(url); };
     img.onerror = function () { linkMsg(true); };
@@ -1785,14 +1839,18 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
     if (washClick(e)) return;
     var t = e.target.closest('.tile.item'); if (t && W8.onItem) W8.onItem(items[+t.dataset.i]);
   });
-  fab.addEventListener('click', function () { openSheet('', ''); });
+  // the round + adds to whatever page is open: a piece of clothing, a photo of my style, an inspiration, a wish
+  fab.addEventListener('click', function () {
+    var on = document.querySelector('.screen.active'), other = { inspo: 'msAdd', inspoBoard: 'ibAdd', wishlist: 'wlAdd' }[on && on.id];
+    if (other) document.getElementById(other).click(); else openSheet('', '');
+  });
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     var c = catById(fCat.value);
     // No name to type: a new piece is called by its type ("Heels", "Fur coats"), and gets its own id
     var sub = c.subs.length ? fSub.value : '';
     var it = { id: 'u' + Date.now().toString(36), autoName: true, cat: c.id, sub: sub, name: sub ? subName(sub) : catName(c), brand: document.getElementById('fBrand').value.trim(),
-      fit: FIT_OF[c.id] ? document.getElementById('fFit').value.trim() : '', size: document.getElementById('fSize').value.trim(), color: pick.color, hex: pick.hex || '', photo: pick.photo, mine: true };
+      size: document.getElementById('fSize').value.trim(), color: pick.color, hex: pick.hex || '', photo: pick.photo, mine: true };
     items.push(it);
     if (document.getElementById('fCapsule').checked) W8.setCapsule(it, true);
     saveItems();
@@ -1832,7 +1890,11 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
   });
 
   renderMain();
-  var start = location.hash.slice(1);
+  // Back within half an hour (e.g. from the shop that Buy opened, or the phone reloaded the app):
+  // no opening animation, and the page you were on, instead of Home
+  var last = null; try { last = JSON.parse(localStorage.getItem('mg-last') || 'null'); } catch (e) {}
+  window.mgResume = !!(last && Date.now() - last.t < 30 * 60 * 1000 && document.getElementById(last.id));
+  var start = location.hash.slice(1) || (window.mgResume ? last.id : '');
   if (document.getElementById(start) && document.getElementById(start).dataset.parent) start = document.getElementById(start).dataset.parent;
   if (document.getElementById(start) && document.getElementById(start).classList.contains('screen')) show(start);
 })();
@@ -2088,7 +2150,7 @@ var GR_SCENE = (function () {
   }
 
   // The intro plays every time the app opens (unless it is switched off in Settings); a link to a tab (app.html#inspo) still lands there afterwards
-  if (MG.get('intro', 'on') === 'off') { stage.hidden = true; return; }
+  if (MG.get('intro', 'on') === 'off' || window.mgResume) { stage.hidden = true; return; }
   buildStage();
   setTimeout(function () {
     stage.classList.add('leaving');
@@ -3430,7 +3492,7 @@ var GR_SCENE = (function () {
   // First start: after the opening animation, ask once (it can be skipped and set later)
   (function firstStart() {
     var skipped = false; try { skipped = !!localStorage.getItem('mg-colours-skip'); } catch (e) {}
-    if (profile() || skipped) return;
+    if (profile() || skipped || window.mgResume) return;
     var stage = $('stage');
     var wait = setInterval(function () { if (!stage || stage.hidden) { clearInterval(wait); openColours(true); } }, 300);
   })();
@@ -3492,16 +3554,26 @@ var GR_SCENE = (function () {
   }
   $('msQ').addEventListener('input', function () { filter('msQ', 'msGrid'); });
   $('ibQ').addEventListener('input', function () { filter('ibQ', 'ibGrid'); });
+  $('wlQ').addEventListener('input', renderWish);
+  // The loupe opens the search under the title; tapping it again closes it and shows everything again
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-find]'); if (!b) return;
+    var input = $(b.dataset.find), box = $(b.dataset.find + 'Box'), open = box.hidden;
+    box.hidden = !open; b.setAttribute('aria-expanded', open);
+    if (open) input.focus();
+    else if (input.value) { input.value = ''; input.dispatchEvent(new Event('input', { bubbles: true })); }
+  });
 
   // ---------- one folder ----------
   var cur = null;
-  function openFolder(kind, f) { cur = { kind: kind, f: f }; renderFolder(); window.mgShow('stFolder'); }
+  function openFolder(kind, f) { cur = { kind: kind, f: f }; $('stFolder').dataset.parent = kind === 'mine' ? 'inspo' : 'inspoBoard'; renderFolder(); window.mgShow('stFolder'); }
   function renderFolder() {
     if (!cur) return;
     var list = data[cur.kind].filter(function (e) { return e.folder === cur.f; });
     $('sfBack').dataset.back = cur.kind === 'mine' ? 'inspo' : 'inspoBoard';
     $('sfKicker').textContent = MG.count(list.length, MG.t('st.nSaved'));
     $('sfTitle').textContent = label(cur.f);
+    $('sfAdd').setAttribute('aria-label', MG.t('st.addTo', { f: label(cur.f) }));
     $('sfGrid').innerHTML = list.length ? list.map(function (e) {
       var url = safeUrl(e.url);
       return '<figure class="cap-look' + (e.src ? '' : ' st-linkonly') + '">' + (e.src ? '<img src="' + esc(e.src) + '" alt="">' : '<span class="st-linkcard">' + esc(url.replace(/^https?:\/\/(www\.)?/, '').split('/')[0]) + '</span>') +
@@ -3509,6 +3581,7 @@ var GR_SCENE = (function () {
         '<button type="button" class="cap-del" data-del="' + esc(e.id) + '" aria-label="' + esc(MG.t('cap.del')) + '"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></figure>';
     }).join('') : '<p class="empty">' + esc(MG.t('st.folderEmpty')) + '</p>';
   }
+  $('sfAdd').addEventListener('click', function () { if (cur) openSheet(cur.kind, [], '', cur.f); });
   $('sfGrid').addEventListener('click', function (e) {
     var b = e.target.closest('[data-del]'); if (!b || !cur) return;
     var id = b.dataset.del, here = cur;
@@ -3550,24 +3623,69 @@ var GR_SCENE = (function () {
     if (!left) return done(out);
     files.forEach(function (f, i) { shrink(f, function (src) { out[i] = src; if (--left === 0) done(out.filter(Boolean)); }); });
   }
-  // The picture behind a link (a Pinterest pin, a shop page): microlink.io finds it,
-  // images.weserv.nl serves it so a copy can be kept on the phone; if that fails, the picture's address is kept
+  // The picture behind a link. A Pinterest pin (pinterest.com/pin/123…, any country) asks Pinterest's
+  // public widget API for the pin's picture; a direct image address is used as it is; any other page
+  // (a shop) goes through microlink.io. images.weserv.nl then serves the picture so a copy can be kept
+  // on the phone; if that fails, the picture's address is kept.
   var linkCache = {};
+  function pinId(url) { var m = /^https?:\/\/([a-z0-9-]+\.)*pinterest\.[a-z.]+\/pin\/(?:[^\/?#]*--)?(\d+)/i.exec(url); return m ? m[2] : ''; }
+  function isPinShort(url) { return /^https?:\/\/(www\.)?pin\.it\//i.test(url); }
+  function isImageAddr(url) { return /\.(jpe?g|png|webp|gif|avif)(\?\S*)?$/i.test(url) || /^https?:\/\/i\.pinimg\.com\//i.test(url); }
+  function keepCopy(img) {
+    return fetch('https://images.weserv.nl/?w=900&url=' + encodeURIComponent(img.replace(/^https?:\/\//, '')))
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.blob(); })
+      .then(function (b) { return new Promise(function (ok) { shrink(new File([b], 'link', { type: b.type || 'image/jpeg' }), function (src) { ok(src || img); }); }); })
+      ['catch'](function () { return img; });
+  }
+  function pinPicture(id) {
+    return fetch('https://widgets.pinterest.com/v3/pidgets/pins/info/?pin_ids=' + id)
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        var im = j && j.data && j.data[0] && j.data[0].images, u = im && (im['564x'] || im['237x'] || im['236x']);
+        u = u && safeUrl(u.url);
+        // the bigger 736x copy exists for nearly every pin; fall back to 564x if it doesn't load
+        return u ? new Promise(function (ok) {
+          var big = u.replace('/564x/', '/736x/'), t = new Image();
+          t.onload = function () { ok(big); }; t.onerror = function () { ok(u); }; t.src = big;
+        }) : '';
+      });
+  }
   function linkImage(url) {
     url = safeUrl(url);
     if (!url) return Promise.resolve('');
-    if (!linkCache[url]) linkCache[url] = fetch('https://api.microlink.io/?url=' + encodeURIComponent(url))
-      .then(function (r) { return r.json(); })
-      .then(function (j) {
-        var img = j && j.status === 'success' && j.data && j.data.image && safeUrl(j.data.image.url);
-        if (!img) return '';
-        return fetch('https://images.weserv.nl/?w=900&url=' + encodeURIComponent(img.replace(/^https?:\/\//, '')))
-          .then(function (r) { if (!r.ok) throw new Error(r.status); return r.blob(); })
-          .then(function (b) { return new Promise(function (ok) { shrink(new File([b], 'link', { type: b.type || 'image/jpeg' }), function (src) { ok(src || img); }); }); })
-          ['catch'](function () { return img; });
-      })['catch'](function () { delete linkCache[url]; return ''; });
+    if (!linkCache[url]) {
+      var id = pinId(url);
+      var find = id ? pinPicture(id)
+        : isImageAddr(url) ? Promise.resolve(url)
+        : isPinShort(url) ? Promise.resolve('')
+        : fetch('https://api.microlink.io/?url=' + encodeURIComponent(url)).then(function (r) { return r.json(); })
+            .then(function (j) { return (j && j.status === 'success' && j.data && j.data.image && safeUrl(j.data.image.url)) || ''; });
+      linkCache[url] = find.then(function (img) { return img ? keepCopy(img) : ''; })['catch'](function () { delete linkCache[url]; return ''; });
+    }
     return linkCache[url];
   }
+  window.mgLinkImage = linkImage;
+
+  // Open a saved link in a small window inside the app. Pinterest won't be framed, so a pin uses
+  // Pinterest's own embed page; other sites load as they are (some shops refuse; the arrow opens the browser).
+  function openWeb(url) {
+    url = safeUrl(url); if (!url) return;
+    var id = pinId(url), host = url.replace(/^https?:\/\/(www\.)?/i, '').split(/[\/?#]/)[0];
+    $('webvHost').textContent = host;
+    $('webvOut').href = url;
+    $('webvFrame').src = id ? 'https://assets.pinterest.com/ext/embed.html?id=' + id : url;
+    $('webv').hidden = false;
+  }
+  function closeWeb() { $('webv').hidden = true; $('webvFrame').src = 'about:blank'; }
+  $('webv').addEventListener('click', function (e) { if (e.target.closest('[data-wclose]')) closeWeb(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !$('webv').hidden) closeWeb(); });
+  // an inspiration's saved link opens there; a wish's Buy goes straight to the shop or Google in the browser
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a.st-open'); if (!a || e.metaKey || e.ctrlKey) return;
+    e.preventDefault(); openWeb(a.href);
+  });
+  window.mgOpenWeb = openWeb;
+  window.mgIsPinShort = isPinShort;
   function debounce(fn, ms) { var t; return function () { clearTimeout(t); t = setTimeout(fn, ms); }; }
   function loadingFig() { return '<figure class="st-loading"><span>' + esc(MG.t('st.loadingImg')) + '</span></figure>'; }
 
@@ -3585,9 +3703,9 @@ var GR_SCENE = (function () {
     }).join('') + '<button type="button" role="radio" data-folder="+" aria-checked="' + (sheet.folder === '+') + '" class="st-new' + (sheet.folder === '+' ? ' on' : '') + '">+ ' + esc(MG.t('st.newFolder')) + '</button>';
     $('stNewF').hidden = sheet.folder !== '+';
   }
-  function openSheet(kind, photos, link) {
-    sheet = { kind: kind, photos: photos || [], folder: '', linkImg: '', linkBusy: false, linkP: null };
-    $('stTitle').textContent = MG.t(kind === 'mine' ? 'st.addMine' : 'st.addBoard');
+  function openSheet(kind, photos, link, folder) {
+    sheet = { kind: kind, photos: photos || [], folder: folder || '', linkImg: '', linkBusy: false, linkP: null };
+    $('stTitle').textContent = folder ? MG.t('st.addTo', { f: label(folder) }) : MG.t(kind === 'mine' ? 'st.addMine' : 'st.addBoard');
     $('stLinkF').hidden = kind === 'mine';
     $('stLink').value = link || '';
     $('stNew').value = '';
@@ -3597,6 +3715,7 @@ var GR_SCENE = (function () {
   }
   function fetchLinkImg() {
     var u = safeUrl($('stLink').value), mine = sheet;
+    stMsg(isPinShort(u) ? MG.t('st.pinShort') : '');
     mine.linkImg = ''; mine.linkBusy = !!u; mine.linkP = u ? linkImage(u) : Promise.resolve('');
     paintSheet();
     mine.linkP.then(function (src) {
@@ -3658,7 +3777,8 @@ var GR_SCENE = (function () {
   // ---------- Wishlist ----------
   var wl = { photo: '' };
   function renderWish() {
-    var list = data.wish;
+    var q = ($('wlQ') && $('wlQ').value || '').trim().toLowerCase();
+    var list = data.wish.filter(function (w) { return !q || [w.name, w.shop, w.size, w.note, w.price].join(' ').toLowerCase().indexOf(q) >= 0; });
     $('wlList').innerHTML = list.length ? list.map(function (w) {
       var img = w.photo || safeUrl(w.img), link = safeUrl(w.link);
       var meta = [w.shop, w.size && MG.t('wl.size') + ' ' + w.size].filter(Boolean).join(' · ');
@@ -3667,7 +3787,7 @@ var GR_SCENE = (function () {
         (w.price ? '<strong>' + esc(w.price) + '</strong>' : '') + (w.note ? '<p>' + esc(w.note) + '</p>' : '') +
         '<div class="wl-acts"><a class="btn wl-buy" href="' + esc(link || 'https://www.google.com/search?tbm=shop&q=' + encodeURIComponent([w.name, w.shop].filter(Boolean).join(' '))) +
         '" target="_blank" rel="noopener">' + esc(MG.t('wl.buy')) + '</a><button type="button" class="btn ghost wl-del" data-wdel="' + esc(w.id) + '">' + esc(MG.t('wl.delete')) + '</button></div></div></article>';
-    }).join('') : '<p class="empty">' + esc(MG.t('wl.empty')) + '</p>';
+    }).join('') : '<p class="empty">' + esc(q ? MG.t('noMatchAll', { q: q }) : MG.t('wl.empty')) + '</p>';
   }
   $('wlList').addEventListener('click', function (e) {
     var b = e.target.closest('[data-wdel]'); if (!b) return;
@@ -3689,7 +3809,18 @@ var GR_SCENE = (function () {
     var f = this.files && this.files[0]; this.value = '';
     if (f) shrink(f, function (src) { if (src) { wl.photo = src; $('wlImg').value = ''; wlPreview(); } });
   });
-  $('wlImg').addEventListener('input', function () { if (safeUrl(this.value)) wl.photo = ''; wlPreview(); });
+  $('wlImg').addEventListener('input', function () {
+    var u = safeUrl(this.value), mine = wl;
+    if (u) wl.photo = '';
+    if (u && !isImageAddr(u)) {
+      // a page (a pin, a shop), not a picture: fetch the picture behind it
+      this.value = ''; mine.linkImg = ''; mine.linkBusy = true; mine.linkP = linkImage(u); wlPreview();
+      if (isPinShort(u)) { $('wlErr').textContent = MG.t('st.pinShort'); $('wlErr').hidden = false; }
+      mine.linkP.then(function (src) { if (wl !== mine) return; mine.linkBusy = false; if (src) { if (src.indexOf('data:') === 0) wl.photo = src; else $('wlImg').value = src; } wlPreview(); });
+      return;
+    }
+    wlPreview();
+  });
   $('wlLink').addEventListener('input', debounce(function () {
     var u = safeUrl($('wlLink').value), mine = wl;
     mine.linkImg = ''; mine.linkBusy = !!u; mine.linkP = u ? linkImage(u) : null; wlPreview();
@@ -3735,20 +3866,6 @@ var GR_SCENE = (function () {
   });
   function wlSay(t) { $('wlMsg').textContent = t; $('wlMsg').hidden = false; clearTimeout(wlSay.t); wlSay.t = setTimeout(function () { $('wlMsg').hidden = true; }, 2500); }
 
-  // ---------- the bar above the tabs: My style · Inspirations · Wishlist ----------
-  var SECTION = { inspo: 'inspo', colorMatch: 'inspo', capsule: 'inspo', capMine: 'inspo', capLooks: 'inspo', inspoBoard: 'inspoBoard', wishlist: 'wishlist' };
-  function sectionOf(id) { return id === 'stFolder' ? (cur && cur.kind === 'board' ? 'inspoBoard' : 'inspo') : SECTION[id]; }
-  function paintBar(id) {
-    var s = sectionOf(id);
-    $('stylebar').hidden = !s;
-    $('stylebar').querySelectorAll('button').forEach(function (b) {
-      var on = b.dataset.st === s; b.classList.toggle('on', on);
-      if (on) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
-    });
-  }
-  $('stylebar').addEventListener('click', function (e) { var b = e.target.closest('[data-st]'); if (b) window.mgShow(b.dataset.st); });
-  document.addEventListener('mg-show', function (e) { paintBar(e.detail); });
-  var active = document.querySelector('.screen.active'); if (active) paintBar(active.id);
 
   function renderAll() { renderMine(); renderBoard(); renderWish(); if ($('stFolder').classList.contains('active')) renderFolder(); }
   MG.onLang(function () { renderAll(); if (!$('stSheet').hidden) paintSheet(); });
@@ -3758,6 +3875,64 @@ var GR_SCENE = (function () {
 
   // installable app (needed for Pinterest → Share → My Gardrobe on Android)
   if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('sw.js')['catch'](function () {});
+})();
+</script>
+<script>
+(function () {
+  // Paste into the open add sheet: an image copied elsewhere (Pinterest → Copy image) goes in as if it was chosen;
+  // a copied address goes into the right link field. Each sheet's own file input does the rest.
+  var $ = function (id) { return document.getElementById(id); };
+  var SHEETS = [
+    { id: 'stSheet', input: 'stFile', msg: 'stMsg' },
+    { id: 'wlSheet', input: 'wlFile', msg: 'wlErr' }
+  ];
+  function openOne() { for (var i = 0; i < SHEETS.length; i++) { var el = $(SHEETS[i].id); if (el && !el.hidden) return SHEETS[i]; } return null; }
+  function feed(sh, files) {
+    var input = $(sh.input), dt = new DataTransfer();
+    files.slice(0, sh.id === 'stSheet' ? 20 : 1).forEach(function (f) { dt.items.add(f); });
+    input.files = dt.files;
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+  function isImageUrl(u) { return /^https?:\/\/\S+\.(jpe?g|png|webp|gif|avif)(\?\S*)?$/i.test(u) || /^https?:\/\/i\.pinimg\.com\//i.test(u); }
+  function set(id, v) { var el = $(id); el.value = v; el.dispatchEvent(new Event('input', { bubbles: true })); el.dispatchEvent(new Event('change', { bubbles: true })); }
+  function useText(sh, text) {
+    var u = String(text || '').trim().split(/\s+/).filter(function (w) { return /^https?:\/\//i.test(w); })[0];
+    if (!u) return false;
+    if (sh.id === 'stSheet') set('stLink', u);
+    else set(isImageUrl(u) ? 'wlImg' : 'wlLink', u);
+    return true;
+  }
+  function say(sh, key) { var m = $(sh.msg); if (!m) return; m.textContent = MG.t(key); m.hidden = false; }
+
+  document.addEventListener('paste', function (e) {
+    var sh = openOne(), cd = e.clipboardData; if (!sh || !cd) return;
+    var files = Array.prototype.slice.call(cd.items || []).filter(function (it) { return it.kind === 'file' && /^image\//.test(it.type); })
+      .map(function (it) { return it.getAsFile(); }).filter(Boolean);
+    if (files.length) { e.preventDefault(); feed(sh, files); return; }
+    // plain text pasted into a field stays a normal paste
+    var ae = document.activeElement;
+    if (ae && (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA') && ae.type !== 'file') return;
+    if (useText(sh, cd.getData('text'))) e.preventDefault();
+  });
+
+  // Paste buttons, for phones (no keyboard shortcut there); the browser may ask to allow it
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-paste]'); if (!b) return;
+    var sh = openOne(); if (!sh) return;
+    e.preventDefault();
+    var cb = navigator.clipboard;
+    if (!cb) { say(sh, 'paste.keys'); return; }
+    var read = cb.read ? cb.read().then(function (items) {
+      var types = [];
+      items.forEach(function (it) { it.types.forEach(function (t) { if (/^image\//.test(t)) types.push(it.getType(t).then(function (bl) { return new File([bl], 'pasted.' + (t.split('/')[1] || 'png'), { type: t }); })); }); });
+      if (types.length) return Promise.all(types).then(function (files) { feed(sh, files); return true; });
+      return cb.readText ? cb.readText().then(function (t) { return useText(sh, t); }) : false;
+    }) : cb.readText().then(function (t) { return useText(sh, t); });
+    read.then(function (ok) { if (!ok) say(sh, 'paste.none'); }, function () { say(sh, 'paste.keys'); });
+  });
+
+  // the keyboard hint only where there is a keyboard
+  if (window.matchMedia && matchMedia('(pointer: coarse)').matches) document.querySelectorAll('[data-paste-hint]').forEach(function (p) { p.hidden = true; });
 })();
 </script>
 </body>
