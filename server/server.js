@@ -7,6 +7,8 @@ const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
 const { DatabaseSync } = require('node:sqlite');
+const { lookup } = require('./lookup');
+const { classify, Anthropic } = require('./classify');
 
 const PORT = +process.argv[2] || +process.env.PORT || 8000;
 const ROOT = path.join(__dirname, '..');
@@ -14,7 +16,9 @@ const DB_FILE = process.env.DB_FILE || path.join(__dirname, 'data', 'gardrobe.db
 const SESSION_DAYS = 60;
 const MAX_BODY = 25 * 1024 * 1024;   // photos are stored as JPEG data URLs inside the items
 // What the app keeps per person; device preferences (theme, units, language) stay in the browser
-const DATA_KEYS = ['mg-items', 'mg-wash', 'mg-worn', 'mg-fav', 'mg-figure', 'mg-outfit', 'mg-outfit-prev', 'mg-worn-day'];
+// The Android app (Capacitor) loads the app from this origin and signs in with a bearer token instead of the cookie
+const APP_ORIGINS = ['https://localhost'];
+const DATA_KEYS = ['mg-items', 'mg-wash', 'mg-worn', 'mg-fav', 'mg-figure', 'mg-outfit', 'mg-outfit-prev', 'mg-worn-day', 'mg-capsule', 'mg-capsule-looks'];
 
 fs.mkdirSync(path.dirname(DB_FILE), { recursive: true });
 const db = new DatabaseSync(DB_FILE);
@@ -75,13 +79,19 @@ function cookies(req) {
   (req.headers.cookie || '').split(';').forEach((c) => { const i = c.indexOf('='); if (i > 0) out[c.slice(0, i).trim()] = decodeURIComponent(c.slice(i + 1).trim()); });
   return out;
 }
-function startSession(res, userId) {
+function startSession(req, res, userId) {
   const token = crypto.randomBytes(32).toString('base64url');
   q.addSession.run(sha(token), userId, Date.now() + SESSION_DAYS * 864e5);
+  if (isApp(req)) return token;   // the phone app keeps it itself
   res.setHeader('Set-Cookie', `mg_session=${token}; HttpOnly; SameSite=Lax; Path=/; Max-Age=${SESSION_DAYS * 86400}`);
 }
+const isApp = (req) => APP_ORIGINS.includes(req.headers.origin);
+function sessionToken(req) {
+  const m = /^Bearer (\S+)$/.exec(req.headers.authorization || '');
+  return m ? m[1] : cookies(req).mg_session;
+}
 function currentUser(req) {
-  const token = cookies(req).mg_session;
+  const token = sessionToken(req);
   if (!token) return null;
   const s = q.session.get(sha(token), Date.now());
   return s ? { user: q.userById.get(s.user_id), tokenHash: sha(token) } : null;
@@ -114,8 +124,16 @@ function noteFail(key) { const f = fails.get(key); fails.set(key, f && Date.now(
 // ---- API
 async function api(req, res, url) {
   const route = req.method + ' ' + url.pathname;
-  // Browsers send Origin on cross-site POST/PUT/DELETE; refuse those so other sites can't act with the cookie
-  if (req.method !== 'GET' && req.headers.origin && new URL(req.headers.origin).host !== req.headers.host) return send(res, 403, { error: 'origin' });
+  // Browsers send Origin on cross-site POST/PUT/DELETE; refuse those so other sites can't act with the cookie.
+  // The Android app is the exception: it doesn't use the cookie.
+  if (isApp(req)) {
+    res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
+    res.setHeader('Vary', 'Origin');
+    if (req.method === 'OPTIONS') {
+      res.writeHead(204, { 'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE', 'Access-Control-Allow-Headers': 'Authorization, Content-Type', 'Access-Control-Max-Age': '86400' });
+      return res.end();
+    }
+  } else if (req.method !== 'GET' && req.headers.origin && new URL(req.headers.origin).host !== req.headers.host) return send(res, 403, { error: 'origin' });
 
   if (route === 'POST /api/signup') {
     const { name, email, password } = await readJson(req);
@@ -124,8 +142,8 @@ async function api(req, res, url) {
     if (String(password || '').length < 8) return send(res, 400, { error: 'short' });
     if (q.userByEmail.get(email.trim())) return send(res, 409, { error: 'taken' });
     const r = q.addUser.run(email.trim(), String(name).trim().slice(0, 80), hashPw(password), Date.now());
-    startSession(res, Number(r.lastInsertRowid));
-    return send(res, 201, { user: { name: String(name).trim(), email: email.trim() }, data: {} });
+    const token = startSession(req, res, Number(r.lastInsertRowid));
+    return send(res, 201, { user: { name: String(name).trim(), email: email.trim() }, data: {}, token });
   }
   if (route === 'POST /api/login') {
     const { email, password } = await readJson(req);
@@ -134,11 +152,11 @@ async function api(req, res, url) {
     const u = q.userByEmail.get(String(email || '').trim());
     if (!u || !checkPw(String(password || ''), u.pw_hash)) { noteFail(key); return send(res, 401, { error: 'login' }); }
     fails.delete(key);
-    startSession(res, u.id);
-    return send(res, 200, { user: publicUser(u), data: dataOf(u.id) });
+    const token = startSession(req, res, u.id);
+    return send(res, 200, { user: publicUser(u), data: dataOf(u.id), token });
   }
   if (route === 'POST /api/logout') {
-    const token = cookies(req).mg_session;
+    const token = sessionToken(req);
     if (token) q.dropSession.run(sha(token));
     res.setHeader('Set-Cookie', 'mg_session=; HttpOnly; SameSite=Lax; Path=/; Max-Age=0');
     return send(res, 200, { ok: true });
@@ -156,6 +174,27 @@ async function api(req, res, url) {
     q.dropOtherSessions.run(me.user.id, me.tokenHash);   // sign out the other devices
     return send(res, 200, { ok: true });
   }
+  // "Add automatically": what a shop's product page says about the piece (signed in only, so it isn't an open proxy)
+  if (route === 'POST /api/lookup') {
+    const { url: link } = await readJson(req);
+    try { return send(res, 200, await lookup(link)); } catch (e) { if (e.code) return send(res, 422, { error: e.code }); throw e; }
+  }
+  // A new piece's photo: what it is (server/classify.js). 'off' when the server has no Claude API credentials.
+  if (route === 'POST /api/classify') {
+    const { photo } = await readJson(req);
+    try {
+      const piece = await classify(photo);
+      return send(res, piece ? 200 : 422, piece || { error: 'unsure' });
+    } catch (e) {
+      if (e.code === 'photo') return send(res, 400, { error: 'photo' });
+      if (e instanceof Anthropic.AuthenticationError) return send(res, 503, { error: 'off' });
+      if (e instanceof Anthropic.RateLimitError) return send(res, 503, { error: 'busy' });
+      if (e instanceof Anthropic.APIError) { console.error('classify:', e.status, e.message); return send(res, 502, { error: 'ai' }); }
+      // anything else is set-up (the SDK reports missing credentials with a plain Error): log it, the app carries on without
+      console.error('classify unavailable:', e.message);
+      return send(res, 503, { error: 'off' });
+    }
+  }
   // One stored value per key, exactly the text the app keeps in localStorage
   const m = url.pathname.match(/^\/api\/data\/([a-z-]+)$/);
   if (m && DATA_KEYS.includes(m[1])) {
@@ -171,15 +210,16 @@ function dataOf(userId) {
 }
 
 // ---- static files (website + app)
-const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.json': 'application/json; charset=utf-8', '.css': 'text/css; charset=utf-8',
-  '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp', '.ico': 'image/x-icon', '.woff2': 'font/woff2' };
+const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.json': 'application/json; charset=utf-8', '.webmanifest': 'application/manifest+json', '.css': 'text/css; charset=utf-8',
+  '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp', '.ico': 'image/x-icon', '.woff2': 'font/woff2',
+  '.apk': 'application/vnd.android.package-archive' };   // release/MyGardrobe.apk, downloaded over Wi-Fi
 function serveFile(req, res, url) {
   let rel = decodeURIComponent(url.pathname);
   if (rel.endsWith('/')) rel += 'index.html';
   const file = path.join(ROOT, rel);
   // only the site itself: nothing outside the folder, no dotfiles, not the server or the Expo app
   const top = path.relative(ROOT, file).split(path.sep)[0];
-  if (!file.startsWith(ROOT + path.sep) || /(^|[\\/])\./.test(rel) || ['server', 'app', 'node_modules'].includes(top)) { res.writeHead(404); return res.end('Not found'); }
+  if (!file.startsWith(ROOT + path.sep) || /(^|[\\/])\./.test(rel) || ['server', 'app', 'node_modules', 'www', 'android', 'scripts'].includes(top)) { res.writeHead(404); return res.end('Not found'); }
   fs.stat(file, (err, st) => {
     if (err || !st.isFile()) { res.writeHead(404); return res.end('Not found'); }
     res.writeHead(200, { 'Content-Type': TYPES[path.extname(file).toLowerCase()] || 'application/octet-stream', 'Content-Length': st.size });

@@ -1,0 +1,13 @@
+{
+  "appId": "com.mygardrobe.app",
+  "appName": "My Gardrobe",
+  "webDir": "www",
+  "backgroundColor": "#F6F2EA",
+  "server": {
+    "androidScheme": "https",
+    "cleartext": true
+  },
+  "android": {
+    "allowMixedContent": true
+  }
+}

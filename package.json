@@ -1,0 +1,21 @@
+{
+  "name": "my-gardrobe",
+  "private": true,
+  "description": "My Gardrobe: website, web app, server and the Android app (Capacitor)",
+  "scripts": {
+    "start": "node server/server.js",
+    "build:app": "node scripts/build-app.mjs",
+    "sync": "node scripts/build-app.mjs && cap sync",
+    "android": "node scripts/build-app.mjs && cap sync android && cap open android",
+    "apk": "node scripts/build-app.mjs && cap sync android && cd android && ./gradlew assembleDebug && cp app/build/outputs/apk/debug/app-debug.apk ../release/MyGardrobe.apk"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.135.0",
+    "@capacitor/android": "^8.5.3",
+    "@capacitor/core": "^8.5.3",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.5.3"
+  }
+}
