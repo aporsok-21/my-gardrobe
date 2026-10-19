@@ -25,6 +25,7 @@ MG_STRINGS["ko"] = {
   shape: { hourglass: "모래시계형", pear: "배형", apple: "사과형", rectangle: "직사각형", triangle: "역삼각형" },
   pick: { outer: "코트 고르기", top: "상의 고르기", bottom: "바지 고르기", shoes: "신발 고르기", bag: "가방 고르기", hat: "모자 고르기", jewelry: "주얼리 고르기" },
   language: "언어", searchLang: "언어 검색", temperature: "온도", celsius: "섭씨", fahrenheit: "화씨",
+  chooseLang: "언어 선택",
   appearance: "화면 모드",
   themeAuto: "자동",
   themeLight: "라이트",

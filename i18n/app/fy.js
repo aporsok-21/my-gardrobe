@@ -25,6 +25,7 @@ MG_STRINGS["fy"] = {
   shape: { hourglass: "Sânlooper", pear: "Par", apple: "Appel", rectangle: "Rjochthoeke", triangle: "Omkearde trijehoeke" },
   pick: { outer: "Kies in jas", top: "Kies in top", bottom: "Kies in broek", shoes: "Kies skuon", bag: "Kies in tas", hat: "Kies in hoed", jewelry: "Kies sieraden" },
   language: "Taal", searchLang: "Taal sykje", temperature: "Temperatuer", celsius: "Celsius", fahrenheit: "Fahrenheit",
+  chooseLang: "Kies taal",
   appearance: "Uterlik",
   themeAuto: "Automatysk",
   themeLight: "Ljocht",

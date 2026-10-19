@@ -25,6 +25,7 @@ MG_STRINGS["lb"] = {
   shape: { hourglass: "Sanduhr", pear: "Bir", apple: "Apel", rectangle: "Rechteck", triangle: "Ëmgedréint Dräieck" },
   pick: { outer: "Wiel e Mantel", top: "Wiel en Iwwerdeel", bottom: "Wiel eng Box", shoes: "Wiel Schong", bag: "Wiel eng Tasch", hat: "Wiel en Hutt", jewelry: "Wiel Bijouen" },
   language: "Sprooch", searchLang: "Sprooch sichen", temperature: "Temperatur", celsius: "Celsius", fahrenheit: "Fahrenheit",
+  chooseLang: "Sprooch wielen",
   appearance: "Ausgesinn",
   themeAuto: "Automatesch",
   themeLight: "Hell",

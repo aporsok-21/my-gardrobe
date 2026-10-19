@@ -25,6 +25,7 @@ MG_STRINGS["bg"] = {
   shape: { hourglass: "Пясъчен часовник", pear: "Круша", apple: "Ябълка", rectangle: "Правоъгълник", triangle: "Обърнат триъгълник" },
   pick: { outer: "Избери палто", top: "Избери горнище", bottom: "Избери панталон", shoes: "Избери обувки", bag: "Избери чанта", hat: "Избери шапка", jewelry: "Избери бижу" },
   language: "Език", searchLang: "Търси език", temperature: "Температура", celsius: "Целзий", fahrenheit: "Фаренхайт",
+  chooseLang: "Избери език",
   appearance: "Външен вид",
   themeAuto: "Автоматично",
   themeLight: "Светъл",

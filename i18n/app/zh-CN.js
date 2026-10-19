@@ -25,6 +25,7 @@ MG_STRINGS["zh-CN"] = {
   shape: { hourglass: "沙漏型", pear: "梨型", apple: "苹果型", rectangle: "矩形", triangle: "倒三角型" },
   pick: { outer: "选择一件外套", top: "选择一件上衣", bottom: "选择一条裤子", shoes: "选择鞋子", bag: "选择一个包", hat: "选择一顶帽子", jewelry: "选择首饰" },
   language: "语言", searchLang: "搜索语言", temperature: "温度", celsius: "摄氏度", fahrenheit: "华氏度",
+  chooseLang: "选择语言",
   appearance: "外观",
   themeAuto: "自动",
   themeLight: "浅色",

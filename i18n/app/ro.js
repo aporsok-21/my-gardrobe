@@ -25,6 +25,7 @@ MG_STRINGS["ro"] = {
   shape: { hourglass: "Clepsidră", pear: "Pară", apple: "Măr", rectangle: "Dreptunghi", triangle: "Triunghi inversat" },
   pick: { outer: "Alege o haină", top: "Alege un top", bottom: "Alege pantaloni", shoes: "Alege pantofi", bag: "Alege o geantă", hat: "Alege o pălărie", jewelry: "Alege bijuterii" },
   language: "Limbă", searchLang: "Caută o limbă", temperature: "Temperatură", celsius: "Celsius", fahrenheit: "Fahrenheit",
+  chooseLang: "Alege limba",
   appearance: "Aspect",
   themeAuto: "Automat",
   themeLight: "Luminos",

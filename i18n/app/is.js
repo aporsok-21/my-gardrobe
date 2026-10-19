@@ -25,6 +25,7 @@ MG_STRINGS["is"] = {
   shape: { hourglass: "Stundaglas", pear: "Pera", apple: "Epli", rectangle: "Rétthyrningur", triangle: "Öfugur þríhyrningur" },
   pick: { outer: "Veldu kápu", top: "Veldu topp", bottom: "Veldu buxur", shoes: "Veldu skó", bag: "Veldu tösku", hat: "Veldu hatt", jewelry: "Veldu skartgrip" },
   language: "Tungumál", searchLang: "Leita að tungumáli", temperature: "Hitastig", celsius: "Celsíus", fahrenheit: "Fahrenheit",
+  chooseLang: "Veldu tungumál",
   appearance: "Útlit",
   themeAuto: "Sjálfvirkt",
   themeLight: "Ljóst",

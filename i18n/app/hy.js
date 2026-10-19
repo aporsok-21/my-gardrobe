@@ -25,6 +25,7 @@ MG_STRINGS["hy"] = {
   shape: { hourglass: "Ավազի ժամացույց", pear: "Տանձ", apple: "Խնձոր", rectangle: "Ուղղանկյուն", triangle: "Շրջված եռանկյուն" },
   pick: { outer: "Ընտրիր վերարկու", top: "Ընտրիր վերնամաս", bottom: "Ընտրիր տաբատ", shoes: "Ընտրիր կոշիկներ", bag: "Ընտրիր պայուսակ", hat: "Ընտրիր գլխարկ", jewelry: "Ընտրիր զարդ" },
   language: "Լեզու", searchLang: "Որոնել լեզու", temperature: "Ջերմաստիճան", celsius: "Ցելսիուս", fahrenheit: "Ֆարենհայտ",
+  chooseLang: "Ընտրիր լեզուն",
   appearance: "Արտաքին տեսք",
   themeAuto: "Ավտոմատ",
   themeLight: "Լուսավոր",

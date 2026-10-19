@@ -25,6 +25,7 @@ MG_STRINGS["uz"] = {
   shape: { hourglass: "Qum soat", pear: "Nok", apple: "Olma", rectangle: "To‘g‘ri to‘rtburchak", triangle: "Teskari uchburchak" },
   pick: { outer: "Palto tanlang", top: "Ustki kiyim tanlang", bottom: "Shim tanlang", shoes: "Poyabzal tanlang", bag: "Sumka tanlang", hat: "Shlyapa tanlang", jewelry: "Taqinchoq tanlang" },
   language: "Til", searchLang: "Til qidirish", temperature: "Harorat", celsius: "Selsiy", fahrenheit: "Farengeyt",
+  chooseLang: "Tilni tanlang",
   appearance: "Koʻrinish",
   themeAuto: "Avtomatik",
   themeLight: "Yorugʻ",

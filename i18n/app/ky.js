@@ -25,6 +25,7 @@ MG_STRINGS["ky"] = {
   shape: { hourglass: "Кум саат", pear: "Алмурут", apple: "Алма", rectangle: "Тик бурчтук", triangle: "Тескери үч бурчтук" },
   pick: { outer: "Пальто танда", top: "Үстүңкү кийим танда", bottom: "Шым танда", shoes: "Бут кийим танда", bag: "Сумка танда", hat: "Калпак танда", jewelry: "Зер буюм танда" },
   language: "Тил", searchLang: "Тил издөө", temperature: "Температура", celsius: "Цельсий", fahrenheit: "Фаренгейт",
+  chooseLang: "Тилди танда",
   appearance: "Көрүнүш",
   themeAuto: "Автоматтык",
   themeLight: "Жарык",

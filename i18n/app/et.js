@@ -25,6 +25,7 @@ MG_STRINGS["et"] = {
   shape: { hourglass: "Liivakell", pear: "Pirn", apple: "Õun", rectangle: "Ristkülik", triangle: "Ümberpööratud kolmnurk" },
   pick: { outer: "Vali mantel", top: "Vali pealis", bottom: "Vali püksid", shoes: "Vali kingad", bag: "Vali kott", hat: "Vali kübar", jewelry: "Vali ehe" },
   language: "Keel", searchLang: "Otsi keelt", temperature: "Temperatuur", celsius: "Celsius", fahrenheit: "Fahrenheit",
+  chooseLang: "Vali keel",
   appearance: "Välimus",
   themeAuto: "Automaatne",
   themeLight: "Hele",

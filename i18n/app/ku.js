@@ -25,6 +25,7 @@ MG_STRINGS["ku"] = {
   shape: { hourglass: "Saeta qûmê", pear: "Hirmî", apple: "Sêv", rectangle: "Çargoşe", triangle: "Sêgoşeya berevajî" },
   pick: { outer: "Qapûtek hilbijêre", top: "Jorînek hilbijêre", bottom: "Pantolekê hilbijêre", shoes: "Pêlavan hilbijêre", bag: "Çenteyek hilbijêre", hat: "Kumek hilbijêre", jewelry: "Xişrekê hilbijêre" },
   language: "Ziman", searchLang: "Li ziman bigere", temperature: "Germahî", celsius: "Celsius", fahrenheit: "Fahrenheit",
+  chooseLang: "Ziman hilbijêre",
   appearance: "Xuyang",
   themeAuto: "Otomatîk",
   themeLight: "Ronî",

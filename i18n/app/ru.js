@@ -25,6 +25,7 @@ MG_STRINGS["ru"] = {
   shape: { hourglass: "Песочные часы", pear: "Груша", apple: "Яблоко", rectangle: "Прямоугольник", triangle: "Перевёрнутый треугольник" },
   pick: { outer: "Выбери пальто", top: "Выбери верх", bottom: "Выбери брюки", shoes: "Выбери обувь", bag: "Выбери сумку", hat: "Выбери шляпу", jewelry: "Выбери украшение" },
   language: "Язык", searchLang: "Поиск языка", temperature: "Температура", celsius: "Цельсий", fahrenheit: "Фаренгейт",
+  chooseLang: "Выбери язык",
   appearance: "Оформление",
   themeAuto: "Автоматически",
   themeLight: "Светлое",

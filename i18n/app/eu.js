@@ -25,6 +25,7 @@ MG_STRINGS["eu"] = {
   shape: { hourglass: "Harea-erlojua", pear: "Udarea", apple: "Sagarra", rectangle: "Laukizuzena", triangle: "Triangelu alderantzikatua" },
   pick: { outer: "Aukeratu beroki bat", top: "Aukeratu goiko pieza bat", bottom: "Aukeratu galtzak", shoes: "Aukeratu oinetakoak", bag: "Aukeratu poltsa bat", hat: "Aukeratu txapela", jewelry: "Aukeratu bitxiak" },
   language: "Hizkuntza", searchLang: "Bilatu hizkuntza", temperature: "Tenperatura", celsius: "Celsius", fahrenheit: "Fahrenheit",
+  chooseLang: "Aukeratu hizkuntza",
   appearance: "Itxura",
   themeAuto: "Automatikoa",
   themeLight: "Argia",

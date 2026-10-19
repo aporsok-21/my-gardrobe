@@ -25,6 +25,7 @@ MG_STRINGS["ja"] = {
   shape: { hourglass: "砂時計型", pear: "洋ナシ型", apple: "リンゴ型", rectangle: "長方形型", triangle: "逆三角形型" },
   pick: { outer: "コートを選ぶ", top: "トップスを選ぶ", bottom: "パンツを選ぶ", shoes: "靴を選ぶ", bag: "バッグを選ぶ", hat: "帽子を選ぶ", jewelry: "アクセサリーを選ぶ" },
   language: "言語", searchLang: "言語を検索", temperature: "温度", celsius: "摂氏", fahrenheit: "華氏",
+  chooseLang: "言語を選択",
   appearance: "外観",
   themeAuto: "自動",
   themeLight: "ライト",

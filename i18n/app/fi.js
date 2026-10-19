@@ -25,6 +25,7 @@ MG_STRINGS["fi"] = {
   shape: { hourglass: "Tiimalasi", pear: "Päärynä", apple: "Omena", rectangle: "Suorakulmio", triangle: "Käänteinen kolmio" },
   pick: { outer: "Valitse takki", top: "Valitse yläosa", bottom: "Valitse housut", shoes: "Valitse kengät", bag: "Valitse laukku", hat: "Valitse hattu", jewelry: "Valitse koru" },
   language: "Kieli", searchLang: "Hae kieltä", temperature: "Lämpötila", celsius: "Celsius", fahrenheit: "Fahrenheit",
+  chooseLang: "Valitse kieli",
   appearance: "Ulkoasu",
   themeAuto: "Automaattinen",
   themeLight: "Vaalea",

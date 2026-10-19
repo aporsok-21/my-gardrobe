@@ -25,6 +25,7 @@ MG_STRINGS["cs"] = {
   shape: { hourglass: "Přesýpací hodiny", pear: "Hruška", apple: "Jablko", rectangle: "Obdélník", triangle: "Obrácený trojúhelník" },
   pick: { outer: "Vyber kabát", top: "Vyber top", bottom: "Vyber kalhoty", shoes: "Vyber boty", bag: "Vyber kabelku", hat: "Vyber klobouk", jewelry: "Vyber šperk" },
   language: "Jazyk", searchLang: "Hledat jazyk", temperature: "Teplota", celsius: "Celsius", fahrenheit: "Fahrenheit",
+  chooseLang: "Vyber jazyk",
   appearance: "Vzhled",
   themeAuto: "Automaticky",
   themeLight: "Světlý",

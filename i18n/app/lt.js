@@ -25,6 +25,7 @@ MG_STRINGS["lt"] = {
   shape: { hourglass: "Smėlio laikrodis", pear: "Kriaušė", apple: "Obuolys", rectangle: "Stačiakampis", triangle: "Apverstas trikampis" },
   pick: { outer: "Pasirink paltą", top: "Pasirink viršų", bottom: "Pasirink kelnes", shoes: "Pasirink batus", bag: "Pasirink rankinę", hat: "Pasirink skrybėlę", jewelry: "Pasirink papuošalą" },
   language: "Kalba", searchLang: "Ieškoti kalbos", temperature: "Temperatūra", celsius: "Celsijus", fahrenheit: "Farenheitas",
+  chooseLang: "Pasirink kalbą",
   appearance: "Išvaizda",
   themeAuto: "Automatiškai",
   themeLight: "Šviesi",

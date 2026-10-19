@@ -25,6 +25,7 @@ MG_STRINGS["tg"] = {
   shape: { hourglass: "Соати регӣ", pear: "Нок", apple: "Себ", rectangle: "Росткунҷа", triangle: "Секунҷаи чаппа" },
   pick: { outer: "Палто интихоб кунед", top: "Болопӯш интихоб кунед", bottom: "Шим интихоб кунед", shoes: "Пойафзол интихоб кунед", bag: "Сумка интихоб кунед", hat: "Кулоҳ интихоб кунед", jewelry: "Ҷавоҳирот интихоб кунед" },
   language: "Забон", searchLang: "Ҷустуҷӯи забон", temperature: "Ҳарорат", celsius: "Селсий", fahrenheit: "Фаренгейт",
+  chooseLang: "Забонро интихоб кунед",
   appearance: "Намуди зоҳирӣ",
   themeAuto: "Худкор",
   themeLight: "Равшан",

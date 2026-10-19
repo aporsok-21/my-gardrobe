@@ -25,6 +25,7 @@ MG_STRINGS["gd"] = {
   shape: { hourglass: "Glainne-uaire", pear: "Peur", apple: "Ubhal", rectangle: "Ceart-cheàrnach", triangle: "Triantan bun os cionn" },
   pick: { outer: "Tagh còta", top: "Tagh mullach", bottom: "Tagh briogais", shoes: "Tagh brògan", bag: "Tagh baga", hat: "Tagh ad", jewelry: "Tagh seudraidh" },
   language: "Cànan", searchLang: "Lorg cànan", temperature: "Teothachd", celsius: "Celsius", fahrenheit: "Fahrenheit",
+  chooseLang: "Tagh cànan",
   appearance: "Coltas",
   themeAuto: "Fèin-obrachail",
   themeLight: "Soilleir",

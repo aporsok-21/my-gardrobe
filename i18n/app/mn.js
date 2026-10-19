@@ -25,6 +25,7 @@ MG_STRINGS["mn"] = {
   shape: { hourglass: "Элсэн цаг", pear: "Лийр", apple: "Алим", rectangle: "Тэгш өнцөгт", triangle: "Урвуу гурвалжин" },
   pick: { outer: "Пальто сонго", top: "Цамц сонго", bottom: "Өмд сонго", shoes: "Гутал сонго", bag: "Цүнх сонго", hat: "Малгай сонго", jewelry: "Гоёл чимэглэл сонго" },
   language: "Хэл", searchLang: "Хэл хайх", temperature: "Температур", celsius: "Цельс", fahrenheit: "Фаренгейт",
+  chooseLang: "Хэл сонгох",
   appearance: "Харагдах байдал",
   themeAuto: "Автомат",
   themeLight: "Цайвар",

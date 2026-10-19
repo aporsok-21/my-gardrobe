@@ -25,6 +25,7 @@ MG_STRINGS["sq"] = {
   shape: { hourglass: "Orë rëre", pear: "Dardhë", apple: "Mollë", rectangle: "Drejtkëndësh", triangle: "Trekëndësh i përmbysur" },
   pick: { outer: "Zgjidh një pallto", top: "Zgjidh një bluzë", bottom: "Zgjidh pantallona", shoes: "Zgjidh këpucë", bag: "Zgjidh një çantë", hat: "Zgjidh një kapelë", jewelry: "Zgjidh bizhuteri" },
   language: "Gjuha", searchLang: "Kërko gjuhë", temperature: "Temperatura", celsius: "Celsius", fahrenheit: "Fahrenheit",
+  chooseLang: "Zgjidh gjuhën",
   appearance: "Pamja",
   themeAuto: "Automatike",
   themeLight: "E çelët",

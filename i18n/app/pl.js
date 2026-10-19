@@ -102,6 +102,7 @@ MG_STRINGS["pl"] = {
   shape: {"hourglass":"Klepsydra","pear":"Gruszka","apple":"Jabłko","rectangle":"Prostokąt","triangle":"Odwrócony trójkąt"},
   pick: {"outer":"Wybierz płaszcz","top":"Wybierz górę","bottom":"Wybierz spodnie","shoes":"Wybierz buty","bag":"Wybierz torebkę","hat":"Wybierz kapelusz","jewelry":"Wybierz biżuterię"},
   language: "Język",
+  chooseLang: "Wybierz język",
   searchLang: "Szukaj języków",
   temperature: "Temperatura",
   celsius: "Celsjusz",

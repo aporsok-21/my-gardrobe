@@ -25,6 +25,7 @@ MG_STRINGS["yue"] = {
   shape: { hourglass: "沙漏形", pear: "啤梨形", apple: "蘋果形", rectangle: "長方形", triangle: "倒三角形" },
   pick: { outer: "揀件外套", top: "揀件上衣", bottom: "揀條褲", shoes: "揀對鞋", bag: "揀個袋", hat: "揀頂帽", jewelry: "揀件首飾" },
   language: "語言", searchLang: "搵語言", temperature: "溫度", celsius: "攝氏", fahrenheit: "華氏",
+  chooseLang: "揀語言",
   appearance: "外觀",
   themeAuto: "自動",
   themeLight: "淺色",

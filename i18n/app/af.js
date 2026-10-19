@@ -25,6 +25,7 @@ MG_STRINGS["af"] = {
   shape: { hourglass: "Uurglas", pear: "Peer", apple: "Appel", rectangle: "Reghoek", triangle: "Omgekeerde driehoek" },
   pick: { outer: "Kies ’n jas", top: "Kies ’n bostuk", bottom: "Kies ’n broek", shoes: "Kies skoene", bag: "Kies ’n handsak", hat: "Kies ’n hoed", jewelry: "Kies juweliersware" },
   language: "Taal", searchLang: "Soek taal", temperature: "Temperatuur", celsius: "Celsius", fahrenheit: "Fahrenheit",
+  chooseLang: "Kies taal",
   appearance: "Voorkoms",
   themeAuto: "Outomaties",
   themeLight: "Lig",

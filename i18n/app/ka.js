@@ -25,6 +25,7 @@ MG_STRINGS["ka"] = {
   shape: { hourglass: "ქვიშის საათი", pear: "მსხალი", apple: "ვაშლი", rectangle: "მართკუთხედი", triangle: "შებრუნებული სამკუთხედი" },
   pick: { outer: "აირჩიე პალტო", top: "აირჩიე ზედა", bottom: "აირჩიე შარვალი", shoes: "აირჩიე ფეხსაცმელი", bag: "აირჩიე ჩანთა", hat: "აირჩიე ქუდი", jewelry: "აირჩიე სამკაული" },
   language: "ენა", searchLang: "ენის ძებნა", temperature: "ტემპერატურა", celsius: "ცელსიუსი", fahrenheit: "ფარენჰაიტი",
+  chooseLang: "აირჩიე ენა",
   appearance: "იერსახე",
   themeAuto: "ავტომატური",
   themeLight: "ღია",

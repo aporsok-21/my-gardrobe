@@ -25,6 +25,7 @@ MG_STRINGS["ca"] = {
   shape: { hourglass: "Rellotge de sorra", pear: "Pera", apple: "Poma", rectangle: "Rectangle", triangle: "Triangle invertit" },
   pick: { outer: "Tria un abric", top: "Tria una part de dalt", bottom: "Tria uns pantalons", shoes: "Tria unes sabates", bag: "Tria una bossa", hat: "Tria un barret", jewelry: "Tria joies" },
   language: "Idioma", searchLang: "Cerca un idioma", temperature: "Temperatura", celsius: "Celsius", fahrenheit: "Fahrenheit",
+  chooseLang: "Tria l’idioma",
   appearance: "Aparença",
   themeAuto: "Automàtic",
   themeLight: "Clar",

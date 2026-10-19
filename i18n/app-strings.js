@@ -101,7 +101,7 @@ window.MG_STRINGS = {
     shape: { hourglass: 'Hourglass', pear: 'Pear', apple: 'Apple', rectangle: 'Rectangle', triangle: 'Inverted triangle' },
     pickNone: 'None',
     pick: { outer: 'Choose a coat', top: 'Choose a top', bottom: 'Choose trousers', dress: 'Choose a dress', shoes: 'Choose shoes', bag: 'Choose a bag', hat: 'Choose a hat', jewelry: 'Choose jewellery' },
-    language: 'Language', searchLang: 'Search languages', temperature: 'Temperature', celsius: 'Celsius', fahrenheit: 'Fahrenheit',
+    language: 'Language', chooseLang: 'Choose language', searchLang: 'Search languages', temperature: 'Temperature', celsius: 'Celsius', fahrenheit: 'Fahrenheit',
     appearance: 'Appearance', themeAuto: 'Automatic', themeLight: 'Light', themeDark: 'Dark',
     intro: 'Opening animation', introSub: 'Play the walk-in closet when the app opens', figureRowSub: 'Height, shape, skin and hair', done: 'Done',
     pw: { row: 'Change password', rowSub: 'Update the password you sign in with', title: 'Change password', current: 'Current password', 'new': 'New password',

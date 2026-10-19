@@ -416,6 +416,16 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
 [dir=rtl] .switch:checked::after{transform:translateX(-20px)}
 [dir=rtl] .switch::after{left:auto;right:3px}
 .lang-search{margin-bottom:0}
+/* "Choose language" row: current flag and name, the arrow folds the list open */
+.lang-pick{padding:12px 14px}
+.lang-pick>b{flex:0 0 auto;font-size:15px}
+.lang-cur{display:flex;align-items:center;gap:6px;min-width:0;font-size:14px;font-weight:600}
+#langFlag{font-size:18px;line-height:1}
+#langName{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lang-cur svg{flex:0 0 auto;width:18px;height:18px;fill:none;stroke:var(--ink);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .25s}
+.lang-pick[aria-expanded="true"] .lang-cur svg{transform:rotate(180deg)}
+.lang-panel{display:none;flex-direction:column;gap:8px}
+.lang-panel.open{display:flex}
 .langs{max-height:0;overflow-y:auto;padding:0 2px;margin:0 -2px;opacity:0;visibility:hidden;transition:max-height .3s ease,opacity .25s ease,padding .3s ease,visibility 0s .3s}
 /* The language list folds open from the search field, like the weather card */
 .langs.open{max-height:248px;padding:2px;opacity:1;visibility:visible;transition:max-height .3s ease,opacity .25s ease,padding .3s ease}
@@ -708,9 +718,15 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
     <div class="sheet-bg" data-close></div>
     <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="setTitle">
       <div class="sheet-head"><h2 id="setTitle" data-t="settings">Settings</h2><button type="button" class="round" data-close aria-label="Close" data-t-aria="close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
-      <div class="set-group"><div class="set-label" id="langLbl" data-t="language">Language</div>
-        <label class="search lang-search" id="langSearch"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input type="search" id="langQ" placeholder="Search languages" aria-label="Search languages" aria-controls="langList" aria-expanded="false" data-t-ph="searchLang" data-t-aria="searchLang" autocomplete="off"></label>
-        <div class="langs" id="langList" role="radiogroup" aria-labelledby="langLbl"></div>
+      <div class="set-group">
+        <button type="button" class="set-row lang-pick" id="langPick" aria-expanded="false" aria-controls="langPanel">
+          <b id="langLbl" data-t="chooseLang">Choose language</b>
+          <span class="lang-cur"><span id="langFlag" aria-hidden="true"></span><span id="langName"></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></span>
+        </button>
+        <div class="lang-panel" id="langPanel">
+          <label class="search lang-search" id="langSearch"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input type="search" id="langQ" placeholder="Search languages" aria-label="Search languages" aria-controls="langList" aria-expanded="false" data-t-ph="searchLang" data-t-aria="searchLang" autocomplete="off"></label>
+          <div class="langs" id="langList" role="radiogroup" aria-labelledby="langLbl"></div>
+        </div>
       </div>
       <div class="set-group"><div class="set-label" data-t="temperature">Temperature</div><div class="seg" id="unitSeg"><button type="button" data-u="c">°C <span data-t="celsius">Celsius</span></button><button type="button" data-u="f">°F <span data-t="fahrenheit">Fahrenheit</span></button></div></div>
       <div class="set-group"><div class="set-label" data-t="appearance">Appearance</div><div class="seg seg3" id="themeSeg"><button type="button" data-th="auto" data-t="themeAuto">Automatic</button><button type="button" data-th="light" data-t="themeLight">Light</button><button type="button" data-th="dark" data-t="themeDark">Dark</button></div></div>
@@ -2633,6 +2649,8 @@ var GR_SCENE = (function () {
   // Settings
   var box = $('settings');
   function paint() {
+    var cur = MG.langs().filter(function (l) { return l.code === MG.lang(); })[0];
+    if (cur) { $('langFlag').textContent = cur.flag; $('langName').textContent = cur.native; }
     $('langList').innerHTML = MG.langs().map(function (l) {
       return '<button type="button" role="radio" data-lang="' + l.code + '" aria-checked="' + (l.code === MG.lang()) + '"><span aria-hidden="true">' + l.flag + '</span><div><b lang="' + l.code + '">' + l.native + '</b>' +
         (l.native !== l.english ? '<small>' + l.english + '</small>' : '') + '</div></button>';
@@ -2654,17 +2672,23 @@ var GR_SCENE = (function () {
     foldLangs(false); paint(); box.hidden = false;
   }
   function foldLangs(open) {
+    $('langPanel').classList.toggle('open', open);
+    $('langPick').setAttribute('aria-expanded', open);
     $('langList').classList.toggle('open', open);
     $('langQ').setAttribute('aria-expanded', open);
     if (!open) return;
     var on = $('langList').querySelector('[aria-checked="true"]');
     if (on && !$('langQ').value) on.scrollIntoView({ block: 'nearest' });
   }
+  $('langPick').addEventListener('click', function () {
+    var open = !$('langPanel').classList.contains('open');
+    $('langQ').value = ''; filterLangs(); foldLangs(open);
+  });
   $('langQ').addEventListener('focus', function () { foldLangs(true); });
   $('langQ').addEventListener('click', function () { foldLangs(true); });
   // a tap anywhere else in Settings folds the list away again
   box.addEventListener('click', function (e) {
-    if (!$('langList').classList.contains('open') || e.target.closest('#langSearch, #langList')) return;
+    if (!$('langList').classList.contains('open') || e.target.closest('#langSearch, #langList, #langPick')) return;
     $('langQ').value = ''; filterLangs(); foldLangs(false);
   });
   function closeSettings() { box.hidden = true; }

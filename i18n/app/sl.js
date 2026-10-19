@@ -25,6 +25,7 @@ MG_STRINGS["sl"] = {
   shape: { hourglass: "Peščena ura", pear: "Hruška", apple: "Jabolko", rectangle: "Pravokotnik", triangle: "Obrnjen trikotnik" },
   pick: { outer: "Izberi plašč", top: "Izberi zgornji del", bottom: "Izberi hlače", shoes: "Izberi čevlje", bag: "Izberi torbico", hat: "Izberi klobuk", jewelry: "Izberi nakit" },
   language: "Jezik", searchLang: "Išči jezik", temperature: "Temperatura", celsius: "Celzij", fahrenheit: "Fahrenheit",
+  chooseLang: "Izberi jezik",
   appearance: "Videz",
   themeAuto: "Samodejno",
   themeLight: "Svetla",

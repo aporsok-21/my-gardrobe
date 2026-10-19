@@ -25,6 +25,7 @@ MG_STRINGS["cy"] = {
   shape: { hourglass: "Awrwydr", pear: "Gellygen", apple: "Afal", rectangle: "Petryal", triangle: "Triongl gwrthdro" },
   pick: { outer: "Dewis cot", top: "Dewis top", bottom: "Dewis trowsus", shoes: "Dewis esgidiau", bag: "Dewis bag", hat: "Dewis het", jewelry: "Dewis gemwaith" },
   language: "Iaith", searchLang: "Chwilio am iaith", temperature: "Tymheredd", celsius: "Celsius", fahrenheit: "Fahrenheit",
+  chooseLang: "Dewis iaith",
   appearance: "Golwg",
   themeAuto: "Awtomatig",
   themeLight: "Golau",

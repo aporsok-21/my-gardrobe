@@ -25,6 +25,7 @@ MG_STRINGS["gl"] = {
   shape: { hourglass: "Reloxo de area", pear: "Pera", apple: "Mazá", rectangle: "Rectángulo", triangle: "Triángulo invertido" },
   pick: { outer: "Escolle un abrigo", top: "Escolle unha parte de arriba", bottom: "Escolle uns pantalóns", shoes: "Escolle uns zapatos", bag: "Escolle un bolso", hat: "Escolle un sombreiro", jewelry: "Escolle xoias" },
   language: "Idioma", searchLang: "Buscar idioma", temperature: "Temperatura", celsius: "Celsius", fahrenheit: "Fahrenheit",
+  chooseLang: "Escoller idioma",
   appearance: "Aparencia",
   themeAuto: "Automático",
   themeLight: "Claro",

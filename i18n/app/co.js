@@ -25,6 +25,7 @@ MG_STRINGS["co"] = {
   shape: { hourglass: "Clessidra", pear: "Pera", apple: "Mela", rectangle: "Rettangulu", triangle: "Triangulu invertitu" },
   pick: { outer: "Sceglie un cappottu", top: "Sceglie un top", bottom: "Sceglie pantaloni", shoes: "Sceglie scarpi", bag: "Sceglie una borsa", hat: "Sceglie un cappellu", jewelry: "Sceglie ghjuvelli" },
   language: "Lingua", searchLang: "Cercà una lingua", temperature: "Temperatura", celsius: "Celsius", fahrenheit: "Fahrenheit",
+  chooseLang: "Sceglie a lingua",
   appearance: "Aspettu",
   themeAuto: "Autumaticu",
   themeLight: "Chjaru",

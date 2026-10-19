@@ -25,6 +25,7 @@ MG_STRINGS["no"] = {
   shape: { hourglass: "Timeglass", pear: "Pære", apple: "Eple", rectangle: "Rektangel", triangle: "Omvendt trekant" },
   pick: { outer: "Velg en kåpe", top: "Velg en topp", bottom: "Velg bukser", shoes: "Velg sko", bag: "Velg en veske", hat: "Velg en hatt", jewelry: "Velg smykker" },
   language: "Språk", searchLang: "Søk etter språk", temperature: "Temperatur", celsius: "Celsius", fahrenheit: "Fahrenheit",
+  chooseLang: "Velg språk",
   appearance: "Utseende",
   themeAuto: "Automatisk",
   themeLight: "Lyst",

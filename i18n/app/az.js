@@ -25,6 +25,7 @@ MG_STRINGS["az"] = {
   shape: { hourglass: "Qum saatı", pear: "Armud", apple: "Alma", rectangle: "Düzbucaqlı", triangle: "Tərs üçbucaq" },
   pick: { outer: "Palto seç", top: "Üst geyim seç", bottom: "Şalvar seç", shoes: "Ayaqqabı seç", bag: "Çanta seç", hat: "Papaq seç", jewelry: "Zinət əşyası seç" },
   language: "Dil", searchLang: "Dil axtar", temperature: "Temperatur", celsius: "Selsi", fahrenheit: "Farengeyt",
+  chooseLang: "Dil seç",
   appearance: "Görünüş",
   themeAuto: "Avtomatik",
   themeLight: "İşıqlı",

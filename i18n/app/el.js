@@ -25,6 +25,7 @@ MG_STRINGS["el"] = {
   shape: { hourglass: "Κλεψύδρα", pear: "Αχλάδι", apple: "Μήλο", rectangle: "Ορθογώνιο", triangle: "Ανεστραμμένο τρίγωνο" },
   pick: { outer: "Διάλεξε παλτό", top: "Διάλεξε μπλούζα", bottom: "Διάλεξε παντελόνι", shoes: "Διάλεξε παπούτσια", bag: "Διάλεξε τσάντα", hat: "Διάλεξε καπέλο", jewelry: "Διάλεξε κοσμήματα" },
   language: "Γλώσσα", searchLang: "Αναζήτηση γλώσσας", temperature: "Θερμοκρασία", celsius: "Κελσίου", fahrenheit: "Φαρενάιτ",
+  chooseLang: "Επίλεξε γλώσσα",
   appearance: "Εμφάνιση",
   themeAuto: "Αυτόματα",
   themeLight: "Φωτεινό",

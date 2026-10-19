@@ -25,6 +25,7 @@ MG_STRINGS["ga"] = {
   shape: { hourglass: "Gloine uaire", pear: "Piorra", apple: "Úll", rectangle: "Dronuilleog", triangle: "Triantán inbhéartaithe" },
   pick: { outer: "Roghnaigh cóta", top: "Roghnaigh barr", bottom: "Roghnaigh bríste", shoes: "Roghnaigh bróga", bag: "Roghnaigh mála", hat: "Roghnaigh hata", jewelry: "Roghnaigh seodra" },
   language: "Teanga", searchLang: "Cuardaigh teanga", temperature: "Teocht", celsius: "Celsius", fahrenheit: "Fahrenheit",
+  chooseLang: "Roghnaigh teanga",
   appearance: "Cuma",
   themeAuto: "Uathoibríoch",
   themeLight: "Geal",

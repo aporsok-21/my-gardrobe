@@ -104,6 +104,7 @@ MG_STRINGS["hu"] = {
   pickNone: "Egyik sem",
   pick: {"outer":"Válassz kabátot","top":"Válassz felsőt","bottom":"Válassz nadrágot","dress":"Válassz ruhát","shoes":"Válassz cipőt","bag":"Válassz táskát","hat":"Válassz kalapot","jewelry":"Válassz ékszert"},
   language: "Nyelv",
+  chooseLang: "Nyelv kiválasztása",
   searchLang: "Nyelvek keresése",
   temperature: "Hőmérséklet",
   celsius: "Celsius",

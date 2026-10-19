@@ -25,6 +25,7 @@ MG_STRINGS["mt"] = {
   shape: { hourglass: "Arloġġ tar-ramel", pear: "Lanġasa", apple: "Tuffieħa", rectangle: "Rettangolu", triangle: "Trijangolu maqlub" },
   pick: { outer: "Agħżel kowt", top: "Agħżel top", bottom: "Agħżel qalziet", shoes: "Agħżel żraben", bag: "Agħżel basket", hat: "Agħżel kappell", jewelry: "Agħżel ġojjelli" },
   language: "Lingwa", searchLang: "Fittex lingwa", temperature: "Temperatura", celsius: "Celsius", fahrenheit: "Fahrenheit",
+  chooseLang: "Agħżel il-lingwa",
   appearance: "Dehra",
   themeAuto: "Awtomatiku",
   themeLight: "Ċar",

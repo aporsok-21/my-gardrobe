@@ -25,6 +25,7 @@ MG_STRINGS["lv"] = {
   shape: { hourglass: "Smilšu pulkstenis", pear: "Bumbieris", apple: "Ābols", rectangle: "Taisnstūris", triangle: "Apgriezts trīsstūris" },
   pick: { outer: "Izvēlies mēteli", top: "Izvēlies augšdaļu", bottom: "Izvēlies bikses", shoes: "Izvēlies apavus", bag: "Izvēlies somu", hat: "Izvēlies cepuri", jewelry: "Izvēlies rotaslietu" },
   language: "Valoda", searchLang: "Meklēt valodu", temperature: "Temperatūra", celsius: "Celsijs", fahrenheit: "Fārenheits",
+  chooseLang: "Izvēlies valodu",
   appearance: "Izskats",
   themeAuto: "Automātiski",
   themeLight: "Gaišs",

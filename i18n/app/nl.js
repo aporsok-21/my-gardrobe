@@ -102,6 +102,7 @@ MG_STRINGS["nl"] = {
   shape: {"hourglass":"Zandloper","pear":"Peer","apple":"Appel","rectangle":"Rechthoek","triangle":"Omgekeerde driehoek"},
   pick: {"outer":"Kies een jas","top":"Kies een top","bottom":"Kies een broek","shoes":"Kies schoenen","bag":"Kies een tas","hat":"Kies een hoed","jewelry":"Kies sieraden"},
   language: "Taal",
+  chooseLang: "Kies taal",
   searchLang: "Talen zoeken",
   temperature: "Temperatuur",
   celsius: "Celsius",
