@@ -3679,10 +3679,28 @@ var GR_SCENE = (function () {
   function closeWeb() { $('webv').hidden = true; $('webvFrame').src = 'about:blank'; }
   $('webv').addEventListener('click', function (e) { if (e.target.closest('[data-wclose]')) closeWeb(); });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !$('webv').hidden) closeWeb(); });
-  // an inspiration's saved link opens there; a wish's Buy goes straight to the shop or Google in the browser
+  // an inspiration's saved link opens there
   document.addEventListener('click', function (e) {
     var a = e.target.closest('a.st-open'); if (!a || e.metaKey || e.ctrlKey) return;
     e.preventDefault(); openWeb(a.href);
+  });
+  // A wish's Buy: Google and shops refuse to be shown inside the app, so on a computer they open in a
+  // smaller browser window over the app (the app stays behind it); phones open it as a new tab
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a.wl-buy'); if (!a || e.metaKey || e.ctrlKey || e.shiftKey) return;
+    if (window.matchMedia && matchMedia('(pointer: coarse)').matches) return;   // phone: normal new tab
+    var w = Math.min(520, screen.availWidth - 40), h = Math.min(800, screen.availHeight - 60);
+    // centred over the app, but always on the screen
+    var sl = screen.availLeft || 0, st = screen.availTop || 0;
+    var x = Math.min(Math.max(sl, (window.screenX || 0) + (window.outerWidth - w) / 2), sl + screen.availWidth - w);
+    var y = Math.min(Math.max(st, (window.screenY || 0) + (window.outerHeight - h) / 2), st + screen.availHeight - h);
+    var win = window.open('about:blank', 'mgShop', 'popup=yes,width=' + w + ',height=' + h + ',left=' + Math.round(x) + ',top=' + Math.round(y));
+    if (!win) return;   // popup blocked: the link opens a normal tab
+    e.preventDefault();
+    // cut the link back to the app before the shop loads, so the shop's page can't reach into it
+    try { win.opener = null; } catch (err) {}
+    win.location.href = a.href;
+    try { win.focus(); } catch (err) {}
   });
   window.mgOpenWeb = openWeb;
   window.mgIsPinShort = isPinShort;
