@@ -425,7 +425,10 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
 .g-row input{flex:1;min-width:0;height:44px;padding:0 12px;border-radius:12px;border:1px solid var(--border);background:var(--surface);font:inherit;font-size:14px;color:var(--ink)}
 .g-row .btn{min-height:44px;padding:0 16px;font-size:14px}
 .g-bad{color:#A9362F!important}
-.opt-chips{display:flex;flex-wrap:wrap;gap:6px}
+.opt-chips{display:flex;flex-direction:column;gap:6px}
+.opt-row{display:flex;flex-wrap:wrap;gap:6px}
+.opt-row.fill{flex-wrap:nowrap;gap:4px}
+.opt-row.fill button{flex:1 1 0;min-width:0;padding:0}
 .opt-chips button{min-width:44px;height:36px;padding:0 12px;border-radius:999px;border:1px solid var(--border);background:var(--surface);font:inherit;font-size:13px;font-weight:600;color:var(--ink);transition:background .15s,color .15s,border-color .15s}
 .opt-chips button.on{background:var(--ink);border-color:var(--ink);color:#F6F2EA}
 .c-name{color:var(--ink)}
@@ -572,7 +575,6 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
       </div>
       <label class="field" id="fCatWrap"><span data-t="category">Category</span><select id="fCat"></select></label>
       <label class="field" id="fSubWrap"><span data-t="type">Type</span><select id="fSub"></select></label>
-      <label class="field"><span data-t="name">Name</span><input id="fName" required placeholder="e.g. Camel wrap coat" autocomplete="off"></label>
       <label class="field"><span data-t="brand">Brand</span><input id="fBrand" placeholder="e.g. Guess" autocomplete="off"></label>
       <div class="field" id="fFitWrap"><span data-t="add2.fit">Fit</span><div class="opt-chips" id="fFitChips" role="radiogroup"></div><input type="hidden" id="fFit"></div>
       <div class="field"><span data-t="add2.size">Size</span><div class="opt-chips" id="fSizeChips" role="radiogroup"></div><input type="hidden" id="fSize"></div>
@@ -890,7 +892,7 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
   try { items = items.concat(JSON.parse(localStorage.getItem(STORE) || '[]').map(function (it) { if (it.cat === 'sweatpants') { it.cat = 'trousers'; it.sub = 'Comfy trousers'; } return it; })); } catch (e) {}
 
   // Laundry and how often each piece was worn, kept in this browser (keyed like the figure: category|name|brand)
-  function keyOf(it) { return it.cat + '|' + it.name + '|' + (it.brand || ''); }
+  function keyOf(it) { return it.id || it.cat + '|' + it.name + '|' + (it.brand || ''); }
   function loadMap(k) { try { return JSON.parse(localStorage.getItem(k) || '{}') || {}; } catch (e) { return {}; } }
   function saveMap(k, m) { try { localStorage.setItem(k, JSON.stringify(m)); } catch (e) {} }
   var wash = loadMap('mg-wash'), wornLog = loadMap('mg-worn');
@@ -953,13 +955,14 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
     return '<div class="tile item' + (worn ? ' wearing' : '') + (washing ? ' washing' : '') + '" data-i="' + items.indexOf(it) + '">' + badge +
       '<button type="button" class="wash" aria-pressed="' + washing + '" aria-label="' + esc(MG.t(washing ? 'wash.off' : 'wash.on')) + '" title="' + esc(MG.t(washing ? 'wash.off' : 'wash.on')) + '">' + WASH_ICON + '</button>' +
       '<div class="art" style="background:#EFE9DF">' + art + '<button type="button" class="fav" aria-pressed="' + W8.isFav(it) + '" aria-label="' + esc(MG.t(W8.isFav(it) ? 'fav.off' : 'fav.on')) + '" title="' + esc(MG.t(W8.isFav(it) ? 'fav.off' : 'fav.on')) + '">' + HEART + '</button></div>' +
-      '<div class="meta"><b>' + esc(it.name) + '</b><span>' + esc([it.brand, it.size, colorName(col[0])].filter(Boolean).join(' · ')) + '</span>' +
+      '<div class="meta"><b>' + esc(shownName(it)) + '</b><span>' + esc([it.brand, it.size, colorName(col[0])].filter(Boolean).join(' · ')) + '</span>' +
       '<em>' + esc(n ? MG.t('worn.n', { n: n }) : MG.t('worn.never')) + '</em></div></div>';
   }
   function catTile(c, subIndex, label) {
     return '<button class="tile cat" data-cat="' + c.id + '" data-sub="' + (subIndex || 0) + '"><div class="art">' + icon(c.icon, '#D8CFC2') + '</div><div class="meta"><b>' + esc(label ? subName(label) : catName(c)) + '</b>' + (label ? '<span>' + esc(catName(c)) + '</span>' : '') + '</div></button>';
   }
-  function bySort(a, b) { return colorRank(a.color) - colorRank(b.color) || a.name.localeCompare(b.name); }
+  function shownName(it) { return it.autoName ? (it.sub ? subName(it.sub) : catName(catById(it.cat))) : it.name; }
+  function bySort(a, b) { return colorRank(a.color) - colorRank(b.color) || shownName(a).localeCompare(shownName(b)); }
   function wireSearch(label, onInput) {
     var input = label.querySelector('input');
     input.addEventListener('input', function () { label.classList.toggle('has', !!input.value); onInput(input.value); });
@@ -1180,10 +1183,12 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
   var fMenu = document.getElementById('fPhotoMenu'), fGoogle = document.getElementById('fGoogle'), fLink = document.getElementById('fLink'), fLinkMsg = document.getElementById('fLinkMsg');
   // Fit and size suggestions by kind of piece; people can still type their own
   var FIT_OF = { coats: 'outer', sweaters: 'top', tshirts: 'top', trousers: 'bottom', jeans: 'bottom', shoes: 'shoes' };
-  var LETTERS = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL'], EU = ['32', '34', '36', '38', '40', '42', '44', '46'];
-  var SIZES = { coats: LETTERS.concat(EU), sweaters: LETTERS.concat(EU), tshirts: LETTERS.concat(EU),
-    trousers: LETTERS.concat(EU, ['W24', 'W26', 'W28', 'W30', 'W32', 'W34', 'W36']), jeans: ['W24', 'W25', 'W26', 'W27', 'W28', 'W29', 'W30', 'W31', 'W32', 'W33', 'W34', 'W36'].concat(EU),
-    shoes: ['35', '36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46'] };
+  // each inner list is one row of chips: letters XXS–XXL, then numbers 32–48 (and waist sizes for trousers)
+  var LETTERS = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL'], EU = ['32', '34', '36', '38', '40', '42', '44', '46', '48'];
+  var WAIST = ['W24', 'W25', 'W26', 'W27', 'W28', 'W29', 'W30', 'W31', 'W32', 'W33', 'W34', 'W36'];
+  var SIZES = { coats: [LETTERS, EU], sweaters: [LETTERS, EU], tshirts: [LETTERS, EU],
+    trousers: [LETTERS, EU, WAIST], jeans: [WAIST, EU],
+    shoes: [['35', '36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46']] };
   var pick = { color: 'black', photo: '' };
   function labelForm() {
     var keep = fCat.value;
@@ -1197,8 +1202,6 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
   function fillSubs(sub) {
     var c = catById(fCat.value);
     document.getElementById('fSubWrap').hidden = !c.subs.length;
-    var ex = items.filter(function (it) { return it.cat === c.id && !it.mine && (!sub || it.sub === sub); })[0];
-    document.getElementById('fName').placeholder = ex ? MG.t('eg', { x: ex.name }) : MG.t('name');
     fSub.innerHTML = c.subs.map(function (s) { return '<option value="' + esc(s) + '"' + (s === sub ? ' selected' : '') + '>' + esc(subName(s)) + '</option>'; }).join('');
   }
   function setColor(id) {
@@ -1211,12 +1214,16 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
     document.getElementById('fFitWrap').hidden = !kind;
     // tappable chips instead of a datalist, which phones show unreliably
     chips('fFitChips', 'fFit', Array.isArray(fits) ? fits : []);
-    chips('fSizeChips', 'fSize', SIZES[c] || [MG.t('add2.oneSize')]);
+    chips('fSizeChips', 'fSize', SIZES[c] || [[MG.t('add2.oneSize')]]);
   }
   function chips(boxId, inputId, list) {
     var input = document.getElementById(inputId);
     input.value = '';
-    document.getElementById(boxId).innerHTML = list.map(function (v) { return '<button type="button" role="radio" aria-checked="false" data-v="' + esc(v) + '">' + esc(v) + '</button>'; }).join('');
+    var rows = Array.isArray(list[0]) ? list : [list];
+    document.getElementById(boxId).innerHTML = rows.map(function (row) {
+      // short rows (letters, 32–48) share one line evenly; longer ones (waist sizes) wrap
+      return '<div class="opt-row' + (rows.length > 1 && row.length <= 9 ? ' fill' : '') + '">' + row.map(function (v) { return '<button type="button" role="radio" aria-checked="false" data-v="' + esc(v) + '">' + esc(v) + '</button>'; }).join('') + '</div>';
+    }).join('');
   }
   [['fFitChips', 'fFit'], ['fSizeChips', 'fSize']].forEach(function (pair) {
     document.getElementById(pair[0]).addEventListener('click', function (e) {
@@ -1248,7 +1255,7 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
   });
   // Google Images, searching for what has been typed so far
   function googleLink() {
-    var c = catById(fCat.value), q = [document.getElementById('fBrand').value.trim(), document.getElementById('fName').value.trim() || (c.subs.length ? subName(fSub.value) : catName(c)), colorName(pick.color)].filter(Boolean).join(' ');
+    var c = catById(fCat.value), q = [document.getElementById('fBrand').value.trim(), (c.subs.length ? subName(fSub.value) : catName(c)), colorName(pick.color)].filter(Boolean).join(' ');
     document.getElementById('fGoogleOpen').href = 'https://www.google.com/search?tbm=isch&q=' + encodeURIComponent(q);
   }
   document.getElementById('fGoogleOpen').addEventListener('click', googleLink);
@@ -1288,7 +1295,6 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
     document.getElementById('sheetTitle').textContent = catId ? MG.t('addTo', { cat: catName(catById(catId)) }) : MG.t('addAnItem');
     fillSubs(sub);
     sheet.hidden = false;
-    setTimeout(function () { document.getElementById('fName').focus(); }, 50);
   }
   function closeSheet() { closeCamera(); sheet.hidden = true; }
 
@@ -1342,9 +1348,10 @@ input[type=range]{width:100%;accent-color:#2B2B2B;margin:0}
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     var c = catById(fCat.value);
-    var it = { cat: c.id, sub: c.subs.length ? fSub.value : '', name: document.getElementById('fName').value.trim(), brand: document.getElementById('fBrand').value.trim(),
+    // No name to type: a new piece is called by its type ("Heels", "Fur coats"), and gets its own id
+    var sub = c.subs.length ? fSub.value : '';
+    var it = { id: 'u' + Date.now().toString(36), autoName: true, cat: c.id, sub: sub, name: sub ? subName(sub) : catName(c), brand: document.getElementById('fBrand').value.trim(),
       fit: FIT_OF[c.id] ? document.getElementById('fFit').value.trim() : '', size: document.getElementById('fSize').value.trim(), color: pick.color, photo: pick.photo, mine: true };
-    if (!it.name) return;
     items.push(it);
     try { localStorage.setItem(STORE, JSON.stringify(items.filter(function (x) { return x.mine; }))); } catch (err) {}
     closeSheet();
@@ -2065,7 +2072,7 @@ var GR_SCENE = (function () {
   // An aesthetic look, rebuilt from your own pieces
   var COMBO = { outer: 'Classic trench coat', top: 'Cashmere crew neck', bottom: 'Straight jeans', shoes: 'Suede loafers', bag: 'Leather tote', hat: 'Wool fedora', jewelry: 'Gold chain' };
 
-  function keyOf(it) { return it.cat + '|' + it.name + '|' + (it.brand || ''); }
+  function keyOf(it) { return it.id || it.cat + '|' + it.name + '|' + (it.brand || ''); }
   function findKey(k) { return W8.items.filter(function (it) { return keyOf(it) === k; })[0] || null; }
   function findName(n) { return W8.items.filter(function (it) { return it.name === n; })[0] || null; }
   // turn a wardrobe item into something the figure can draw
