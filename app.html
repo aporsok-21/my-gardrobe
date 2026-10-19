@@ -30,7 +30,7 @@
 // while someone is signed in, every change to their wardrobe keys is also sent to their account.
 // It runs before the rest of the app, so a reload is all it takes to show another account's data.
 (function () {
-  var KEYS = ['mg-items', 'mg-wash', 'mg-worn', 'mg-fav', 'mg-figure', 'mg-outfit', 'mg-outfit-prev', 'mg-worn-day', 'mg-capsule', 'mg-capsule-looks'];
+  var KEYS = ['mg-items', 'mg-wash', 'mg-worn', 'mg-fav', 'mg-figure', 'mg-outfit', 'mg-outfit-prev', 'mg-worn-day', 'mg-capsule', 'mg-capsule-looks', 'mg-colours'];
   var DIRTY = 'mg-sync-dirty', TOKEN = 'mg-token', ls; try { ls = window.localStorage; } catch (e) { return; }
   // In the phone apps the page is not served by our server: MG_API (set by scripts/build-app.mjs) says where it is,
   // and the session is a token kept here instead of a cookie
@@ -612,6 +612,53 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
 .sw-more:focus-within{outline:2px solid var(--focus);outline-offset:3px}
 @media (prefers-reduced-motion:reduce){.sheet,.sheet-bg{animation:none}}
 
+/* Styles: the bar above the tabs, folders, the save sheet and the wishlist */
+.stylebar{display:flex;gap:6px;padding:6px 10px;background:var(--bg);border-top:1px solid var(--border)}
+.stylebar[hidden]{display:none}
+.stylebar button{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:52px;padding:5px 4px;border:1px solid var(--border);border-radius:16px;background:var(--surface);font:inherit;font-size:11.5px;font-weight:700;line-height:1.15;color:var(--muted);text-align:center}
+.stylebar button span{max-width:100%;overflow-wrap:anywhere}
+.stylebar svg{flex:0 0 auto;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.stylebar button.on{background:var(--ink);border-color:var(--ink);color:var(--on-ink)}
+.st-grid .tile[hidden]{display:none}
+.st-grid .empty{grid-column:1/-1}
+.st-folder .art{background:var(--soft)}
+.st-fold{width:46%!important;fill:#E3C98F;stroke:#B08D57;stroke-width:1.6;stroke-linejoin:round}
+.st-hint{margin:-4px 0 14px;font-size:13px;line-height:1.4;color:var(--muted)}
+.st-actions{display:flex;gap:8px}
+.st-prev{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.st-prev[hidden]{display:none}
+.st-prev figure{position:relative;margin:0;aspect-ratio:3/4;border-radius:14px;overflow:hidden;background:var(--soft)}
+.st-prev img{display:block;width:100%;height:100%;object-fit:cover}
+.wl-prev{grid-template-columns:1fr}
+.wl-prev figure{aspect-ratio:auto;height:200px}
+.wl-prev img{object-fit:contain}
+.st-pick{width:100%;cursor:pointer;min-height:46px;padding:0 12px;font-size:14px}
+.st-folders{flex-wrap:wrap}
+.st-folders button{min-width:44px;height:36px;padding:0 14px;border-radius:999px;border:1px solid var(--border);background:var(--surface);font:inherit;font-size:13px;font-weight:600;color:var(--ink)}
+.st-folders button.on{background:var(--ink);border-color:var(--ink);color:var(--on-ink)}
+.st-folders .st-new{border-style:dashed}
+.st-ok{color:var(--okmsg)}
+.st-open{position:absolute;bottom:8px;inset-inline-end:8px;display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:rgba(17,17,17,.55)}
+.st-open svg{width:15px;height:15px;fill:none;stroke:#FFFFFF;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.st-loading{display:flex;align-items:center;justify-content:center;padding:8px;text-align:center}
+.st-loading span{font-size:12px;font-weight:700;color:var(--muted);animation:fade 1s ease-in-out infinite alternate}
+.st-linkonly{display:flex;align-items:center;justify-content:center;background:var(--soft)}
+.st-linkcard{padding:0 12px;font-size:13px;font-weight:700;color:var(--muted);text-align:center;word-break:break-all}
+.field textarea{padding:12px 14px;border-radius:14px;border:1px solid var(--border);background:var(--surface);font:inherit;font-size:15px;font-weight:500;color:var(--ink);resize:vertical}
+.field textarea:focus{outline:2px solid var(--focus);outline-offset:1px}
+.wl-list{display:flex;flex-direction:column;gap:12px}
+.wl-card{display:flex;gap:12px;padding:10px;border-radius:20px;border:1px solid var(--border);background:var(--surface)}
+.wl-img{flex:0 0 108px;height:136px;border-radius:14px;overflow:hidden;background:var(--soft);display:flex;align-items:center;justify-content:center}
+.wl-img img{width:100%;height:100%;object-fit:cover}
+.wl-ph{width:40%;height:auto;fill:none;stroke:var(--hover);stroke-width:1.6;stroke-linejoin:round}
+.wl-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.wl-body b{font-size:15px;font-weight:800;overflow-wrap:anywhere}
+.wl-body span{font-size:12.5px;font-weight:600;color:var(--muted)}
+.wl-body strong{font-size:15px;font-weight:800}
+.wl-body p{margin:2px 0 0;font-size:13px;line-height:1.35;color:var(--muted);overflow-wrap:anywhere}
+.wl-acts{display:flex;gap:6px;margin-top:auto;padding-top:8px}
+.wl-acts .btn{flex:1;min-height:38px;padding:0 10px;font-size:13.5px;text-decoration:none}
+
 /* Dark mode: colours baked into the markup and the line illustrations */
 [data-theme="dark"] .phone{border-color:#3A3530}
 [data-theme="dark"] .tile .art[style]{background:var(--art)!important}
@@ -671,6 +718,35 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
 .cap-look img{display:block;width:100%;height:100%;object-fit:cover}
 .cap-del{position:absolute;top:8px;inset-inline-end:8px;display:flex;align-items:center;justify-content:center;width:30px;height:30px;padding:0;border:0;border-radius:50%;background:rgba(17,17,17,.55)}
 .cap-del svg{width:14px;height:14px;fill:none;stroke:#FFFFFF;stroke-width:2.4;stroke-linecap:round}
+/* Your colours: the card on top of Colour match, the fold-out, and the set-up sheet */
+.cm-you{margin-bottom:12px}
+.cm-you .kicker{display:block;margin-bottom:2px}
+.cm-face img{display:block;width:100%;height:100%;object-fit:cover}
+.cm-eyes{margin-top:10px}
+.cm-eyes small{display:block;margin-bottom:6px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.cm-eyes ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:6px 8px}
+.cm-eyes li{display:flex;align-items:center;gap:6px;min-width:0;font-size:12px;font-weight:600;line-height:1.2}
+.cm-eyes li i{flex:0 0 auto;width:20px;height:20px;border-radius:50%;border:1px solid rgba(43,43,43,.2)}
+.cm-me{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin-top:12px;padding-top:10px;border-top:1px solid var(--border);font-size:12px;font-weight:600}
+.cm-me span{display:flex;align-items:center;gap:5px}
+.cm-me i{width:14px;height:14px;border-radius:50%;border:1px solid rgba(43,43,43,.2)}
+.cm-me .link{margin-inline-start:auto;min-height:32px;padding:0}
+.cm-you>.btn{width:100%;margin-top:12px}
+.cm-more{display:flex;align-items:center;justify-content:space-between;width:100%;margin:0 0 12px;padding:14px 16px;border-radius:16px;border:1px solid var(--border);background:var(--surface);font:inherit;font-size:15px;font-weight:700;color:var(--ink);cursor:pointer}
+.cm-more svg{width:20px;height:20px;fill:none;stroke:var(--ink);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .25s}
+.cm-more[aria-expanded="true"] svg{transform:rotate(180deg)}
+.cp-lead{margin:0}
+.cp-upload{width:100%;cursor:pointer}
+.cp-step{margin:0 0 8px;font-size:14px;font-weight:700}
+.cp-canvas{position:relative;border-radius:16px;overflow:hidden;background:#EFE9DF}
+.cp-canvas canvas{display:block;width:100%;height:auto;cursor:crosshair}
+#cpMarks i{position:absolute;display:flex;align-items:center;justify-content:center;width:22px;height:22px;margin:-11px 0 0 -11px;border-radius:50%;border:2px solid #FFFDF8;background:#2B2B2B;color:#F6F2EA;font-style:normal;font-size:11px;font-weight:800;pointer-events:none}
+.cp-opts{display:flex;flex-wrap:wrap;gap:6px}
+.cp-opts button{display:flex;align-items:center;gap:6px;min-height:36px;padding:0 12px 0 6px;border-radius:999px;border:1px solid var(--border);background:var(--surface);font:inherit;font-size:13px;font-weight:600;color:var(--ink)}
+.cp-opts button i{width:22px;height:22px;border-radius:50%;border:1px solid rgba(43,43,43,.2)}
+.cp-opts button[aria-checked="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+#cpSave:disabled{opacity:.45}
+#cpSkip{align-self:center}
 </style>
 </head>
 <body>
@@ -756,17 +832,15 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
   </main>
 
   <!-- INSPIRATIONS -->
-  <main class="screen" id="inspo" aria-label="Inspirations" data-t-aria="inspirations">
+  <main class="screen" id="inspo" aria-label="My style" data-t-aria="st.mine">
     <div class="topline">
-      <div><span class="kicker" data-t="discover">Discover</span><h1 data-t="inspirations">Inspirations</h1></div>
-      <button class="round" aria-label="Saved" data-t-aria="saved"><svg viewBox="0 0 24 24"><path d="M7 4h10v16l-5-3.5L7 20z"/></svg></button>
+      <div><span class="kicker" data-t="styles">Styles</span><h1 data-t="st.mine">My style</h1></div>
+      <button class="round" id="msAdd" aria-label="Add photos of your outfits" data-t-aria="st.addMine"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
     </div>
-    <div class="chips" data-chips>
-      <button class="chip on" data-t="all">All</button><button class="chip" data-t="trends">Trends</button><button class="chip" data-t="casual">Casual</button><button class="chip" data-t="work">Work</button><button class="chip" data-t="evening">Evening</button><button class="chip" data-t="weekend">Weekend</button>
-    </div>
+    <label class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input type="search" id="msQ" placeholder="Search" aria-label="Search" data-t-ph="st.search" data-t-aria="st.search" autocomplete="off"></label>
 
     <div class="section">
-      <div class="grid">
+      <div class="grid st-grid" id="msGrid">
         <div class="tile open-tile" role="button" tabindex="0" data-open="colorMatch"><div class="art" style="background:#E6DFD4"><img src="assets/swatches.svg" alt=""></div><div class="meta"><b data-t="colourMatch">Colour match</b><span data-t="tip">Tip</span></div></div>
         <div class="tile open-tile" role="button" tabindex="0" data-open="capsule"><div class="art" style="background:#D8CFC2"><img src="assets/wardrobe.svg" alt=""></div><div class="meta"><b data-t="capsule">Capsule closet</b><span data-t="guide">Guide</span></div></div>
       </div>
@@ -779,8 +853,12 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
       <button class="round back" data-back="inspo" aria-label="Back" data-t-aria="cap.back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
       <div><span class="kicker" data-t="inspirations">Inspirations</span><h1 data-t="colourMatch">Colour match</h1></div>
     </div>
-    <p class="sub cm-intro" data-t="cm.intro">Find your skin tone, then wear the colours next to it. The fairest tones come first, the deepest last.</p>
-    <div class="cm-list" id="cmList"></div>
+    <div id="cmMine"></div>
+    <button type="button" class="cm-more" id="cmMore" aria-expanded="false" aria-controls="cmOthers"><span data-t="cm.others">Other skin colours</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+    <div id="cmOthers" hidden>
+      <p class="sub cm-intro" data-t="cm.intro">Find your skin tone, then wear the colours next to it. The fairest tones come first, the deepest last.</p>
+      <div class="cm-list" id="cmList"></div>
+    </div>
   </main>
 
   <!-- CAPSULE CLOSET (from Inspirations) -->
@@ -827,6 +905,39 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
     <label class="btn cap-add"><input type="file" id="capLooksFile" accept="image/*" multiple hidden><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span data-t="cap.addLooks">Add photos from your gallery</span></label>
     <p class="cap-msg" id="capLooksMsg" role="status" hidden></p>
     <div class="section cap-looks" id="capLooksGrid"></div>
+  </main>
+
+  <!-- INSPIRATIONS (Styles → Inspirations): saved ideas, e.g. shared from Pinterest, kept in folders -->
+  <main class="screen" id="inspoBoard" aria-label="Inspirations" data-t-aria="inspirations" data-parent="inspo">
+    <div class="topline">
+      <div><span class="kicker" data-t="styles">Styles</span><h1 data-t="inspirations">Inspirations</h1></div>
+      <button class="round" id="ibAdd" aria-label="Save an inspiration" data-t-aria="st.addBoard"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+    </div>
+    <label class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input type="search" id="ibQ" placeholder="Search" aria-label="Search" data-t-ph="st.search" data-t-aria="st.search" autocomplete="off"></label>
+    <p class="st-hint" data-t="st.shareHint">Seen a great outfit on Pinterest? Tap Share there, choose My Gardrobe, and save it into a folder here.</p>
+    <div class="grid st-grid" id="ibGrid"></div>
+  </main>
+
+  <!-- WISHLIST (Styles → Wishlist) -->
+  <main class="screen" id="wishlist" aria-label="Wishlist" data-t-aria="st.wish" data-parent="inspo">
+    <div class="topline">
+      <div><span class="kicker" data-t="styles">Styles</span><h1 data-t="st.wish">Wishlist</h1></div>
+      <div class="st-actions">
+        <button class="round" id="wlShare" aria-label="Share my wishlist" data-t-aria="wl.share"><svg viewBox="0 0 24 24"><path d="M12 15V4M8 8l4-4 4 4"/><path d="M6 12v7a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-7"/></svg></button>
+        <button class="round" id="wlAdd" aria-label="Add to wishlist" data-t-aria="wl.add"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+      </div>
+    </div>
+    <p class="cap-msg st-ok" id="wlMsg" role="status" hidden></p>
+    <div class="wl-list" id="wlList"></div>
+  </main>
+
+  <!-- ONE FOLDER (from My style or Inspirations) -->
+  <main class="screen" id="stFolder" aria-label="Folder" data-parent="inspo">
+    <div class="cat-top">
+      <button class="round back" id="sfBack" data-back="inspo" aria-label="Back" data-t-aria="cap.back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <div><span class="kicker" id="sfKicker"></span><h1 id="sfTitle"></h1></div>
+    </div>
+    <div class="section cap-looks" id="sfGrid"></div>
   </main>
 
   <!-- MY GARDROBE -->
@@ -967,10 +1078,32 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
       <div class="set-group"><div class="set-label" data-t="temperature">Temperature</div><div class="seg" id="unitSeg"><button type="button" data-u="c">°C <span data-t="celsius">Celsius</span></button><button type="button" data-u="f">°F <span data-t="fahrenheit">Fahrenheit</span></button></div></div>
       <div class="set-group"><div class="set-label" data-t="appearance">Appearance</div><div class="seg seg3" id="themeSeg"><button type="button" data-th="auto" data-t="themeAuto">Automatic</button><button type="button" data-th="light" data-t="themeLight">Light</button><button type="button" data-th="dark" data-t="themeDark">Dark</button></div></div>
       <label class="set-row"><span><b data-t="intro">Opening animation</b><small data-t="introSub">Play the walk-in closet when the app opens</small></span><input type="checkbox" class="switch" id="introToggle"></label>
+      <button type="button" class="set-row" id="setColours"><span><b data-t="cp.title">Your colours</b><small data-t="cp.rowSub">Skin, hair and eye colour</small></span><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
       <button type="button" class="set-row" id="setFigure"><span><b data-t="yourFigure">Your figure</b><small data-t="figureRowSub">Height, shape, skin and hair</small></span><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+      <button type="button" class="set-row" id="setBackup"><span><b data-t="bk.save">Back up my wardrobe</b><small data-t="bk.saveSub">Save everything to a file you can keep or move to another phone</small></span><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+      <label class="set-row" id="setRestore"><span><b data-t="bk.load">Restore from a backup</b><small data-t="bk.loadSub">Load a backup file; this replaces what is here now</small></span><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg><input type="file" id="restoreFile" accept=".json,application/json" hidden></label>
       <button type="button" class="set-row" id="setPassword"><span><b data-t="pw.row">Change password</b><small data-t="pw.rowSub">Update the password you sign in with</small></span><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
       <button type="button" class="set-row logout" id="setLogout"><span><b data-t="auth.logout">Log out</b><small id="setWho"></small></span><svg viewBox="0 0 24 24"><path d="M15 4h4v16h-4M10 16l4-4-4-4M14 12H4"/></svg></button>
       <button type="button" class="btn" data-close data-t="done">Done</button>
+    </div>
+  </div>
+
+  <!-- YOUR COLOURS: skin, hair and eyes, chosen by hand or read from a photo -->
+  <div class="sheet-wrap" id="colours" hidden>
+    <div class="sheet-bg" data-cp-close></div>
+    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="cpTitle">
+      <div class="sheet-head"><h2 id="cpTitle" data-t="cp.title">Your colours</h2><button type="button" class="round" data-cp-close aria-label="Close" data-t-aria="close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+      <p class="sub cp-lead" data-t="cp.lead">Tell us your skin, hair and eye colour and we'll show you the colours that suit you. Upload a photo or choose yourself, or both.</p>
+      <label class="btn ghost cp-upload"><input type="file" id="cpFile" accept="image/*" hidden><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="9.5" cy="9.5" r="1.6"/><path d="M5 17l4.5-4.5 3 3 2.5-2.5L20 18"/></svg><span data-t="cp.upload">Upload a photo of yourself</span></label>
+      <div class="cp-photo" id="cpPhoto" hidden>
+        <p class="cp-step" id="cpStep" role="status"></p>
+        <div class="cp-canvas"><canvas id="cpCanvas"></canvas><div id="cpMarks"></div></div>
+      </div>
+      <div class="field"><span data-t="cp.skin">Skin</span><div class="cp-opts" id="cpSkin" role="radiogroup"></div></div>
+      <div class="field"><span data-t="cp.hair">Hair</span><div class="cp-opts" id="cpHair" role="radiogroup"></div></div>
+      <div class="field"><span data-t="cp.eyes">Eyes</span><div class="cp-opts" id="cpEyes" role="radiogroup"></div></div>
+      <button type="button" class="btn" id="cpSave" data-t="save">Save</button>
+      <button type="button" class="link" id="cpSkip" data-t="skip">Skip for now</button>
     </div>
   </div>
 
@@ -988,12 +1121,57 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
     </form>
   </div>
 
+
+  <!-- Save photos into a folder (My style or Inspirations) -->
+  <div class="sheet-wrap" id="stSheet" hidden>
+    <div class="sheet-bg" data-close></div>
+    <form class="sheet" id="stForm" role="dialog" aria-modal="true" aria-labelledby="stTitle" novalidate>
+      <div class="sheet-head"><h2 id="stTitle"></h2><button type="button" class="round" data-close aria-label="Close" data-t-aria="close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+      <div class="st-prev" id="stPrev"></div>
+      <label class="btn ghost st-pick"><input type="file" id="stFile" accept="image/*" multiple hidden><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span data-t="st.pickPhotos">Choose photos</span></label>
+      <label class="field" id="stLinkF"><span data-t="st.link">Link (optional)</span><input type="url" id="stLink" placeholder="https://" inputmode="url" autocomplete="off"></label>
+      <div class="field"><span data-t="st.chooseFolder">Choose a category</span><div class="opt-row st-folders" id="stFolders" role="radiogroup"></div></div>
+      <label class="field" id="stNewF" hidden><span data-t="st.newName">Name of the new category</span><input type="text" id="stNew" maxlength="40" autocomplete="off"></label>
+      <p class="cap-msg" id="stMsg" role="alert" hidden></p>
+      <button type="submit" class="btn" data-t="st.save">Save</button>
+    </form>
+  </div>
+
+  <!-- Add a wishlist piece -->
+  <div class="sheet-wrap" id="wlSheet" hidden>
+    <div class="sheet-bg" data-close></div>
+    <form class="sheet" id="wlForm" role="dialog" aria-modal="true" aria-labelledby="wlTitle" novalidate>
+      <div class="sheet-head"><h2 id="wlTitle" data-t="wl.add">Add to wishlist</h2><button type="button" class="round" data-close aria-label="Close" data-t-aria="close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+      <div class="st-prev wl-prev" id="wlPrev"></div>
+      <div class="field-row">
+        <label class="btn ghost st-pick"><input type="file" id="wlFile" accept="image/*" hidden><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="9.5" cy="9.5" r="1.6"/><path d="M5 17l4.5-4.5 3 3 2.5-2.5L20 18"/></svg><span data-t="wl.upload">Upload photo</span></label>
+        <button type="button" class="btn ghost st-pick" id="wlGoogle"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><span data-t="wl.google">Find on Google</span></button>
+      </div>
+      <label class="field"><span data-t="wl.img">Image link</span><input type="url" id="wlImg" placeholder="https://…" inputmode="url" autocomplete="off"></label>
+      <label class="field"><span data-t="wl.name">What is it?</span><input type="text" id="wlName" maxlength="80" autocomplete="off" placeholder="Black leather boots" data-t-ph="wl.namePh"></label>
+      <label class="field"><span data-t="wl.shop">Where you found it</span><input type="text" id="wlShop" maxlength="80" autocomplete="off" placeholder="Zara, Mariahilfer Straße" data-t-ph="wl.shopPh"></label>
+      <div class="field-row">
+        <label class="field"><span data-t="wl.price">Price</span><input type="text" id="wlPrice" maxlength="20" autocomplete="off" placeholder="€ 89"></label>
+        <label class="field"><span data-t="wl.size">Size</span><input type="text" id="wlSize" maxlength="20" autocomplete="off" placeholder="38"></label>
+      </div>
+      <label class="field"><span data-t="wl.link">Link to buy it</span><input type="url" id="wlLink" placeholder="https://" inputmode="url" autocomplete="off"></label>
+      <label class="field"><span data-t="wl.note">Personal note</span><textarea id="wlNote" rows="3" maxlength="300" placeholder="Fits well, a little long in the sleeves" data-t-ph="wl.notePh"></textarea></label>
+      <p class="cap-msg" id="wlErr" role="alert" hidden></p>
+      <button type="submit" class="btn" data-t="st.save">Save</button>
+    </form>
+  </div>
+
+  <nav class="stylebar" id="stylebar" aria-label="Styles" data-t-aria="styles" hidden>
+    <button type="button" data-st="inspo"><svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="3.2"/><path d="M6 20.5c.4-4.6 2.8-7.2 6-7.2s5.6 2.6 6 7.2"/></svg><span data-t="st.mine">My style</span></button>
+    <button type="button" data-st="inspoBoard"><svg viewBox="0 0 24 24"><path d="M10 3.5c.6 3.7 2.3 5.4 6 6-3.7.6-5.4 2.3-6 6-.6-3.7-2.3-5.4-6-6 3.7-.6 5.4-2.3 6-6z"/><path d="M18 14.5c.3 1.6 1 2.3 2.5 2.5-1.5.2-2.2.9-2.5 2.5-.3-1.6-1-2.3-2.5-2.5 1.5-.2 2.2-.9 2.5-2.5z"/></svg><span data-t="inspirations">Inspirations</span></button>
+    <button type="button" data-st="wishlist"><svg viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 7.5 2.6C19.5 15.4 12 20 12 20z"/></svg><span data-t="st.wish">Wishlist</span></button>
+  </nav>
   <nav class="tabbar" aria-label="Main">
     <button class="tab active" data-tab="home" aria-current="page">
       <span class="pill"><svg viewBox="0 0 24 24"><path d="M3.5 11 12 4l8.5 7"/><path d="M5.5 9.5V20h13V9.5"/><path d="M10 20v-5.5h4V20"/></svg></span><span data-t="home">Home</span>
     </button>
     <button class="tab" data-tab="inspo">
-      <span class="pill"><svg viewBox="0 0 24 24"><path d="M10 3.5c.6 3.7 2.3 5.4 6 6-3.7.6-5.4 2.3-6 6-.6-3.7-2.3-5.4-6-6 3.7-.6 5.4-2.3 6-6z"/><path d="M18 14.5c.3 1.6 1 2.3 2.5 2.5-1.5.2-2.2.9-2.5 2.5-.3-1.6-1-2.3-2.5-2.5 1.5-.2 2.2-.9 2.5-2.5z"/><path d="M18.5 3.5v2.5M17.25 4.75h2.5"/></svg></span><span data-t="inspirations">Inspirations</span>
+      <span class="pill"><svg viewBox="0 0 24 24"><path d="M10 3.5c.6 3.7 2.3 5.4 6 6-3.7.6-5.4 2.3-6 6-.6-3.7-2.3-5.4-6-6 3.7-.6 5.4-2.3 6-6z"/><path d="M18 14.5c.3 1.6 1 2.3 2.5 2.5-1.5.2-2.2.9-2.5 2.5-.3-1.6-1-2.3-2.5-2.5 1.5-.2 2.2-.9 2.5-2.5z"/><path d="M18.5 3.5v2.5M17.25 4.75h2.5"/></svg></span><span data-t="styles">Styles</span>
     </button>
     <button class="tab" data-tab="wardrobe">
       <span class="pill"><svg viewBox="0 0 24 24"><path d="M9 3.5 4.5 5.5 2.5 10l3 1.3 1.5-1.6V20.5h10V9.7l1.5 1.6 3-1.3-2-4.5L15 3.5c-.4 1.5-1.6 2.5-3 2.5S9.4 5 9 3.5z"/></svg></span>My Gardrobe
@@ -1096,6 +1274,46 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
 })();
 </script>
 <script>
+// Photos live in IndexedDB (room for hundreds), the rest stays in localStorage
+(function () {
+  var dbp = null;
+  function db() {
+    if (!dbp) dbp = new Promise(function (ok, no) {
+      if (!window.indexedDB) return no(new Error('no indexedDB'));
+      var r = indexedDB.open('my-gardrobe', 1);
+      r.onupgradeneeded = function () { r.result.createObjectStore('kv'); };
+      r.onsuccess = function () { ok(r.result); };
+      r.onerror = function () { no(r.error); };
+    });
+    return dbp;
+  }
+  function tx(mode, fn) {
+    return db().then(function (d) {
+      return new Promise(function (ok, no) {
+        var t = d.transaction('kv', mode), st = t.objectStore('kv'), out = fn(st);
+        t.oncomplete = function () { ok(out && 'result' in out ? out.result : undefined); };
+        t.onerror = t.onabort = function () { no(t.error); };
+      });
+    });
+  }
+  window.MGStore = {
+    get: function (k) { return tx('readonly', function (st) { return st.get(k); }); },
+    set: function (k, v) { return tx('readwrite', function (st) { st.put(v, k); }); },
+    del: function (k) { return tx('readwrite', function (st) { st['delete'](k); }); },
+    all: function () {
+      return tx('readonly', function (st) {
+        var out = {}, c = st.openCursor();
+        c.onsuccess = function () { var cur = c.result; if (cur) { out[cur.key] = cur.value; cur['continue'](); } };
+        return { get result() { return out; } };
+      });
+    },
+    clear: function () { return tx('readwrite', function (st) { st.clear(); }); }
+  };
+  // ask the browser not to clear our data when space runs low
+  try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
+})();
+</script>
+<script>
 (function () {
   var tabs = document.querySelectorAll('.tab');
   var fab = document.getElementById('fab');
@@ -1112,6 +1330,7 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
     fab.classList.toggle('show', id === 'wardrobe');
     document.getElementById(id).scrollTop = 0;
     try { history.replaceState(null, '', '#' + id); } catch (e) {}
+    document.dispatchEvent(new CustomEvent('mg-show', { detail: id }));
   }
   window.mgShow = show;
 
@@ -1200,6 +1419,27 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
   var STORE = 'mg-items';
   var items = SAMPLE.map(function (r) { return { cat: r[0], sub: r[1], name: r[2], brand: r[3], color: r[4] }; });
   try { items = items.concat(JSON.parse(localStorage.getItem(STORE) || '[]').map(function (it) { if (it.cat === 'sweatpants') { it.cat = 'trousers'; it.sub = 'Comfy trousers'; } return it; })); } catch (e) {}
+  // Your pieces are saved without their photos; each photo sits in MGStore under 'photo:' + key
+  function photoKey(it) { return 'photo:' + (it.id || it.cat + '|' + it.name + '|' + (it.brand || '')); }
+  function saveItems() {
+    var mine = items.filter(function (x) { return x.mine; }), jobs = [];
+    var slim = mine.map(function (x) {
+      var o = Object.assign({}, x);
+      if (o.photo) { if (o.photo.indexOf('data:') === 0) jobs.push(MGStore.set(photoKey(x), o.photo)); o.photo = ''; o.hasPhoto = true; }
+      return o;
+    });
+    try { localStorage.setItem(STORE, JSON.stringify(slim)); } catch (err) { jobs.push(Promise.reject(err)); }
+    return Promise.all(jobs)['catch'](function () { alert(MG.t('storageFull')); });
+  }
+  // Load the photos, and move any still kept in localStorage (older versions) across
+  (function () {
+    var old = items.some(function (x) { return x.mine && x.photo && x.photo.indexOf('data:') === 0; });
+    MGStore.all().then(function (kv) {
+      items.forEach(function (x) { if (x.mine && x.hasPhoto && !x.photo && kv[photoKey(x)]) x.photo = kv[photoKey(x)]; });
+      if (old) saveItems();
+      if (W8.refresh) W8.refresh();
+    })['catch'](function () {});
+  })();
 
   // Laundry and how often each piece was worn, kept in this browser (keyed like the figure: category|name|brand)
   function keyOf(it) { return it.id || it.cat + '|' + it.name + '|' + (it.brand || ''); }
@@ -1768,7 +2008,7 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
       size: document.getElementById('fSize').value.trim(), color: pick.color, hex: pick.hex || '', photo: pick.photo, mine: true };
     items.push(it);
     if (document.getElementById('fCapsule').checked) W8.setCapsule(it, true);
-    try { localStorage.setItem(STORE, JSON.stringify(items.filter(function (x) { return x.mine; }))); } catch (err) {}
+    saveItems();
     closeSheet();
     if (cur && cur.id === c.id && document.getElementById('category').classList.contains('active')) {
       renderPages();
@@ -2075,11 +2315,11 @@ var GR_SCENE = (function () {
 (function () {
   // Body shapes only nudge the proportions a little, so the figure always stays natural
   var SHAPES = [
-    { id: 'hourglass', name: 'Hourglass', d: { S: 0, B: 0.8, W: -1.2, H: 0.6 } },
-    { id: 'pear', name: 'Pear', d: { S: -0.8, B: -0.4, W: 0.2, H: 1.8 } },
-    { id: 'apple', name: 'Apple', d: { S: 0, B: 1, W: 3, H: -0.3 } },
+    { id: 'hourglass', name: 'Hourglass', d: { S: 0, B: 0.8, W: -1.2, H: 0.6, C: 0.05 } },
+    { id: 'pear', name: 'Pear', d: { S: -0.8, B: -0.4, W: 0.2, H: 1.8, C: 0.14 } },
+    { id: 'apple', name: 'Apple', d: { S: 0, B: 1, W: 3, H: -0.3, C: -0.04 } },
     { id: 'rectangle', name: 'Rectangle', d: { S: 0, B: -0.3, W: 1.6, H: -0.6 } },
-    { id: 'triangle', name: 'Inverted triangle', d: { S: 1.6, B: 0.8, W: 0.3, H: -1.2 } }
+    { id: 'triangle', name: 'Inverted triangle', d: { S: 1.6, B: 0.8, W: 0.3, H: -1.2, C: -0.1 } }
   ];
   var SKINS = ['#F4DDCB', '#E9C6A8', '#D6A47F', '#B57D55', '#8C5A3A', '#5F3C27'];
   var HAIRS = ['#1F1915', '#4A3328', '#7A5236', '#B5875A', '#DDC08A', '#A3472C', '#B8B2AB'];
@@ -2122,7 +2362,7 @@ var GR_SCENE = (function () {
   // Numbers that describe a body; these are what we animate between
   function params(o, ex) {
     var fem = o.gender === 'man' ? 0 : 1;
-    var b = { S: lerp(23.6, 19.5, fem), B: lerp(19.6, 17.4, fem), W: lerp(15.2, 13.2, fem), H: lerp(16.6, 18.8, fem) };
+    var b = { S: lerp(23.6, 19.5, fem), B: lerp(19.6, 17.4, fem), W: lerp(15.2, 13.2, fem), H: lerp(16.6, 18.8, fem), C: 0 };
     var sh = SHAPES.filter(function (x) { return x.id === o.shape; })[0];
     if (sh) Object.keys(sh.d).forEach(function (k) { b[k] += sh.d[k] * (ex || 1); });
     var bmi = o.weight / Math.pow(o.height / 100, 2);
@@ -2130,7 +2370,7 @@ var GR_SCENE = (function () {
     var sk = hex2rgb(o.skin || DEFAULT.skin), hr = hex2rgb(o.hair || DEFAULT.hair);
     var extra = { sr: sk[0], sg: sk[1], sb: sk[2], hr: hr[0], hg: hr[1], hb: hr[2] };
     TYPES.forEach(function (t) { extra['w_' + t] = o.outfit && o.outfit[t] ? 1 : 0; });
-    return Object.assign(extra, { S: b.S * Math.sqrt(f), B: b.B * f, W: b.W * Math.pow(f, 1.2), H: b.H * f, f: f, fem: fem, k: clamp(o.height / 170, 0.88, 1.12) });
+    return Object.assign(extra, { S: b.S * Math.sqrt(f), B: b.B * f, W: b.W * Math.pow(f, 1.2), H: b.H * f, C: b.C, f: f, fem: fem, k: clamp(o.height / 170, 0.88, 1.12) });
   }
 
   function draw(p, outfit, uid) {
@@ -2145,12 +2385,15 @@ var GR_SCENE = (function () {
     // men stand a little wider with fuller legs
     // straight legs: knees almost touch, small gaps at calf and ankle (no bow legs)
     var lw = lerp(1.15, 1, fem), kIn = lerp(1.2, 0.6, fem), cIn = lerp(1.8, 1.4, fem), aIn = lerp(2.6, 2.2, fem), tIn = lerp(1.8, 0.6, fem);
-    var kc = kIn + 4.5 * g * lw, cc = cIn + 5.2 * g * lw, ank = aIn + lerp(5.4, 5, fem), ox = ank - 9.4;
+    // calves and knees follow the weight and the body shape (fuller legs on a pear, slimmer on an inverted triangle)
+    var cg = Math.pow(p.f, 1.0) * (1 + (p.C || 0)), kg = Math.pow(p.f, 0.95) * (1 + (p.C || 0) * 0.7);
+    var kc = kIn + 4.5 * kg * lw, cc = cIn + 5.2 * cg * lw, ank = aIn + lerp(5.4, 5, fem), ox = ank - 9.4;
+    var kneeX = kc + 4.5 * kg * lw, calfX = cc + 5.2 * cg * lw;
 
     // skin: torso + legs
     var torso = [P(neck, 31), P(neck + 0.4, 38), P(S * lerp(0.6, 0.55, fem), lerp(41.4, 42.5, fem)), P(S - lerp(2.4, 3, fem), lerp(45, 46, fem)), P(S - 4.6, 58),
       P(B, bustY), P(B - lerp(1, 2.2, fem), 78), P(W, waistY), P(W + (H - W) * 0.7, yHH), P(H, hipY)];
-    var legOut = [P(H * 0.98, yCr - 1), P(H * 0.74 + 2.4, yTh), P(kc + 4.5 * g * lw, yKn), P(cc + 5.2 * g * lw, yCa), P(ank, 196)];
+    var legOut = [P(H * 0.98, yCr - 1), P(H * 0.74 + 2.4, yTh), P(kneeX, yKn), P(calfX, yCa), P(ank, 196)];
     var legIn = [P(aIn, 196), P(cIn, yCa), P(kIn, yKn), P(H * 0.03 + tIn, yTh), P(0, yCr)];
     var foot = function (s) { var x = function (v) { return f1(60 + s * (v + ox)); }; return s > 0
       ? ' C' + x(10.2) + ' 200 ' + x(12) + ' 204 ' + x(10.6) + ' 206 L' + x(4.2) + ' 206 C' + x(3.4) + ' 203 ' + x(3.8) + ' 199 ' + x(4.4) + ' 196'
@@ -2212,7 +2455,7 @@ var GR_SCENE = (function () {
 
     // ---- clothes: every garment is built from the same body numbers, so it fits any figure
     var bodyPts = [[46, S - 3], [58, S - 4.6], [bustY, B], [78, B - lerp(1, 2.2, fem)], [waistY, W], [yHH, W + (H - W) * 0.7], [hipY, H],
-      [yCr - 1, H * 0.98], [yTh, H * 0.74 + 2.4], [yKn, kc + 4.5 * g * lw], [yCa, cc + 5.2 * g * lw], [196, ank]];
+      [yCr - 1, H * 0.98], [yTh, H * 0.74 + 2.4], [yKn, kneeX], [yCa, calfX], [196, ank]];
     function bodyX(y) {
       for (var i = 1; i < bodyPts.length; i++) if (y <= bodyPts[i][0]) {
         var a0 = bodyPts[i - 1], a1 = bodyPts[i]; return lerp(a0[1], a1[1], (y - a0[0]) / (a1[0] - a0[0]));
@@ -2250,6 +2493,9 @@ var GR_SCENE = (function () {
     var G = {
       bottom: function (it) {
         var c = it.color, hemY = 194, hw = 5.2 * g * lw + 0.4, jc = lerp(6.4, 5.8, fem), jeans = /jean|denim/i.test(it.name || '');
+        // a fuller calf or knee widens the leg outward, the inner seam stays put
+        var need = Math.max(calfX, kneeX) + 0.9;
+        if (jc + hw < need) { var inner = jc - hw; hw = (need - inner) / 2; jc = (need + inner) / 2; }
         var out = [P(W + 0.9, waistY + 4), P(W + (H - W) * 0.7 + 0.9, yHH), P(H + 0.9, hipY), P(H * 0.98 + 0.9, yCr - 1), P(H * 0.74 + 3.2, yTh), P(jc + hw, yKn + 4), P(jc + hw, hemY)];
         var inn = [P(jc - hw, hemY), P(jc - hw, yKn + 4), P(H * 0.03 + tIn - 0.6, yTh), P(0, yCr + 1.4)];
         var d = 'M' + f1(X(0)) + ' ' + f1(waistY + 4.4) + ' L' + f1(out[0][0]) + ' ' + f1(out[0][1]) + through(out) + ' L' + f1(inn[0][0]) + ' ' + hemY + through(inn) +
@@ -3027,6 +3273,39 @@ var GR_SCENE = (function () {
     var b = e.target.closest('button[data-th]'); if (!b) return;
     MG.set('theme', b.dataset.th); paint();
   });
+  // Back up: every setting and piece (localStorage) plus the photos (MGStore) in one file
+  $('setBackup').addEventListener('click', function () {
+    var local = {};
+    for (var i = 0; i < localStorage.length; i++) { var k = localStorage.key(i); if (/^(mg-|gr-)/.test(k)) local[k] = localStorage.getItem(k); }
+    MGStore.all()['catch'](function () { return {}; }).then(function (store) {
+      var data = { app: 'my-gardrobe', version: 1, saved: new Date().toISOString(), local: local, store: store };
+      var url = URL.createObjectURL(new Blob([JSON.stringify(data)], { type: 'application/json' })), a = document.createElement('a');
+      a.href = url; a.download = 'my-gardrobe-' + new Date().toISOString().slice(0, 10) + '.json';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+    });
+  });
+  $('restoreFile').addEventListener('change', function () {
+    var f = this.files && this.files[0]; this.value = '';
+    if (!f) return;
+    var r = new FileReader();
+    r.onload = function () {
+      var data; try { data = JSON.parse(r.result); } catch (e) {}
+      if (!data || data.app !== 'my-gardrobe' || typeof data.local !== 'object') { alert(MG.t('bk.bad')); return; }
+      var go = function () { restoreFrom(data); };
+      if (window.mgConfirm) window.mgConfirm(MG.t('bk.confirm'), go, { title: MG.t('warn.sure'), yes: 'OK', no: MG.t('cancel') });
+      else if (confirm(MG.t('bk.confirm'))) go();
+    };
+    r.readAsText(f);
+  });
+  function restoreFrom(data) {
+      Object.keys(localStorage).filter(function (k) { return /^(mg-|gr-)/.test(k); }).forEach(function (k) { localStorage.removeItem(k); });
+      try { Object.keys(data.local).forEach(function (k) { if (/^(mg-|gr-)/.test(k)) localStorage.setItem(k, data.local[k]); }); } catch (e) { alert(MG.t('storageFull')); }
+      var store = data.store || {};
+      MGStore.clear().then(function () { return Promise.all(Object.keys(store).map(function (k) { return MGStore.set(k, store[k]); })); })
+        ['catch'](function () { alert(MG.t('storageFull')); })
+        .then(function () { location.reload(); });
+  }
   $('introToggle').addEventListener('change', function () { MG.set('intro', this.checked ? 'on' : 'off'); });
   // Change password: checked here, then on the server (which also signs the other devices out)
   var pwBox = $('pwBox'), pwForm = $('pwForm'), pwMsg = $('pwMsg');
@@ -3116,9 +3395,6 @@ var GR_SCENE = (function () {
   // shown under the intro, so the doors open onto the sign-in page
   if (!session()) show();
 })();
-
-// Installable app: the service worker keeps the app working offline (see sw.js)
-if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('sw.js').catch(function () {});
 </script>
 <script>
 // Inspirations: Colour match (skin tones and the colours that suit them) and the Capsule closet
@@ -3138,7 +3414,7 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.ser
   function render(id) {
     if (id === 'colorMatch') renderColours();
     if (id === 'capsule') renderCapsule();
-    if (id === 'capMine') renderMine();
+    if (id === 'capMine') renderCapMine();
     if (id === 'capLooks') renderLooks();
   }
 
@@ -3177,11 +3453,16 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.ser
       '<path d="M36 54.5Q40 57 44 54.5" fill="none" stroke="#A9575A" stroke-width="1.6" stroke-linecap="round"/>' +
       '<circle cx="31" cy="50" r="3" fill="#E58C8A" opacity=".18"/><circle cx="49" cy="50" r="3" fill="#E58C8A" opacity=".18"/></svg>';
   }
+  // Real photos for the skin tones: put e.g. assets/skin/olive.jpg in the project and add it here,
+  // like { olive: 'assets/skin/olive.jpg' }. Until a photo is listed, the drawn portrait is shown.
+  var SKIN_PHOTOS = {};
+  function face(sk) { return SKIN_PHOTOS[sk.id] ? '<img src="' + esc(SKIN_PHOTOS[sk.id]) + '" alt="">' : portrait(sk); }
   function renderColours() {
+    renderMine();
     $('cmList').innerHTML = SKINS.map(function (sk) {
       var t = MG.t('cm.skin.' + sk.id);
       return '<article class="cm-card"><div class="cm-head"><b>' + esc(t[0]) + '</b><span>' + esc(t[1]) + '</span></div>' +
-        '<div class="cm-row"><div class="cm-face">' + portrait(sk) + '</div>' +
+        '<div class="cm-row"><div class="cm-face">' + face(sk) + '</div>' +
         '<div class="cm-pal"><small>' + esc(MG.t('cm.suits')) + '</small><ul>' + sk.colours.map(function (c) {
           return '<li><i style="background:' + C[c] + '"></i>' + esc(MG.t('cm.col.' + c)) + '</li>';
         }).join('') + '</ul></div></div></article>';
@@ -3228,7 +3509,7 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.ser
       '<div class="art" style="background:#EFE9DF">' + art + (choosing ? '<span class="cap-check" aria-hidden="true"></span>' : '') + '</div>' +
       '<div class="meta"><b>' + esc(W8.shownName(it)) + '</b><span>' + esc([it.brand, W8.colorName(col[0])].filter(Boolean).join(' · ')) + '</span></div></button>';
   }
-  function renderMine() {
+  function renderCapMine() {
     var list = choosing ? W8.items : mine();
     $('capMineKicker').textContent = MG.count(mine().length, MG.t('cap.nPieces'));
     $('capChoose').textContent = MG.t(choosing ? 'done' : 'cap.choose');
@@ -3237,7 +3518,7 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.ser
       ? '<div class="grid">' + list.map(function (it) { return tile(it, W8.inCapsule(it)); }).join('') + '</div>'
       : '<p class="empty">' + esc(MG.t('cap.mineEmpty')) + '</p>';
   }
-  $('capChoose').addEventListener('click', function () { choosing = !choosing; renderMine(); });
+  $('capChoose').addEventListener('click', function () { choosing = !choosing; renderCapMine(); });
   $('capMineBody').addEventListener('click', function (e) {
     var b = e.target.closest('.cap-item'); if (!b || !choosing) return;
     var it = W8.items.filter(function (x) { return W8.keyOf(x) === b.dataset.k; })[0]; if (!it) return;
@@ -3248,8 +3529,19 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.ser
 
   // ---------- Folder: My looks from my capsule closet (photos from the gallery) ----------
   var LOOKS = 'mg-capsule-looks';
-  function looks() { try { return JSON.parse(localStorage.getItem(LOOKS)) || []; } catch (e) { return []; } }
-  function saveLooks(list) { try { localStorage.setItem(LOOKS, JSON.stringify(list)); return true; } catch (e) { return false; } }
+  var lookList = [];
+  try { lookList = JSON.parse(localStorage.getItem(LOOKS)) || []; } catch (e) {}
+  function looks() { return lookList.slice(); }
+  function saveLooks(list) {
+    lookList = list.slice();
+    MGStore.set(LOOKS, lookList).then(function () { try { localStorage.removeItem(LOOKS); } catch (e) {} })['catch'](function () { msg(MG.t('cap.full')); });
+    return true;
+  }
+  // older versions kept these photos in localStorage: move them over once
+  MGStore.get(LOOKS).then(function (v) {
+    if (v) lookList = v; else if (lookList.length) saveLooks(lookList);
+    renderCapsule(); if ($('capLooks').classList.contains('active')) renderLooks();
+  })['catch'](function () {});
   function msg(text) { $('capLooksMsg').textContent = text || ''; $('capLooksMsg').hidden = !text; }
   function renderLooks() {
     var list = looks();
@@ -3291,9 +3583,459 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.ser
     var list = looks(); list.splice(+b.dataset.i, 1); saveLooks(list); msg(''); renderLooks();
   });
 
+
+  // ---------- Your colours: skin, hair and eyes give a colour type ----------
+  var HAIR = [['blonde', '#E3C98F'], ['darkBlonde', '#B5875A'], ['red', '#A3472C'], ['lightBrown', '#7A5236'], ['darkBrown', '#4A3328'], ['black', '#1F1915'], ['grey', '#B8B2AB']];
+  var EYES = [['blue', '#5B88B5'], ['grey', '#8E9AA3'], ['green', '#6E8F5A'], ['hazel', '#8A7040'], ['lightBrown', '#8B5A2B'], ['darkBrown', '#4A2C1A'], ['black', '#1E1410']];
+  var SEASONS = {
+    spring: ['coral', 'peach', 'warmRed', 'gold', 'camel', 'ivory', 'mint', 'turquoise'],
+    summer: ['dustyRose', 'lavender', 'softGrey', 'denim', 'sage', 'mauve', 'softTeal', 'icyPink'],
+    autumn: ['olive', 'mustard', 'terracotta', 'rust', 'burgundy', 'teal', 'camel', 'chocolate'],
+    winter: ['navy', 'emerald', 'ruby', 'royal', 'fuchsia', 'white', 'icyPink', 'sapphire']
+  };
+  // colours that make each eye colour stand out
+  var EYE_POP = { blue: ['coral', 'camel', 'rust'], grey: ['plum', 'navy', 'berry'], green: ['plum', 'burgundy', 'mauve'], hazel: ['olive', 'plum', 'gold'],
+    lightBrown: ['teal', 'emerald', 'gold'], darkBrown: ['cobalt', 'emerald', 'gold'], black: ['royal', 'emerald', 'white'] };
+  var COOL = { porcelain: 1, fair: 1, deep: 1 }, LIGHT_HAIR = { blonde: 1, darkBlonde: 1, red: 1, grey: 1 };
+  function season(p) { return COOL[p.skin] ? (LIGHT_HAIR[p.hair] ? 'summer' : 'winter') : (LIGHT_HAIR[p.hair] ? 'spring' : 'autumn'); }
+  function profile() { try { return JSON.parse(localStorage.getItem('mg-colours')); } catch (e) { return null; } }
+  function skinOf(id) { return SKINS.filter(function (k) { return k.id === id; })[0] || SKINS[3]; }
+  function hexOf(list, id) { return (list.filter(function (x) { return x[0] === id; })[0] || list[0])[1]; }
+  function swatches(ids) { return '<ul>' + ids.map(function (c) { return '<li><i style="background:' + C[c] + '"></i>' + esc(MG.t('cm.col.' + c)) + '</li>'; }).join('') + '</ul>'; }
+
+  // Top of Colour match: your own type, or an invitation to set it up
+  function renderMine() {
+    var p = profile();
+    if (!p) {
+      $('cmMine').innerHTML = '<article class="cm-card cm-you"><div class="cm-head"><b>' + esc(MG.t('cp.findTitle')) + '</b><span>' + esc(MG.t('cp.findSub')) + '</span></div>' +
+        '<button type="button" class="btn" data-cp-open>' + esc(MG.t('cp.find')) + '</button></article>';
+      return;
+    }
+    var se = season(p), sk = skinOf(p.skin);
+    $('cmMine').innerHTML = '<article class="cm-card cm-you">' +
+      '<div class="cm-head"><small class="kicker">' + esc(MG.t('cp.yourType')) + '</small><b>' + esc(MG.t('cp.season.' + se)[0]) + '</b><span>' + esc(MG.t('cp.season.' + se)[1]) + '</span></div>' +
+      '<div class="cm-row"><div class="cm-face">' + (p.photo ? '<img src="' + esc(p.photo) + '" alt="">' : face(sk)) + '</div>' +
+      '<div class="cm-pal"><small>' + esc(MG.t('cm.suits')) + '</small>' + swatches(SEASONS[se]) + '</div></div>' +
+      '<div class="cm-eyes"><small>' + esc(MG.t('cp.eyePop')) + '</small>' + swatches(EYE_POP[p.eyes] || []) + '</div>' +
+      '<div class="cm-me"><span><i style="background:' + sk.skin + '"></i>' + esc(MG.t('cm.skin.' + sk.id)[0]) + '</span>' +
+      '<span><i style="background:' + hexOf(HAIR, p.hair) + '"></i>' + esc(MG.t('cp.hairs.' + p.hair)) + '</span>' +
+      '<span><i style="background:' + hexOf(EYES, p.eyes) + '"></i>' + esc(MG.t('cp.eyeCols.' + p.eyes)) + '</span>' +
+      '<button type="button" class="link" data-cp-open>' + esc(MG.t('cp.change')) + '</button></div></article>';
+  }
+  $('cmMore').addEventListener('click', function () {
+    var open = $('cmOthers').hidden;
+    $('cmOthers').hidden = !open; this.setAttribute('aria-expanded', open);
+  });
+
+  // The sheet where you set (or change) your colours
+  var box = $('colours'), draft = {}, photoStep = -1, photoSrc = '';
+  function opts(boxId, list, key, label) {
+    $(boxId).innerHTML = list.map(function (o) {
+      var on = draft[key] === o[0];
+      return '<button type="button" role="radio" aria-checked="' + on + '" data-v="' + o[0] + '"><i style="background:' + o[1] + '"></i>' + esc(label(o[0])) + '</button>';
+    }).join('');
+  }
+  function paintOpts() {
+    opts('cpSkin', SKINS.map(function (k) { return [k.id, k.skin]; }), 'skin', function (id) { return MG.t('cm.skin.' + id)[0]; });
+    opts('cpHair', HAIR, 'hair', function (id) { return MG.t('cp.hairs.' + id); });
+    opts('cpEyes', EYES, 'eyes', function (id) { return MG.t('cp.eyeCols.' + id); });
+    $('cpSave').disabled = !(draft.skin && draft.hair && draft.eyes);
+  }
+  [['cpSkin', 'skin'], ['cpHair', 'hair'], ['cpEyes', 'eyes']].forEach(function (pair) {
+    $(pair[0]).addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; draft[pair[1]] = b.dataset.v; paintOpts(); });
+  });
+  function openColours(first) {
+    var p = profile() || {};
+    draft = { skin: p.skin, hair: p.hair, eyes: p.eyes }; photoSrc = p.photo || ''; photoStep = -1;
+    $('cpPhoto').hidden = true; $('cpSkip').hidden = !first;
+    paintOpts(); box.hidden = false;
+  }
+  function closeColours() { box.hidden = true; }
+  document.addEventListener('click', function (e) { if (e.target.closest('[data-cp-open]')) openColours(false); });
+  box.addEventListener('click', function (e) { if (e.target.closest('[data-cp-close]')) closeColours(); });
+  $('setColours').addEventListener('click', function () { $('settings').hidden = true; openColours(false); });
+  $('cpSkip').addEventListener('click', function () { try { localStorage.setItem('mg-colours-skip', '1'); } catch (e) {} closeColours(); });
+  $('cpSave').addEventListener('click', function () {
+    var p = { skin: draft.skin, hair: draft.hair, eyes: draft.eyes };
+    if (photoSrc) p.photo = photoSrc;
+    try { localStorage.setItem('mg-colours', JSON.stringify(p)); } catch (e) { delete p.photo; try { localStorage.setItem('mg-colours', JSON.stringify(p)); } catch (x) {} }
+    closeColours();
+    if (document.querySelector('.screen.active').id === 'colorMatch') renderColours();
+  });
+
+  // From a photo: tap your skin, then your hair, then your eye; each tap picks the closest option
+  var STEPS = ['skin', 'hair', 'eyes'], cv = $('cpCanvas'), g = cv.getContext('2d', { willReadFrequently: true });
+  function stepText() { $('cpStep').textContent = photoStep < 3 ? MG.t('cp.tap.' + STEPS[photoStep]) : MG.t('cp.tapDone'); }
+  function closest(rgb, list) {
+    var best = list[0][0], d = Infinity;
+    list.forEach(function (o) {
+      var n = parseInt(o[1].slice(1), 16), dr = rgb[0] - (n >> 16), dg = rgb[1] - (n >> 8 & 255), db = rgb[2] - (n & 255), x = 2 * dr * dr + 4 * dg * dg + 3 * db * db;
+      if (x < d) { d = x; best = o[0]; }
+    });
+    return best;
+  }
+  $('cpFile').addEventListener('change', function () {
+    var f = this.files && this.files[0]; this.value = ''; if (!f) return;
+    var r = new FileReader();
+    r.onload = function () {
+      var img = new Image();
+      img.onload = function () {
+        var k = Math.min(1, 640 / Math.max(img.width, img.height));
+        cv.width = Math.round(img.width * k); cv.height = Math.round(img.height * k);
+        g.drawImage(img, 0, 0, cv.width, cv.height);
+        // a small copy is kept to show on your colour card
+        var t = document.createElement('canvas'), tk = Math.min(1, 240 / Math.max(img.width, img.height));
+        t.width = Math.round(img.width * tk); t.height = Math.round(img.height * tk); t.getContext('2d').drawImage(img, 0, 0, t.width, t.height);
+        try { photoSrc = t.toDataURL('image/jpeg', 0.8); } catch (e) { photoSrc = ''; }
+        $('cpMarks').innerHTML = ''; photoStep = 0; $('cpPhoto').hidden = false; stepText();
+      };
+      img.src = r.result;
+    };
+    r.readAsDataURL(f);
+  });
+  cv.addEventListener('click', function (e) {
+    if (photoStep < 0 || photoStep > 2) return;
+    var rc = cv.getBoundingClientRect(), x = Math.round((e.clientX - rc.left) * cv.width / rc.width), y = Math.round((e.clientY - rc.top) * cv.height / rc.height);
+    var half = photoStep === 2 ? 2 : 5, data = g.getImageData(Math.max(0, x - half), Math.max(0, y - half), half * 2 + 1, half * 2 + 1).data, sum = [0, 0, 0], n = 0;
+    for (var i = 0; i < data.length; i += 4) { sum[0] += data[i]; sum[1] += data[i + 1]; sum[2] += data[i + 2]; n++; }
+    var rgb = sum.map(function (v) { return v / n; });
+    var key = STEPS[photoStep];
+    draft[key] = closest(rgb, key === 'skin' ? SKINS.map(function (k) { return [k.id, k.skin]; }) : key === 'hair' ? HAIR : EYES);
+    $('cpMarks').insertAdjacentHTML('beforeend', '<i style="left:' + ((e.clientX - rc.left) / rc.width * 100).toFixed(1) + '%;top:' + ((e.clientY - rc.top) / rc.height * 100).toFixed(1) + '%">' + (photoStep + 1) + '</i>');
+    photoStep++; stepText(); paintOpts();
+  });
+
+  // First start: after the opening animation, ask once (it can be skipped and set later)
+  (function firstStart() {
+    var skipped = false; try { skipped = !!localStorage.getItem('mg-colours-skip'); } catch (e) {}
+    if (profile() || skipped) return;
+    var stage = $('stage');
+    var wait = setInterval(function () { if (!stage || stage.hidden) { clearInterval(wait); openColours(true); } }, 300);
+  })();
+
   MG.onLang(function () {
     var on = document.querySelector('.screen.active'); if (on) render(on.id);
+    if (!box.hidden) { paintOpts(); if (photoStep >= 0) stepText(); }
   });
+})();
+</script>
+<script>
+// Styles: My style (your own outfit photos in folders), Inspirations (saved ideas, e.g. from Pinterest) and the Wishlist
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  function esc(v) { return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function safeUrl(u) { u = String(u || '').trim(); return /^https?:\/\//i.test(u) ? u : ''; }
+  function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+
+  // ---------- data: kept in MGStore (IndexedDB), photos included ----------
+  var KEY = { mine: 'st-mine', board: 'st-board', wish: 'wishlist' };
+  var data = { mine: [], board: [], wish: [] };
+  function save(kind) {
+    return MGStore.set(KEY[kind], data[kind])['catch'](function () { alert(MG.t('storageFull')); throw new Error('full'); });
+  }
+
+  // Folder ids: a preset key, or 'c:' + the name someone typed
+  var PRESETS = ['casual', 'business', 'elegant', 'evening', 'sporty', 'street', 'boho', 'minimal'];
+  function label(f) { return f.indexOf('c:') === 0 ? f.slice(2) : MG.t('st.f.' + f); }
+  function folders(list) {
+    var seen = {}, out = [];
+    list.forEach(function (e) { if (!seen[e.folder]) { seen[e.folder] = { id: e.folder, n: 0, cover: '' }; out.push(seen[e.folder]); } seen[e.folder].n++; if (e.src) seen[e.folder].cover = e.src; });
+    return out;
+  }
+  var WISH_SVG = '<svg class="wl-ph" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 7.5 2.6C19.5 15.4 12 20 12 20z"/></svg>';
+  var FOLDER_SVG = '<svg class="st-fold" viewBox="0 0 48 40" aria-hidden="true"><path d="M4 8a4 4 0 0 1 4-4h10l4 5h18a4 4 0 0 1 4 4v19a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z"/></svg>';
+  function folderTile(kind, f) {
+    return '<div class="tile open-tile st-folder" role="button" tabindex="0" data-sf="' + kind + '" data-f="' + esc(f.id) + '"><div class="art">' +
+      (f.cover ? '<img class="photo" src="' + esc(f.cover) + '" alt="">' : FOLDER_SVG) + '</div><div class="meta"><b>' + esc(label(f.id)) + '</b><span>' +
+      esc(MG.count(f.n, MG.t('st.nSaved'))) + '</span></div></div>';
+  }
+
+  // ---------- My style ----------
+  function renderMine() {
+    var grid = $('msGrid');
+    grid.querySelectorAll('.st-folder').forEach(function (t) { t.remove(); });
+    grid.insertAdjacentHTML('afterbegin', folders(data.mine).map(function (f) { return folderTile('mine', f); }).join(''));
+    filter('msQ', 'msGrid');
+  }
+  // ---------- Inspirations ----------
+  function renderBoard() {
+    var fs = folders(data.board);
+    $('ibGrid').innerHTML = fs.length ? fs.map(function (f) { return folderTile('board', f); }).join('') : '<p class="empty">' + esc(MG.t('st.boardEmpty')) + '</p>';
+    filter('ibQ', 'ibGrid');
+  }
+  // search: only the titles of the folders (and of Colour match / Capsule closet)
+  function filter(qId, gridId) {
+    var q = $(qId).value.trim().toLowerCase();
+    $(gridId).querySelectorAll('.tile').forEach(function (t) { var b = t.querySelector('.meta b'); t.hidden = !!q && (!b || b.textContent.toLowerCase().indexOf(q) < 0); });
+  }
+  $('msQ').addEventListener('input', function () { filter('msQ', 'msGrid'); });
+  $('ibQ').addEventListener('input', function () { filter('ibQ', 'ibGrid'); });
+
+  // ---------- one folder ----------
+  var cur = null;
+  function openFolder(kind, f) { cur = { kind: kind, f: f }; renderFolder(); window.mgShow('stFolder'); }
+  function renderFolder() {
+    if (!cur) return;
+    var list = data[cur.kind].filter(function (e) { return e.folder === cur.f; });
+    $('sfBack').dataset.back = cur.kind === 'mine' ? 'inspo' : 'inspoBoard';
+    $('sfKicker').textContent = MG.count(list.length, MG.t('st.nSaved'));
+    $('sfTitle').textContent = label(cur.f);
+    $('sfGrid').innerHTML = list.length ? list.map(function (e) {
+      var url = safeUrl(e.url);
+      return '<figure class="cap-look' + (e.src ? '' : ' st-linkonly') + '">' + (e.src ? '<img src="' + esc(e.src) + '" alt="">' : '<span class="st-linkcard">' + esc(url.replace(/^https?:\/\/(www\.)?/, '').split('/')[0]) + '</span>') +
+        (url ? '<a class="st-open" href="' + esc(url) + '" target="_blank" rel="noopener" aria-label="' + esc(MG.t('st.openLink')) + '"><svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a>' : '') +
+        '<button type="button" class="cap-del" data-del="' + esc(e.id) + '" aria-label="' + esc(MG.t('cap.del')) + '"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></figure>';
+    }).join('') : '<p class="empty">' + esc(MG.t('st.folderEmpty')) + '</p>';
+  }
+  $('sfGrid').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-del]'); if (!b || !cur) return;
+    var id = b.dataset.del, here = cur;
+    function gone() {
+      data[here.kind] = data[here.kind].filter(function (x) { return x.id !== id; });
+      save(here.kind); renderAll();
+      if (!data[here.kind].some(function (x) { return x.folder === here.f; })) window.mgShow(here.kind === 'mine' ? 'inspo' : 'inspoBoard');
+    }
+    if (window.mgConfirm) window.mgConfirm(MG.t('st.delConfirm'), gone, { title: MG.t('cap.del'), yes: MG.t('cap.del'), no: MG.t('cancel') });
+    else if (confirm(MG.t('st.delConfirm'))) gone();
+  });
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest('[data-sf]'); if (t) openFolder(t.dataset.sf, t.dataset.f);
+  });
+  document.addEventListener('keydown', function (e) {
+    if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('.st-folder')) { e.preventDefault(); e.target.click(); }
+  });
+
+  // ---------- the "save into a folder" sheet ----------
+  var sheet = { kind: 'mine', photos: [], folder: '' };
+  function shrink(file, done) {
+    var r = new FileReader();
+    r.onload = function () {
+      var img = new Image();
+      img.onload = function () {
+        var k = Math.min(1, 900 / Math.max(img.width, img.height)), cv = document.createElement('canvas');
+        cv.width = Math.round(img.width * k); cv.height = Math.round(img.height * k);
+        cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+        try { done(cv.toDataURL('image/jpeg', 0.82)); } catch (e) { done(null); }
+      };
+      img.onerror = function () { done(null); };
+      img.src = r.result;
+    };
+    r.onerror = function () { done(null); };
+    r.readAsDataURL(file);
+  }
+  function shrinkAll(files, done) {
+    var out = [], left = files.length;
+    if (!left) return done(out);
+    files.forEach(function (f, i) { shrink(f, function (src) { out[i] = src; if (--left === 0) done(out.filter(Boolean)); }); });
+  }
+  // The picture behind a link (a Pinterest pin, a shop page): microlink.io finds it,
+  // images.weserv.nl serves it so a copy can be kept on the phone; if that fails, the picture's address is kept
+  var linkCache = {};
+  function linkImage(url) {
+    url = safeUrl(url);
+    if (!url) return Promise.resolve('');
+    if (!linkCache[url]) linkCache[url] = fetch('https://api.microlink.io/?url=' + encodeURIComponent(url))
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        var img = j && j.status === 'success' && j.data && j.data.image && safeUrl(j.data.image.url);
+        if (!img) return '';
+        return fetch('https://images.weserv.nl/?w=900&url=' + encodeURIComponent(img.replace(/^https?:\/\//, '')))
+          .then(function (r) { if (!r.ok) throw new Error(r.status); return r.blob(); })
+          .then(function (b) { return new Promise(function (ok) { shrink(new File([b], 'link', { type: b.type || 'image/jpeg' }), function (src) { ok(src || img); }); }); })
+          ['catch'](function () { return img; });
+      })['catch'](function () { delete linkCache[url]; return ''; });
+    return linkCache[url];
+  }
+  function debounce(fn, ms) { var t; return function () { clearTimeout(t); t = setTimeout(fn, ms); }; }
+  function loadingFig() { return '<figure class="st-loading"><span>' + esc(MG.t('st.loadingImg')) + '</span></figure>'; }
+
+  function stMsg(t) { $('stMsg').textContent = t || ''; $('stMsg').hidden = !t; }
+  function paintSheet() {
+    var shown = sheet.photos.length ? sheet.photos : sheet.linkImg ? [sheet.linkImg] : [];
+    $('stPrev').innerHTML = shown.map(function (src, i) {
+      return '<figure><img src="' + esc(src) + '" alt="" referrerpolicy="no-referrer"><button type="button" class="cap-del" data-rm="' + (sheet.photos.length ? i : 'link') + '" aria-label="' + esc(MG.t('cap.del')) + '"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></figure>';
+    }).join('') + (!shown.length && sheet.linkBusy ? loadingFig() : '');
+    $('stPrev').hidden = !shown.length && !sheet.linkBusy;
+    var ids = PRESETS.slice();
+    folders(data[sheet.kind]).forEach(function (f) { if (ids.indexOf(f.id) < 0) ids.push(f.id); });
+    $('stFolders').innerHTML = ids.map(function (f) {
+      return '<button type="button" role="radio" data-folder="' + esc(f) + '" aria-checked="' + (sheet.folder === f) + '" class="' + (sheet.folder === f ? 'on' : '') + '">' + esc(label(f)) + '</button>';
+    }).join('') + '<button type="button" role="radio" data-folder="+" aria-checked="' + (sheet.folder === '+') + '" class="st-new' + (sheet.folder === '+' ? ' on' : '') + '">+ ' + esc(MG.t('st.newFolder')) + '</button>';
+    $('stNewF').hidden = sheet.folder !== '+';
+  }
+  function openSheet(kind, photos, link) {
+    sheet = { kind: kind, photos: photos || [], folder: '', linkImg: '', linkBusy: false, linkP: null };
+    $('stTitle').textContent = MG.t(kind === 'mine' ? 'st.addMine' : 'st.addBoard');
+    $('stLinkF').hidden = kind === 'mine';
+    $('stLink').value = link || '';
+    $('stNew').value = '';
+    stMsg(''); paintSheet();
+    $('stSheet').hidden = false;
+    if (link) fetchLinkImg();
+  }
+  function fetchLinkImg() {
+    var u = safeUrl($('stLink').value), mine = sheet;
+    mine.linkImg = ''; mine.linkBusy = !!u; mine.linkP = u ? linkImage(u) : Promise.resolve('');
+    paintSheet();
+    mine.linkP.then(function (src) {
+      if (sheet !== mine || safeUrl($('stLink').value) !== u) return;
+      mine.linkImg = src; mine.linkBusy = false; paintSheet();
+    });
+  }
+  $('stLink').addEventListener('input', debounce(fetchLinkImg, 600));
+  function closeSheet() { $('stSheet').hidden = true; }
+  $('stSheet').addEventListener('click', function (e) {
+    if (e.target.closest('[data-close]')) return closeSheet();
+    var f = e.target.closest('[data-folder]');
+    if (f) { sheet.folder = f.dataset.folder; stMsg(''); paintSheet(); if (sheet.folder === '+') $('stNew').focus(); return; }
+    var rm = e.target.closest('[data-rm]');
+    if (rm) { if (rm.dataset.rm === 'link') { sheet.linkImg = ''; sheet.linkP = null; } else sheet.photos.splice(+rm.dataset.rm, 1); paintSheet(); }
+  });
+  $('stFile').addEventListener('change', function () {
+    var files = Array.prototype.slice.call(this.files || []); this.value = '';
+    shrinkAll(files, function (srcs) { sheet.photos = sheet.photos.concat(srcs); stMsg(''); paintSheet(); });
+  });
+  $('stForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var link = safeUrl($('stLink').value);
+    if (!sheet.photos.length && !(sheet.kind === 'board' && link)) return stMsg(MG.t(sheet.kind === 'mine' ? 'st.needPhoto' : 'st.needPhotoOrLink'));
+    var folder = sheet.folder;
+    if (folder === '+') { var n = $('stNew').value.trim(); folder = n ? 'c:' + n : ''; }
+    if (!folder) return stMsg(MG.t('st.needFolder'));
+    var kind = sheet.kind, photos = sheet.photos, mine = sheet;
+    // a link without photos is saved together with its picture (waits for it if it is still loading)
+    var pic = photos.length || !link ? Promise.resolve('') : (mine.linkP && safeUrl($('stLink').value) === link ? mine.linkP : linkImage(link));
+    if (!photos.length && link && mine.linkBusy) stMsg(MG.t('st.loadingImg'));
+    pic.then(function (linkSrc) {
+      if (!photos.length && link && mine.linkP === null && !mine.linkBusy) linkSrc = mine.linkImg;   // picture removed by hand
+      var now = Date.now(), add = photos.length
+        ? photos.map(function (src) { return { id: uid(), folder: folder, src: src, url: link, at: now }; })
+        : [{ id: uid(), folder: folder, src: linkSrc || '', url: link, at: now }];
+      data[kind] = data[kind].concat(add);
+      return save(kind).then(function () { closeSheet(); renderAll(); openFolder(kind, folder); });
+    })['catch'](function () {});
+  });
+  // + on My style opens the gallery straight away, then asks for the category
+  $('msAdd').addEventListener('click', function () { openSheet('mine', []); $('stFile').click(); });
+  $('ibAdd').addEventListener('click', function () { openSheet('board', []); });
+
+  // ---------- shared from another app (Pinterest → Share → My Gardrobe), see sw.js ----------
+  function takeShared() {
+    if (!/[?&]shared=1/.test(location.search)) return;
+    try { history.replaceState(null, '', location.pathname + '#inspoBoard'); } catch (e) {}
+    MGStore.get('share-inbox').then(function (box) {
+      MGStore.del('share-inbox');
+      if (!box) return;
+      var link = safeUrl(box.url) || ((String(box.text || '').match(/https?:\/\/\S+/) || [''])[0]);
+      var files = (box.files || []).map(function (b) { return new File([b], 'shared', { type: b.type || 'image/jpeg' }); });
+      window.mgShow('inspoBoard');
+      shrinkAll(files, function (srcs) { openSheet('board', srcs, link); });
+    })['catch'](function () {});
+  }
+
+  // ---------- Wishlist ----------
+  var wl = { photo: '' };
+  function renderWish() {
+    var list = data.wish;
+    $('wlList').innerHTML = list.length ? list.map(function (w) {
+      var img = w.photo || safeUrl(w.img), link = safeUrl(w.link);
+      var meta = [w.shop, w.size && MG.t('wl.size') + ' ' + w.size].filter(Boolean).join(' · ');
+      return '<article class="wl-card"><div class="wl-img">' + (img ? '<img src="' + esc(img) + '" alt="" referrerpolicy="no-referrer">' : WISH_SVG) + '</div>' +
+        '<div class="wl-body"><b>' + esc(w.name || MG.t('wl.noName')) + '</b>' + (meta ? '<span>' + esc(meta) + '</span>' : '') +
+        (w.price ? '<strong>' + esc(w.price) + '</strong>' : '') + (w.note ? '<p>' + esc(w.note) + '</p>' : '') +
+        '<div class="wl-acts"><a class="btn wl-buy" href="' + esc(link || 'https://www.google.com/search?tbm=shop&q=' + encodeURIComponent([w.name, w.shop].filter(Boolean).join(' '))) +
+        '" target="_blank" rel="noopener">' + esc(MG.t('wl.buy')) + '</a><button type="button" class="btn ghost wl-del" data-wdel="' + esc(w.id) + '">' + esc(MG.t('wl.delete')) + '</button></div></div></article>';
+    }).join('') : '<p class="empty">' + esc(MG.t('wl.empty')) + '</p>';
+  }
+  $('wlList').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-wdel]'); if (!b) return;
+    // the app's own dialog: the browser's confirm() is ugly in the installed app and blocked in some in-app browsers
+    var id = b.dataset.wdel, gone = function () { data.wish = data.wish.filter(function (w) { return w.id !== id; }); save('wish'); renderWish(); };
+    if (window.mgConfirm) window.mgConfirm(MG.t('wl.delConfirm'), gone, { title: MG.t('wl.delete'), yes: MG.t('wl.delete'), no: MG.t('cancel') });
+    else if (confirm(MG.t('wl.delConfirm'))) gone();
+  });
+  function wlPreview() {
+    var src = wl.photo || safeUrl($('wlImg').value) || wl.linkImg;
+    $('wlPrev').innerHTML = src ? '<figure><img src="' + esc(src) + '" alt="" referrerpolicy="no-referrer"></figure>' : wl.linkBusy ? loadingFig() : '';
+    $('wlPrev').hidden = !src && !wl.linkBusy;
+  }
+  $('wlAdd').addEventListener('click', function () {
+    $('wlForm').reset(); wl = { photo: '', linkImg: '', linkBusy: false, linkP: null }; wlPreview(); $('wlErr').hidden = true; $('wlSheet').hidden = false;
+  });
+  $('wlSheet').addEventListener('click', function (e) { if (e.target.closest('[data-close]')) $('wlSheet').hidden = true; });
+  $('wlFile').addEventListener('change', function () {
+    var f = this.files && this.files[0]; this.value = '';
+    if (f) shrink(f, function (src) { if (src) { wl.photo = src; $('wlImg').value = ''; wlPreview(); } });
+  });
+  $('wlImg').addEventListener('input', function () { if (safeUrl(this.value)) wl.photo = ''; wlPreview(); });
+  $('wlLink').addEventListener('input', debounce(function () {
+    var u = safeUrl($('wlLink').value), mine = wl;
+    mine.linkImg = ''; mine.linkBusy = !!u; mine.linkP = u ? linkImage(u) : null; wlPreview();
+    if (mine.linkP) mine.linkP.then(function (src) { if (wl !== mine || safeUrl($('wlLink').value) !== u) return; mine.linkImg = src; mine.linkBusy = false; wlPreview(); });
+  }, 600));
+  // Google Images in a new tab; long-press an image there, copy its address and paste it into Image link
+  $('wlGoogle').addEventListener('click', function () {
+    var q = [$('wlName').value, $('wlShop').value].filter(Boolean).join(' ').trim();
+    window.open('https://www.google.com/search?tbm=isch&q=' + encodeURIComponent(q || MG.t('wl.namePh')), '_blank', 'noopener');
+  });
+  $('wlForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var w = { id: uid(), photo: wl.photo, img: safeUrl($('wlImg').value), name: $('wlName').value.trim(), shop: $('wlShop').value.trim(),
+      price: $('wlPrice').value.trim(), size: $('wlSize').value.trim(), link: safeUrl($('wlLink').value), note: $('wlNote').value.trim(), at: Date.now() };
+    // no picture of its own: take the one behind the shop link
+    var pic = w.photo || w.img || !w.link ? Promise.resolve('') : (wl.linkP && !wl.linkBusy ? Promise.resolve(wl.linkImg) : wl.linkP || linkImage(w.link));
+    if (!w.photo && !w.img && !w.name && !w.link) { $('wlErr').textContent = MG.t('wl.need'); $('wlErr').hidden = false; return; }
+    if (!w.photo && !w.img && w.link) { $('wlErr').textContent = MG.t('st.loadingImg'); $('wlErr').hidden = false; }
+    pic.then(function (src) {
+      if (src) { if (src.indexOf('data:') === 0) w.photo = src; else w.img = src; }
+      data.wish.unshift(w);
+      return save('wish').then(function () { $('wlSheet').hidden = true; renderWish(); });
+    })['catch'](function () {});
+  });
+  // Share the whole wishlist: the phone's share sheet (WhatsApp, Messenger, Instagram…), or copy it as text
+  function dataUrlFile(src, i) {
+    var m = /^data:([^;]+);base64,(.*)$/.exec(src || ''); if (!m) return null;
+    var bin = atob(m[2]), arr = new Uint8Array(bin.length);
+    for (var k = 0; k < bin.length; k++) arr[k] = bin.charCodeAt(k);
+    return new File([arr], 'wishlist-' + (i + 1) + '.jpg', { type: m[1] });
+  }
+  $('wlShare').addEventListener('click', function () {
+    var list = data.wish;
+    if (!list.length) return wlSay(MG.t('wl.empty'));
+    var text = MG.t('wl.shareTitle') + '\n\n' + list.map(function (w, i) {
+      return (i + 1) + '. ' + [w.name || MG.t('wl.noName'), w.price, w.size && MG.t('wl.size') + ' ' + w.size, w.shop].filter(Boolean).join(' · ') + (w.link ? '\n   ' + w.link : '');
+    }).join('\n');
+    var files = list.map(function (w, i) { return dataUrlFile(w.photo, i); }).filter(Boolean).slice(0, 10);
+    var payload = { title: MG.t('wl.shareTitle'), text: text };
+    if (files.length && navigator.canShare && navigator.canShare({ files: files })) payload.files = files;
+    if (navigator.share) return navigator.share(payload)['catch'](function () {});
+    if (navigator.clipboard) navigator.clipboard.writeText(text).then(function () { wlSay(MG.t('wl.copied')); });
+  });
+  function wlSay(t) { $('wlMsg').textContent = t; $('wlMsg').hidden = false; clearTimeout(wlSay.t); wlSay.t = setTimeout(function () { $('wlMsg').hidden = true; }, 2500); }
+
+  // ---------- the bar above the tabs: My style · Inspirations · Wishlist ----------
+  var SECTION = { inspo: 'inspo', colorMatch: 'inspo', capsule: 'inspo', capMine: 'inspo', capLooks: 'inspo', inspoBoard: 'inspoBoard', wishlist: 'wishlist' };
+  function sectionOf(id) { return id === 'stFolder' ? (cur && cur.kind === 'board' ? 'inspoBoard' : 'inspo') : SECTION[id]; }
+  function paintBar(id) {
+    var s = sectionOf(id);
+    $('stylebar').hidden = !s;
+    $('stylebar').querySelectorAll('button').forEach(function (b) {
+      var on = b.dataset.st === s; b.classList.toggle('on', on);
+      if (on) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
+    });
+  }
+  $('stylebar').addEventListener('click', function (e) { var b = e.target.closest('[data-st]'); if (b) window.mgShow(b.dataset.st); });
+  document.addEventListener('mg-show', function (e) { paintBar(e.detail); });
+  var active = document.querySelector('.screen.active'); if (active) paintBar(active.id);
+
+  function renderAll() { renderMine(); renderBoard(); renderWish(); if ($('stFolder').classList.contains('active')) renderFolder(); }
+  MG.onLang(function () { renderAll(); if (!$('stSheet').hidden) paintSheet(); });
+  Promise.all(['mine', 'board', 'wish'].map(function (k) { return MGStore.get(KEY[k]).then(function (v) { data[k] = v || []; })['catch'](function () {}); }))
+    .then(function () { renderAll(); takeShared(); });
+  renderAll();
+
+  // installable app (needed for Pinterest → Share → My Gardrobe on Android)
+  if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('sw.js')['catch'](function () {});
 })();
 </script>
 </body>

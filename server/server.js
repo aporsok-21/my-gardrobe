@@ -18,7 +18,7 @@ const MAX_BODY = 25 * 1024 * 1024;   // photos are stored as JPEG data URLs insi
 // What the app keeps per person; device preferences (theme, units, language) stay in the browser
 // The Android app (Capacitor) loads the app from this origin and signs in with a bearer token instead of the cookie
 const APP_ORIGINS = ['https://localhost'];
-const DATA_KEYS = ['mg-items', 'mg-wash', 'mg-worn', 'mg-fav', 'mg-figure', 'mg-outfit', 'mg-outfit-prev', 'mg-worn-day', 'mg-capsule', 'mg-capsule-looks'];
+const DATA_KEYS = ['mg-items', 'mg-wash', 'mg-worn', 'mg-fav', 'mg-figure', 'mg-outfit', 'mg-outfit-prev', 'mg-worn-day', 'mg-capsule', 'mg-capsule-looks', 'mg-colours'];
 
 fs.mkdirSync(path.dirname(DB_FILE), { recursive: true });
 const db = new DatabaseSync(DB_FILE);
