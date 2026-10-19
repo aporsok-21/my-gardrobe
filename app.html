@@ -510,6 +510,52 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
 [data-theme="dark"] .dot,[data-theme="dark"] .swatches button{border-color:rgba(238,232,222,.35)}
 [data-theme="dark"] .switch{background:#4A443D}
 [data-theme="dark"] .tile.item.washing .wash svg{stroke:#F6F2EA}
+
+/* Inspirations: Colour match */
+.open-tile{cursor:pointer;transition:transform .2s}
+.open-tile:active{transform:scale(.98)}
+.cm-intro{margin:0 0 14px}
+.cm-list{display:flex;flex-direction:column;gap:12px;padding-bottom:8px}
+.cm-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:14px}
+.cm-head b{display:block;font-size:17px;font-weight:800;letter-spacing:-.02em}
+.cm-head span{display:block;margin-top:2px;font-size:12.5px;line-height:1.35;color:var(--muted)}
+.cm-row{display:flex;gap:12px;margin-top:10px;align-items:stretch}
+.cm-face{flex:0 0 92px;border-radius:14px;background:#EFE9DF;display:flex;align-items:flex-end;justify-content:center;overflow:hidden}
+.cm-face svg{display:block;width:92px;height:auto}
+.cm-pal{flex:1;min-width:0}
+.cm-pal small{display:block;margin-bottom:6px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.cm-pal ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:6px 8px}
+.cm-pal li{display:flex;align-items:center;gap:6px;min-width:0;font-size:12px;font-weight:600;line-height:1.2}
+.cm-pal li i{flex:0 0 auto;width:20px;height:20px;border-radius:50%;border:1px solid rgba(43,43,43,.2)}
+/* Inspirations: Capsule closet */
+.cap-folders{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cap-folder{display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:14px;border-radius:18px;border:1px solid var(--border);background:var(--surface);font:inherit;color:var(--ink);text-align:start;cursor:pointer}
+.cap-folder svg{width:36px;height:30px;fill:#E3C98F;stroke:#B08D57;stroke-width:1.6;stroke-linejoin:round}
+.cap-folder b{font-size:14px;font-weight:700;line-height:1.25}
+.cap-folder span{font-size:12px;font-weight:600;color:var(--muted)}
+.cap-text{margin:0;font-size:14.5px;line-height:1.5}
+.cap-pieces{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.cap-piece{margin:0;padding:8px 6px 10px;border-radius:14px;border:1px solid var(--border);background:var(--surface);text-align:center}
+.cap-piece>div{display:flex;align-items:center;justify-content:center;aspect-ratio:1;border-radius:10px;background:#EFE9DF}
+.cap-piece svg{width:70%;height:auto}
+.cap-piece figcaption{margin-top:6px;font-size:11.5px;font-weight:700;line-height:1.25}
+.cap-tips{display:flex;flex-direction:column;gap:8px;margin:0;padding-inline-start:20px;font-size:14px;line-height:1.45}
+.cap-tips li::marker{font-weight:800;color:var(--accent)}
+.cap-choose{width:100%;margin-bottom:6px}
+.cap-item{display:block;width:100%;padding:0;font:inherit;color:inherit;text-align:start}
+.cap-item .art{position:relative}
+.cap-item[aria-pressed="false"]{opacity:.5}
+.cap-check{position:absolute;top:8px;inset-inline-end:8px;width:24px;height:24px;border-radius:50%;border:2px solid #FFFDF8;background:rgba(43,43,43,.25)}
+.cap-item.on .cap-check{background:#2B2B2B}
+.cap-item.on .cap-check::after{content:'';position:absolute;left:6px;top:2px;width:6px;height:11px;border:solid #FFFDF8;border-width:0 2.4px 2.4px 0;transform:rotate(45deg)}
+.cap-add{width:100%;cursor:pointer}
+.cap-msg{margin:8px 0 0;font-size:13px;font-weight:600;color:#B5483A}
+.cap-looks{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cap-looks .empty{grid-column:1/-1}
+.cap-look{position:relative;margin:0;aspect-ratio:3/4;border-radius:16px;overflow:hidden;background:#EFE9DF}
+.cap-look img{display:block;width:100%;height:100%;object-fit:cover}
+.cap-del{position:absolute;top:8px;inset-inline-end:8px;display:flex;align-items:center;justify-content:center;width:30px;height:30px;padding:0;border:0;border-radius:50%;background:rgba(17,17,17,.55)}
+.cap-del svg{width:14px;height:14px;fill:none;stroke:#FFFFFF;stroke-width:2.4;stroke-linecap:round}
 </style>
 </head>
 <body>
@@ -576,10 +622,66 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
 
     <div class="section">
       <div class="grid">
-        <div class="tile"><div class="art" style="background:#E6DFD4"><img src="assets/swatches.svg" alt=""></div><div class="meta"><b data-t="colourMatch">Colour match</b><span data-t="tip">Tip</span></div></div>
-        <div class="tile"><div class="art" style="background:#D8CFC2"><img src="assets/wardrobe.svg" alt=""></div><div class="meta"><b data-t="capsule">Capsule closet</b><span data-t="guide">Guide</span></div></div>
+        <div class="tile open-tile" role="button" tabindex="0" data-open="colorMatch"><div class="art" style="background:#E6DFD4"><img src="assets/swatches.svg" alt=""></div><div class="meta"><b data-t="colourMatch">Colour match</b><span data-t="tip">Tip</span></div></div>
+        <div class="tile open-tile" role="button" tabindex="0" data-open="capsule"><div class="art" style="background:#D8CFC2"><img src="assets/wardrobe.svg" alt=""></div><div class="meta"><b data-t="capsule">Capsule closet</b><span data-t="guide">Guide</span></div></div>
       </div>
     </div>
+  </main>
+
+  <!-- COLOUR MATCH (from Inspirations) -->
+  <main class="screen" id="colorMatch" aria-label="Colour match" data-t-aria="colourMatch" data-parent="inspo">
+    <div class="cat-top">
+      <button class="round back" data-back="inspo" aria-label="Back" data-t-aria="cap.back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <div><span class="kicker" data-t="inspirations">Inspirations</span><h1 data-t="colourMatch">Colour match</h1></div>
+    </div>
+    <p class="sub cm-intro" data-t="cm.intro">Find your skin tone, then wear the colours next to it. The fairest tones come first, the deepest last.</p>
+    <div class="cm-list" id="cmList"></div>
+  </main>
+
+  <!-- CAPSULE CLOSET (from Inspirations) -->
+  <main class="screen" id="capsule" aria-label="Capsule closet" data-t-aria="capsule" data-parent="inspo">
+    <div class="cat-top">
+      <button class="round back" data-back="inspo" aria-label="Back" data-t-aria="cap.back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <div><span class="kicker" data-t="inspirations">Inspirations</span><h1 data-t="capsule">Capsule closet</h1></div>
+    </div>
+    <div class="cap-folders">
+      <button type="button" class="cap-folder" data-open="capMine"><svg viewBox="0 0 48 40" aria-hidden="true"><path d="M4 8a4 4 0 0 1 4-4h10l4 5h18a4 4 0 0 1 4 4v19a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z"/></svg><b data-t="cap.mine">My capsule closet</b><span id="capMineCount"></span></button>
+      <button type="button" class="cap-folder" data-open="capLooks"><svg viewBox="0 0 48 40" aria-hidden="true"><path d="M4 8a4 4 0 0 1 4-4h10l4 5h18a4 4 0 0 1 4 4v19a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z"/></svg><b data-t="cap.looks">My looks from my capsule closet</b><span id="capLooksCount"></span></button>
+    </div>
+    <div class="section">
+      <h2 data-t="cap.what">What is a capsule closet?</h2>
+      <p class="cap-text" data-t="cap.whatText">A capsule closet is a small, carefully chosen set of timeless pieces that all go together. With fewer clothes you can put together more outfits, get dressed faster and buy less but better.</p>
+    </div>
+    <div class="section">
+      <h2 data-t="cap.pieces">Pieces that belong in it</h2>
+      <div class="cap-pieces" id="capPieces"></div>
+    </div>
+    <div class="section">
+      <h2 data-t="cap.how">How to choose</h2>
+      <ol class="cap-tips" id="capTips"></ol>
+    </div>
+  </main>
+
+  <!-- MY CAPSULE CLOSET (folder) -->
+  <main class="screen" id="capMine" aria-label="My capsule closet" data-t-aria="cap.mine" data-parent="inspo">
+    <div class="cat-top">
+      <button class="round back" data-back="capsule" aria-label="Back" data-t-aria="cap.back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <div><span class="kicker" id="capMineKicker"></span><h1 data-t="cap.mine">My capsule closet</h1></div>
+    </div>
+    <button type="button" class="btn ghost cap-choose" id="capChoose" data-t="cap.choose">Choose from My Gardrobe</button>
+    <p class="sub" id="capChooseHint" data-t="cap.chooseHint" hidden>Tap pieces to add them or take them out.</p>
+    <div class="section" id="capMineBody"></div>
+  </main>
+
+  <!-- MY LOOKS FROM MY CAPSULE CLOSET (folder) -->
+  <main class="screen" id="capLooks" aria-label="My looks from my capsule closet" data-t-aria="cap.looks" data-parent="inspo">
+    <div class="cat-top">
+      <button class="round back" data-back="capsule" aria-label="Back" data-t-aria="cap.back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <div><span class="kicker" id="capLooksKicker"></span><h1 data-t="cap.looks">My looks from my capsule closet</h1></div>
+    </div>
+    <label class="btn cap-add"><input type="file" id="capLooksFile" accept="image/*" multiple hidden><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span data-t="cap.addLooks">Add photos from your gallery</span></label>
+    <p class="cap-msg" id="capLooksMsg" role="status" hidden></p>
+    <div class="section cap-looks" id="capLooksGrid"></div>
   </main>
 
   <!-- MY GARDROBE -->
@@ -593,7 +695,7 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
   </main>
 
   <!-- ONE CATEGORY (opened from My Gardrobe) -->
-  <main class="screen" id="category" aria-label="Category">
+  <main class="screen" id="category" aria-label="Category" data-parent="wardrobe">
     <div class="cat-top">
       <button class="round back" id="cBack" aria-label="Back to My Gardrobe" data-t-aria="back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
       <div><span class="kicker" id="cCount"></span><h1 id="cTitle"></h1></div>
@@ -632,6 +734,7 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
       <div class="field" id="fFitWrap"><span data-t="add2.fit">Fit</span><div class="opt-chips" id="fFitChips" role="radiogroup"></div><input type="hidden" id="fFit"></div>
       <div class="field"><span data-t="add2.size">Size</span><div class="opt-chips" id="fSizeChips" role="radiogroup"></div><input type="hidden" id="fSize"></div>
       <div class="field"><span><span data-t="colour">Colour</span> · <b class="c-name" id="fColorName"></b></span><div class="swatches" id="fColor"></div></div>
+      <label class="set-row cap-row"><span><b data-t="cap.toggle">Capsule closet</b><small data-t="cap.toggleSub">Add this piece to my capsule closet</small></span><input type="checkbox" class="switch" id="fCapsule"></label>
       <button class="btn" type="submit" data-t="save">Save</button>
     </form>
   </div>
@@ -852,7 +955,8 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
   var fab = document.getElementById('fab');
 
   function show(id) {
-    var tabId = id === 'category' ? 'wardrobe' : id;
+    // pages opened from a tab (a category, the capsule closet…) keep that tab lit
+    var tabId = document.getElementById(id).dataset.parent || id;
     document.querySelectorAll('.screen').forEach(function (s) { s.classList.toggle('active', s.id === id); });
     tabs.forEach(function (t) {
       var on = t.dataset.tab === tabId;
@@ -1448,6 +1552,7 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
     var it = { id: 'u' + Date.now().toString(36), autoName: true, cat: c.id, sub: sub, name: sub ? subName(sub) : catName(c), brand: document.getElementById('fBrand').value.trim(),
       fit: FIT_OF[c.id] ? document.getElementById('fFit').value.trim() : '', size: document.getElementById('fSize').value.trim(), color: pick.color, hex: pick.hex || '', photo: pick.photo, mine: true };
     items.push(it);
+    if (document.getElementById('fCapsule').checked) W8.setCapsule(it, true);
     try { localStorage.setItem(STORE, JSON.stringify(items.filter(function (x) { return x.mine; }))); } catch (err) {}
     closeSheet();
     if (cur && cur.id === c.id && document.getElementById('category').classList.contains('active')) {
@@ -1461,6 +1566,15 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
   });
 
   W8.items = items; W8.catById = catById; W8.colorOf = colorOf; W8.openCat = openCat;
+  W8.icon = icon; W8.shownName = shownName; W8.colorName = colorName; W8.keyOf = keyOf;
+  // Pieces in the capsule closet, kept by key so sample pieces and your own uploads both work
+  var CAP_STORE = 'mg-capsule', capsule = {};
+  try { (JSON.parse(localStorage.getItem(CAP_STORE)) || []).forEach(function (k) { capsule[k] = true; }); } catch (e) {}
+  W8.inCapsule = function (it) { return !!capsule[keyOf(it)]; };
+  W8.setCapsule = function (it, on) {
+    if (on) capsule[keyOf(it)] = true; else delete capsule[keyOf(it)];
+    try { localStorage.setItem(CAP_STORE, JSON.stringify(Object.keys(capsule))); } catch (e) {}
+  };
   W8.refresh = function () { renderMain(); if (cur) renderPages(); };
   // outline-only version of a category icon
   W8.lineIcon = function (name) {
@@ -1477,7 +1591,7 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
 
   renderMain();
   var start = location.hash.slice(1);
-  if (start === 'category') start = 'wardrobe';
+  if (document.getElementById(start) && document.getElementById(start).dataset.parent) start = document.getElementById(start).dataset.parent;
   if (document.getElementById(start) && document.getElementById(start).classList.contains('screen')) show(start);
 })();
 </script>
@@ -2721,6 +2835,182 @@ var GR_SCENE = (function () {
   });
   $('setFigure').addEventListener('click', function () { closeSettings(); if (window.mgWardrobe && window.mgWardrobe.openFigure) window.mgWardrobe.openFigure(); });
 
+})();
+</script>
+<script>
+// Inspirations: Colour match (skin tones and the colours that suit them) and the Capsule closet
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var W8 = window.mgWardrobe;
+  function esc(v) { return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+
+  // ---------- opening and leaving the pages ----------
+  document.addEventListener('click', function (e) {
+    var o = e.target.closest('[data-open]'); if (o) { render(o.dataset.open); window.mgShow(o.dataset.open); return; }
+    var b = e.target.closest('[data-back]'); if (b) { render(b.dataset.back); window.mgShow(b.dataset.back); }
+  });
+  document.addEventListener('keydown', function (e) {
+    if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('.open-tile')) { e.preventDefault(); e.target.click(); }
+  });
+  function render(id) {
+    if (id === 'colorMatch') renderColours();
+    if (id === 'capsule') renderCapsule();
+    if (id === 'capMine') renderMine();
+    if (id === 'capLooks') renderLooks();
+  }
+
+  // ---------- Colour match: fairest skin first, deepest last ----------
+  var C = { navy: '#1F2A44', emerald: '#046A4B', ruby: '#9B111E', icyPink: '#F4C6D7', lavender: '#B7A4D6', softGrey: '#A9A9AE', sapphire: '#0F52BA', plum: '#5E2750',
+    dustyRose: '#C9939A', sage: '#9CAF88', denim: '#5D7FA3', taupe: '#8B7D6B', mauve: '#A57E9A', softTeal: '#6FB7B0', berry: '#8E2C48', ivory: '#F6F1E4',
+    peach: '#F6B99B', coral: '#F27A62', camel: '#C19A6B', mint: '#A8DDC4', gold: '#C9A54E', cream: '#F3EAD7', olive: '#708238', mustard: '#D1A12C',
+    terracotta: '#C0603F', burgundy: '#6D1A2A', teal: '#0F7C7A', rust: '#A34A28', khaki: '#A89F68', turquoise: '#2EC4B6', warmRed: '#C8332B', chocolate: '#4E2E1E',
+    orange: '#EE7A26', white: '#FFFFFF', amber: '#E3A324', burntOrange: '#CC5500', forest: '#2C5F2D', cobalt: '#1F4FB4', fuchsia: '#D1307E', yellow: '#F5D000',
+    royal: '#2A47C8', magenta: '#C2187A', lime: '#9BCB3B', scarlet: '#E0231C', purple: '#6C2BA6', silver: '#C3C6CA' };
+  var SKINS = [
+    { id: 'porcelain', skin: '#F6E1D6', hair: '#5A3E2B', colours: ['navy', 'emerald', 'ruby', 'icyPink', 'lavender', 'softGrey', 'sapphire', 'plum'] },
+    { id: 'fair', skin: '#EECDB8', hair: '#B5875A', colours: ['dustyRose', 'sage', 'denim', 'taupe', 'mauve', 'softTeal', 'berry', 'ivory'] },
+    { id: 'light', skin: '#E5BC97', hair: '#7A5236', colours: ['peach', 'coral', 'camel', 'ivory', 'mint', 'softTeal', 'gold', 'cream'] },
+    { id: 'olive', skin: '#C9A27A', hair: '#2B201A', colours: ['olive', 'mustard', 'terracotta', 'burgundy', 'teal', 'cream', 'rust', 'khaki'] },
+    { id: 'tan', skin: '#B9865A', hair: '#3A2A20', colours: ['coral', 'turquoise', 'warmRed', 'gold', 'chocolate', 'emerald', 'orange', 'white'] },
+    { id: 'caramel', skin: '#9A6640', hair: '#1F1915', colours: ['amber', 'burntOrange', 'forest', 'cobalt', 'fuchsia', 'mustard', 'cream', 'plum'] },
+    { id: 'brown', skin: '#6E4429', hair: '#1F1915', colours: ['cobalt', 'emerald', 'fuchsia', 'yellow', 'white', 'gold', 'warmRed', 'orange'] },
+    { id: 'deep', skin: '#432818', hair: '#141010', colours: ['white', 'royal', 'magenta', 'lime', 'gold', 'scarlet', 'purple', 'silver'] }
+  ];
+  function shade(hex, k) {
+    var n = parseInt(hex.slice(1), 16), f = function (c) { return Math.round(c * k); };
+    return '#' + ((1 << 24) + (f(n >> 16) << 16) + (f(n >> 8 & 255) << 8) + f(n & 255)).toString(16).slice(1);
+  }
+  // A small portrait drawn in the skin tone
+  function portrait(sk) {
+    var cheek = shade(sk.skin, 0.93), line = shade(sk.skin, 0.72);
+    return '<svg viewBox="0 0 80 96" aria-hidden="true">' +
+      '<path d="M18 44C18 20 28 11 40 11C52 11 62 20 62 44C62 61 58 72 53 75H27C22 72 18 61 18 44Z" fill="' + sk.hair + '"/>' +
+      '<path d="M12 96C12 80 24 73 40 73C56 73 68 80 68 96Z" fill="#D8CFC2"/>' +
+      '<path d="M33 58H47V72C47 76 33 76 33 72Z" fill="' + cheek + '"/>' +
+      '<ellipse cx="40" cy="43" rx="15" ry="19" fill="' + sk.skin + '"/>' +
+      '<path d="M25 37C26 24 33 19 40 19C48 19 55 24 56 35C50 28 41 26 32 31C29 32 27 34 25 37Z" fill="' + sk.hair + '"/>' +
+      '<circle cx="34" cy="44" r="1.4" fill="#2B2B2B"/><circle cx="46" cy="44" r="1.4" fill="#2B2B2B"/>' +
+      '<path d="M40 46Q39 50 41 51" fill="none" stroke="' + line + '" stroke-width="1" stroke-linecap="round"/>' +
+      '<path d="M36 54.5Q40 57 44 54.5" fill="none" stroke="#A9575A" stroke-width="1.6" stroke-linecap="round"/>' +
+      '<circle cx="31" cy="50" r="3" fill="#E58C8A" opacity=".18"/><circle cx="49" cy="50" r="3" fill="#E58C8A" opacity=".18"/></svg>';
+  }
+  function renderColours() {
+    $('cmList').innerHTML = SKINS.map(function (sk) {
+      var t = MG.t('cm.skin.' + sk.id);
+      return '<article class="cm-card"><div class="cm-head"><b>' + esc(t[0]) + '</b><span>' + esc(t[1]) + '</span></div>' +
+        '<div class="cm-row"><div class="cm-face">' + portrait(sk) + '</div>' +
+        '<div class="cm-pal"><small>' + esc(MG.t('cm.suits')) + '</small><ul>' + sk.colours.map(function (c) {
+          return '<li><i style="background:' + C[c] + '"></i>' + esc(MG.t('cm.col.' + c)) + '</li>';
+        }).join('') + '</ul></div></div></article>';
+    }).join('');
+  }
+
+  // ---------- Capsule closet: the guide ----------
+  var ICON = {
+    shirt: ['M22 9L14 13L8 46L14 47L18 26V55H46V26L50 47L56 46L50 13L42 9L32 15Z', 'M32 15V55M32 23h0M32 31h0M32 39h0M32 47h0M24 9L32 19L40 9M8.6 42L14.6 43M55.4 42L49.4 43'],
+    tee: ['M22 10Q32 17 42 10L56 17L51 27L45 24V54H19V24L13 27L8 17Z', 'M24 11Q32 18 40 11'],
+    knit: ['M22 10Q32 16 42 10L52 14L58 38L51 40L47 26V54H17V26L13 40L6 38L12 14Z', 'M17 49H47M51.5 35.5L57 34M12.5 35.5L7 34M24 11Q32 17 40 11M24 20V46M32 20V46M40 20V46'],
+    jeans: ['M18 8H46L50 58H36L32 24L28 58H14Z', 'M18 14H46M32 14V24M21 14Q22 20 28 20M43 14Q42 20 36 20M16 50H28M36 50H48'],
+    trousers: ['M18 8H46L50 58H36L32 24L28 58H14Z', 'M18 14H46M32 14V24M24 18V56M40 18V56'],
+    blazer: ['M22 8L14 12L9 22L10 48H16L17 30L18 54H46L47 30L48 48H54L55 22L50 12L42 8L32 30Z', 'M22 8L28 24L32 30M42 8L36 24L32 30M32 30V54M29 38h0M29 45h0M20 42H27M37 42H44'],
+    trench: ['M22 8L14 12L9 22L10 50H16L17 30L18 58H46L47 30L48 50H54L55 22L50 12L42 8L32 18Z', 'M32 18V58M27 27h0M27 34h0M37 27h0M37 34h0M17 38H47M30 38V42M22 8L27 22M42 8L37 22'],
+    coat: ['M22 8L14 12L9 22L10 50H16L17 30L18 58H46L47 30L48 50H54L55 22L50 12L42 8L32 18Z', 'M32 18V58M28.5 30h0M28.5 38h0M28.5 46h0M22 8L27 22M42 8L37 22'],
+    dress: ['M25 8H39L41 22L36 28L50 58H14L28 28L23 22Z', 'M23 22H41M28 28H36'],
+    sneakers: ['M8 44C8 36 12 30 16 28L26 26L32 32C38 36 48 38 54 40C58 41 58 48 54 48H10C8 48 8 46 8 44Z', 'M8 43.5H57M24 30L28 34M28 28L32 32'],
+    boots: ['M20 12H36V36C42 38 50 40 54 43C57 45 56 50 53 50H18C17 50 16 49 16 47L18 34Z', 'M16 45H55M36 18V30M26 50V54H20V50'],
+    tote: ['M14 26H50L54 56H10Z', 'M24 26C24 14 40 14 40 26M14 34H50M30 34V38H34V34']
+  };
+  var PIECES = [['shirt', '#F4F0E8'], ['tee', '#FFFFFF'], ['knit', '#D8C4A2'], ['jeans', '#3F5F8C'], ['trousers', '#2B2B2B'], ['blazer', '#26324A'],
+    ['trench', '#C8B08A'], ['coat', '#7B5535'], ['dress', '#1F1F1F'], ['sneakers', '#F4F0E8'], ['boots', '#2B2B2B'], ['tote', '#7B5535']];
+  function pieceSvg(id, fill) {
+    var ic = ICON[id], n = parseInt(fill.slice(1), 16), dark = (0.299 * (n >> 16) + 0.587 * (n >> 8 & 255) + 0.114 * (n & 255)) < 110;
+    return '<svg viewBox="0 0 64 64" aria-hidden="true"><path d="' + ic[0] + '" fill="' + fill + '" stroke="#2B2B2B" stroke-width="1.6" stroke-linejoin="round"/>' +
+      '<path d="' + ic[1] + '" fill="none" stroke="' + (dark ? '#E9E3D9' : '#2B2B2B') + '" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" opacity=".8"/></svg>';
+  }
+  function renderCapsule() {
+    $('capPieces').innerHTML = PIECES.map(function (p) {
+      return '<figure class="cap-piece"><div>' + pieceSvg(p[0], p[1]) + '</div><figcaption>' + esc(MG.t('cap.piece.' + p[0])) + '</figcaption></figure>';
+    }).join('');
+    $('capTips').innerHTML = MG.t('cap.tips').map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('');
+    $('capMineCount').textContent = MG.count(mine().length, MG.t('cap.nPieces'));
+    $('capLooksCount').textContent = MG.count(looks().length, MG.t('cap.nPhotos'));
+  }
+
+  // ---------- Folder: My capsule closet ----------
+  var choosing = false;
+  function mine() { return W8.items.filter(W8.inCapsule); }
+  function tile(it, on) {
+    var col = W8.colorOf(it.color), art = it.photo ? '<img class="photo" src="' + esc(it.photo) + '" alt="">' : W8.icon(W8.catById(it.cat).icon, it.hex || col[2]);
+    return '<button type="button" class="tile cap-item' + (on ? ' on' : '') + '" data-k="' + esc(W8.keyOf(it)) + '"' + (choosing ? ' aria-pressed="' + on + '"' : ' tabindex="-1"') + '>' +
+      '<div class="art" style="background:#EFE9DF">' + art + (choosing ? '<span class="cap-check" aria-hidden="true"></span>' : '') + '</div>' +
+      '<div class="meta"><b>' + esc(W8.shownName(it)) + '</b><span>' + esc([it.brand, W8.colorName(col[0])].filter(Boolean).join(' · ')) + '</span></div></button>';
+  }
+  function renderMine() {
+    var list = choosing ? W8.items : mine();
+    $('capMineKicker').textContent = MG.count(mine().length, MG.t('cap.nPieces'));
+    $('capChoose').textContent = MG.t(choosing ? 'done' : 'cap.choose');
+    $('capChooseHint').hidden = !choosing;
+    $('capMineBody').innerHTML = list.length
+      ? '<div class="grid">' + list.map(function (it) { return tile(it, W8.inCapsule(it)); }).join('') + '</div>'
+      : '<p class="empty">' + esc(MG.t('cap.mineEmpty')) + '</p>';
+  }
+  $('capChoose').addEventListener('click', function () { choosing = !choosing; renderMine(); });
+  $('capMineBody').addEventListener('click', function (e) {
+    var b = e.target.closest('.cap-item'); if (!b || !choosing) return;
+    var it = W8.items.filter(function (x) { return W8.keyOf(x) === b.dataset.k; })[0]; if (!it) return;
+    W8.setCapsule(it, !W8.inCapsule(it));
+    b.classList.toggle('on', W8.inCapsule(it)); b.setAttribute('aria-pressed', W8.inCapsule(it));
+    $('capMineKicker').textContent = MG.count(mine().length, MG.t('cap.nPieces'));
+  });
+
+  // ---------- Folder: My looks from my capsule closet (photos from the gallery) ----------
+  var LOOKS = 'mg-capsule-looks';
+  function looks() { try { return JSON.parse(localStorage.getItem(LOOKS)) || []; } catch (e) { return []; } }
+  function saveLooks(list) { try { localStorage.setItem(LOOKS, JSON.stringify(list)); return true; } catch (e) { return false; } }
+  function msg(text) { $('capLooksMsg').textContent = text || ''; $('capLooksMsg').hidden = !text; }
+  function renderLooks() {
+    var list = looks();
+    $('capLooksKicker').textContent = MG.count(list.length, MG.t('cap.nPhotos'));
+    $('capLooksGrid').innerHTML = list.length
+      ? list.map(function (src, i) { return '<figure class="cap-look"><img src="' + esc(src) + '" alt=""><button type="button" class="cap-del" data-i="' + i + '" aria-label="' + esc(MG.t('cap.del')) + '"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></figure>'; }).join('')
+      : '<p class="empty">' + esc(MG.t('cap.looksEmpty')) + '</p>';
+  }
+  // photos are shrunk before they are kept, so more of them fit on the phone
+  function shrink(file, done) {
+    var r = new FileReader();
+    r.onload = function () {
+      var img = new Image();
+      img.onload = function () {
+        var k = Math.min(1, 720 / Math.max(img.width, img.height)), cv = document.createElement('canvas');
+        cv.width = Math.round(img.width * k); cv.height = Math.round(img.height * k);
+        cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+        try { done(cv.toDataURL('image/jpeg', 0.8)); } catch (e) { done(null); }
+      };
+      img.onerror = function () { done(null); };
+      img.src = r.result;
+    };
+    r.readAsDataURL(file);
+  }
+  $('capLooksFile').addEventListener('change', function () {
+    var files = Array.prototype.slice.call(this.files || []), list = looks(), left = files.length, full = false;
+    msg('');
+    if (!left) return;
+    files.forEach(function (f) {
+      shrink(f, function (src) {
+        if (src && !full) { list.push(src); if (!saveLooks(list)) { list.pop(); full = true; } }
+        if (--left === 0) { renderLooks(); if (full) msg(MG.t('cap.full')); }
+      });
+    });
+    this.value = '';
+  });
+  $('capLooksGrid').addEventListener('click', function (e) {
+    var b = e.target.closest('.cap-del'); if (!b) return;
+    var list = looks(); list.splice(+b.dataset.i, 1); saveLooks(list); msg(''); renderLooks();
+  });
+
+  MG.onLang(function () {
+    var on = document.querySelector('.screen.active'); if (on) render(on.id);
+  });
 })();
 </script>
 </body>
