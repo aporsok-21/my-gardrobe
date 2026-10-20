@@ -3019,6 +3019,20 @@ var GR_SCENE = (function () {
     thumbsFor = null; syncControls(); renderCombo();
   });
   W8.openFigure = open;
+  // Your colours (skin and hair) carry over to the figure, as the nearest of its own swatches
+  W8.setFigureColours = function (skin, hair) {
+    function nearest(hex, list) {
+      var a = hex2rgb(hex);
+      return list.reduce(function (best, c) {
+        var b = hex2rgb(c), d = Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2) + Math.pow(a[2] - b[2], 2);
+        return d < best.d ? { c: c, d: d } : best;
+      }, { c: list[0], d: Infinity }).c;
+    }
+    if (skin) fig.skin = nearest(skin, SKINS);
+    if (hair) fig.hair = nearest(hair, HAIRS);
+    try { localStorage.setItem('mg-figure', JSON.stringify(fig)); } catch (e) {}
+    thumbsFor = null; showCard();
+  };
   renderCombo(); W8.refresh();
   cardFig.set(Object.assign({}, fig, { outfit: outfit }), true);
 })();
@@ -3724,6 +3738,7 @@ var GR_SCENE = (function () {
     var p = { skin: draft.skin, hair: draft.hair, eyes: draft.eyes };
     if (photoSrc) p.photo = photoSrc;
     try { localStorage.setItem('mg-colours', JSON.stringify(p)); } catch (e) { delete p.photo; try { localStorage.setItem('mg-colours', JSON.stringify(p)); } catch (x) {} }
+    window.mgWardrobe.setFigureColours(skinOf(p.skin).skin, hexOf(HAIR, p.hair));
     closeColours();
     if (document.querySelector('.screen.active').id === 'colorMatch') renderColours();
   });
