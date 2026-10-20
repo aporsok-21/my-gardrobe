@@ -2,3 +2,4 @@ server/data/
 node_modules/
 www/
 release/
+server/.env

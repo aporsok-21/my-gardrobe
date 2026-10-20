@@ -2,6 +2,8 @@
 // No packages needed (Node 22.5+ has node:sqlite). It also serves the website and app,
 // so `node server/server.js` replaces `python3 -m http.server`.
 'use strict';
+// Private settings (email password, API keys) live in server/.env, which is not in git
+try { process.loadEnvFile(require('node:path').join(__dirname, '.env')); } catch (e) {}
 const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');

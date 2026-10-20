@@ -1,12 +1,21 @@
 // Emails from the server: for now only "confirm your email address" after signing up.
-// Sends through SMTP when SMTP_URL is set (e.g. smtps://you%40gmail.com:app-password@smtp.gmail.com:465,
-// with MAIL_FROM="My Gardrobe <you@gmail.com>"); without it the link is printed in the server's terminal,
-// so sign-up can still be tried out on this Mac.
+// Sent through Resend (resend.com) when RESEND_API_KEY is in server/.env (see server/.env.example).
+// Without a domain of our own set up there, Resend only delivers to the email address of the Resend account.
+// Without the key the link is printed in the server's terminal, so sign-up can still be tried out on this Mac.
 'use strict';
-const nodemailer = require('nodemailer');
 
-const transport = process.env.SMTP_URL ? nodemailer.createTransport(process.env.SMTP_URL) : null;
-const FROM = process.env.MAIL_FROM || 'My Gardrobe <no-reply@mygardrobe.app>';
+const KEY = process.env.RESEND_API_KEY;
+const FROM = process.env.MAIL_FROM || 'My Gardrobe <onboarding@resend.dev>';
+console.log(KEY ? 'Email: sending through Resend as ' + FROM : 'Email: not set up (RESEND_API_KEY in server/.env), confirm links are printed here instead');
+
+async function send(mail) {
+  const r = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { Authorization: 'Bearer ' + KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ from: FROM, ...mail })
+  });
+  if (!r.ok) throw new Error('Resend ' + r.status + ': ' + (await r.text()).slice(0, 300));
+}
 
 const TEXT = {
   en: { subject: 'Confirm your email for My Gardrobe', hi: 'Hi {name},', body: 'Tap the button to confirm that this is your email address. Then log in to My Gardrobe with this email and your password.', button: 'Confirm my email', ignore: 'If you didn\'t sign up for My Gardrobe, you can ignore this email.', expires: 'The link works for 24 hours.' },
@@ -16,9 +25,9 @@ const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&
 
 async function sendVerify(to, name, link, lang) {
   const t = TEXT[lang] || TEXT.en, hi = t.hi.replace('{name}', name);
-  if (!transport) { console.log(`\nConfirm-email link for ${to} (no SMTP_URL set, so nothing was emailed):\n${link}\n`); return; }
-  await transport.sendMail({
-    from: FROM, to, subject: t.subject,
+  if (!KEY) { console.log(`\nConfirm-email link for ${to} (email not set up, so nothing was sent):\n${link}\n`); return; }
+  await send({
+    to, subject: t.subject,
     text: `${hi}\n\n${t.body}\n\n${link}\n\n${t.expires}\n${t.ignore}`,
     html: `<div style="font-family:Helvetica,Arial,sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;background:#F6F2EA;color:#2B2B2B">
   <h1 style="font-size:24px;margin:0 0 16px">My Gardrobe</h1>
