@@ -4,8 +4,8 @@
 // - the app opens without a connection once it has been opened online: its own files are fetched fresh
 //   when possible and come from the cache only offline; Google Fonts come from the cache first.
 // The API is never cached: wardrobe data lives in the app and on the server.
-var CACHE = 'mg-v3';
-var SHELL = ['app.html', 'i18n/app-strings.js', 'manifest.webmanifest', 'assets/icons/icon-192.png', 'assets/swatches.svg', 'assets/wardrobe.svg'];
+var CACHE = 'mg-v4';
+var SHELL = ['app.html', 'i18n/app-strings.js', 'manifest.webmanifest', 'assets/icons/icon-192.png', 'assets/swatches.svg', 'assets/swatches-colour.svg', 'assets/wardrobe.svg'];
 
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(SHELL); }).then(function () { return self.skipWaiting(); }));

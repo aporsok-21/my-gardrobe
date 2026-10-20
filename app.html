@@ -114,6 +114,9 @@
   --wx-1:#F4EFE6; --wx-2:#EEE7DC; --wx-border:#E2D9CB; --warn-bg:#F3E7D3; --warn-border:#E6D3B0; --gold:#A8834A;
   --ok-bg:#EFEBE3; --ok-border:#E2DBCF; --err-bg:#F3E1DD; --err:#8A2F25; --okmsg-bg:#E3EADB; --okmsg:#3F5A34;
   --glass:rgba(255,253,248,.92); --focus:#444444; --heart:#A9362F;
+  /* soft tints for the Styles tiles: a little colour, still calm */
+  --tint-rose:#F2DED6; --tint-sage:#DCE5D5; --tint-sky:#DAE4EC; --tint-butter:#F2E7C9; --tint-lilac:#E6DDEA;
+  --fold-rose:#D9A796; --fold-sage:#9DB08F; --fold-sky:#8DA5BE; --fold-butter:#E2BE6E; --fold-lilac:#B49DBF;
   color-scheme:light;
 }
 /* Dark mode: Settings → Appearance; the script in <head> resolves "Automatic" from the phone setting */
@@ -124,6 +127,8 @@
   --wx-1:#2A2723; --wx-2:#24211E; --wx-border:#3A3530; --warn-bg:#3A3022; --warn-border:#5A4826; --gold:#D4AC67;
   --ok-bg:#2A2824; --ok-border:#3A3530; --err-bg:#3F2522; --err:#F0A99F; --okmsg-bg:#26321F; --okmsg:#B5D19F;
   --glass:rgba(38,35,32,.92); --focus:#CFC6B8; --heart:#E0675C;
+  --tint-rose:#3A2B27; --tint-sage:#29312A; --tint-sky:#262E35; --tint-butter:#363020; --tint-lilac:#2F2934;
+  --fold-rose:#B9877A; --fold-sage:#879A7A; --fold-sky:#7890A8; --fold-butter:#C4A35C; --fold-lilac:#9A86A6;
   color-scheme:dark;
 }
 *{box-sizing:border-box}
@@ -631,6 +636,14 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
 .st-grid .empty{grid-column:1/-1}
 .st-folder .art{background:var(--soft)}
 .st-fold{width:46%!important;fill:#E3C98F;stroke:#B08D57;stroke-width:1.6;stroke-linejoin:round}
+/* My style: each tile gets one soft tint */
+.tint-rose .art{background:var(--tint-rose)}
+.tint-sage .art{background:var(--tint-sage)}
+.tint-sky .art{background:var(--tint-sky)}
+.tint-butter .art{background:var(--tint-butter)}
+.tint-lilac .art{background:var(--tint-lilac)}
+.tint-rose .st-fold{fill:var(--fold-rose)}.tint-sage .st-fold{fill:var(--fold-sage)}.tint-sky .st-fold{fill:var(--fold-sky)}.tint-butter .st-fold{fill:var(--fold-butter)}.tint-lilac .st-fold{fill:var(--fold-lilac)}
+[class*="tint-"] .st-fold{stroke:rgba(43,43,43,.35)}
 .st-hint{margin:-4px 0 14px;font-size:13px;line-height:1.4;color:var(--muted)}
 .st-actions{display:flex;gap:8px}
 .st-find[aria-expanded="true"]{background:var(--ink);border-color:var(--ink)}
@@ -866,8 +879,8 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
 
     <div class="section">
       <div class="grid st-grid" id="msGrid">
-        <div class="tile open-tile" role="button" tabindex="0" data-open="colorMatch"><div class="art" style="background:#E6DFD4"><img src="assets/swatches.svg" alt=""></div><div class="meta"><b data-t="colourMatch">Colour match</b><span data-t="tip">Tip</span></div></div>
-        <div class="tile open-tile" role="button" tabindex="0" data-open="capsule"><div class="art" style="background:#D8CFC2"><img src="assets/wardrobe.svg" alt=""></div><div class="meta"><b data-t="capsule">Capsule closet</b><span data-t="guide">Guide</span></div></div>
+        <div class="tile open-tile tint-rose" role="button" tabindex="0" data-open="colorMatch"><div class="art"><img src="assets/swatches-colour.svg" alt=""></div><div class="meta"><b data-t="colourMatch">Colour match</b><span data-t="tip">Tip</span></div></div>
+        <div class="tile open-tile tint-sage" role="button" tabindex="0" data-open="capsule"><div class="art"><img src="assets/wardrobe.svg" alt=""></div><div class="meta"><b data-t="capsule">Capsule closet</b><span data-t="guide">Guide</span></div></div>
       </div>
     </div>
   </main>
@@ -1122,7 +1135,6 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
       <button type="button" class="set-row" id="setColours"><span><b data-t="cp.title">Your colours</b><small data-t="cp.rowSub">Skin, hair and eye colour</small></span><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
       <button type="button" class="set-row" id="setFigure"><span><b data-t="yourFigure">Your figure</b><small data-t="figureRowSub">Height, shape, skin and hair</small></span><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
       <button type="button" class="set-row" id="setBackup"><span><b data-t="bk.save">Back up my wardrobe</b><small data-t="bk.saveSub">Save everything to a file you can keep or move to another phone</small></span><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
-      <label class="set-row" id="setRestore"><span><b data-t="bk.load">Restore from a backup</b><small data-t="bk.loadSub">Load a backup file; this replaces what is here now</small></span><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg><input type="file" id="restoreFile" accept=".json,application/json" hidden></label>
       <button type="button" class="set-row" id="setPassword"><span><b data-t="pw.row">Change password</b><small data-t="pw.rowSub">Update the password you sign in with</small></span><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
       <button type="button" class="set-row logout" id="setLogout"><span><b data-t="auth.logout">Log out</b><small id="setWho"></small></span><svg viewBox="0 0 24 24"><path d="M15 4h4v16h-4M10 16l4-4-4-4M14 12H4"/></svg></button>
       <button type="button" class="btn" data-close data-t="done">Done</button>
@@ -3075,7 +3087,7 @@ var GR_SCENE = (function () {
   function localDay(iso) { var p = iso.split('-'); return new Date(+p[0], p[1] - 1, +p[2]); }
   function pad(n) { return (n < 10 ? '0' : '') + n; }
 
-  var city = '', cityIsPlaceholder = false, last = null, noteFn = null, loads = 0;
+  var city = '', cityIsPlaceholder = false, last = null, noteFn = null, loads = 0, loadedAt = 0;
   $('wx-date').textContent = dayDate.format(new Date());
 
   // note() takes a function so the message can be rebuilt in a new language
@@ -3213,7 +3225,7 @@ var GR_SCENE = (function () {
     var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat.toFixed(3) + '&longitude=' + lon.toFixed(3) +
       '&current=temperature_2m,weather_code&hourly=temperature_2m,weather_code' +
       '&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=7';
-    fetch(url).then(function (r) { if (!r.ok) throw r; return r.json(); }).then(function (d) { if (ticket === loads) render(d); }).catch(function () {
+    fetch(url).then(function (r) { if (!r.ok) throw r; return r.json(); }).then(function (d) { if (ticket === loads) { loadedAt = Date.now(); render(d); } }).catch(function () {
       if (ticket !== loads) return;
       // the forecast service sometimes answers "busy" (503): try again a few times before giving up
       if ((retry || 0) < 3) { setTimeout(function () { if (ticket === loads) load(lat, lon, null, (retry || 0) + 1); }, 2000 * ((retry || 0) + 1)); return; }
@@ -3286,6 +3298,16 @@ var GR_SCENE = (function () {
     if (noteFn) note(noteFn);
   });
   document.addEventListener('mg-setting', function (e) { if (e.detail.key === 'unit' && last) render(last); });
+
+  // The app can stay open in the background for hours (or overnight): fetch again when it is back
+  // on screen and the forecast is over 15 minutes old, and every 30 minutes while it is in view
+  function refresh() {
+    if (document.visibilityState !== 'visible' || Date.now() - loadedAt < 15 * 60e3) return;
+    if ($('wx-date')) $('wx-date').textContent = dayDate.format(new Date());
+    locate();
+  }
+  document.addEventListener('visibilitychange', refresh);
+  setInterval(refresh, 30 * 60e3);
 
   locate();
 })();
@@ -3369,27 +3391,6 @@ var GR_SCENE = (function () {
       setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
     });
   });
-  $('restoreFile').addEventListener('change', function () {
-    var f = this.files && this.files[0]; this.value = '';
-    if (!f) return;
-    var r = new FileReader();
-    r.onload = function () {
-      var data; try { data = JSON.parse(r.result); } catch (e) {}
-      if (!data || data.app !== 'my-gardrobe' || typeof data.local !== 'object') { alert(MG.t('bk.bad')); return; }
-      var go = function () { restoreFrom(data); };
-      if (window.mgConfirm) window.mgConfirm(MG.t('bk.confirm'), go, { title: MG.t('warn.sure'), yes: 'OK', no: MG.t('cancel') });
-      else if (confirm(MG.t('bk.confirm'))) go();
-    };
-    r.readAsText(f);
-  });
-  function restoreFrom(data) {
-      Object.keys(localStorage).filter(function (k) { return /^(mg-|gr-)/.test(k); }).forEach(function (k) { localStorage.removeItem(k); });
-      try { Object.keys(data.local).forEach(function (k) { if (/^(mg-|gr-)/.test(k)) localStorage.setItem(k, data.local[k]); }); } catch (e) { alert(MG.t('storageFull')); }
-      var store = data.store || {};
-      MGStore.clear().then(function () { return Promise.all(Object.keys(store).map(function (k) { return MGStore.set(k, store[k]); })); })
-        ['catch'](function () { alert(MG.t('storageFull')); })
-        .then(function () { location.reload(); });
-  }
   $('introToggle').addEventListener('change', function () { MG.set('intro', this.checked ? 'on' : 'off'); });
   // Change password: checked here, then on the server (which also signs the other devices out)
   var pwBox = $('pwBox'), pwForm = $('pwForm'), pwMsg = $('pwMsg');
@@ -3848,8 +3849,11 @@ var GR_SCENE = (function () {
   }
   var WISH_SVG = '<svg class="wl-ph" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 7.5 2.6C19.5 15.4 12 20 12 20z"/></svg>';
   var FOLDER_SVG = '<svg class="st-fold" viewBox="0 0 48 40" aria-hidden="true"><path d="M4 8a4 4 0 0 1 4-4h10l4 5h18a4 4 0 0 1 4 4v19a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z"/></svg>';
-  function folderTile(kind, f) {
-    return '<div class="tile open-tile st-folder" role="button" tabindex="0" data-sf="' + kind + '" data-f="' + esc(f.id) + '"><div class="art">' +
+  // My style folders take turns through three soft tints, so no two neighbours match (side by side or
+  // one above the other); rose and sage are kept for Colour match and Capsule closet
+  var TINTS = ['sky', 'butter', 'lilac'];
+  function folderTile(kind, f, i) {
+    return '<div class="tile open-tile st-folder' + (kind === 'mine' ? ' tint-' + TINTS[i % TINTS.length] : '') + '" role="button" tabindex="0" data-sf="' + kind + '" data-f="' + esc(f.id) + '"><div class="art">' +
       (f.cover ? '<img class="photo" src="' + esc(f.cover) + '" alt="">' : FOLDER_SVG) + '</div><div class="meta"><b>' + esc(label(f.id)) + '</b><span>' +
       esc(MG.count(f.n, MG.t('st.nSaved'))) + '</span></div></div>';
   }
@@ -3858,7 +3862,7 @@ var GR_SCENE = (function () {
   function renderMine() {
     var grid = $('msGrid');
     grid.querySelectorAll('.st-folder').forEach(function (t) { t.remove(); });
-    grid.insertAdjacentHTML('afterbegin', folders(data.mine).map(function (f) { return folderTile('mine', f); }).join(''));
+    grid.insertAdjacentHTML('afterbegin', folders(data.mine).map(function (f, i) { return folderTile('mine', f, i); }).join(''));
     filter('msQ', 'msGrid');
   }
   // ---------- Inspirations ----------
