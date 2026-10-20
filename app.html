@@ -76,15 +76,18 @@
   window.mgAccount = {
     api: api,
     // Signed in: keep the session, take the account's wardrobe and start fresh with it
+    // (the first log-in of an account made on this device keeps what is here and sends it up instead)
     signedIn: function (user, data) {
+      var carry = rawGet('mg-carry'); try { rawRemove.call(ls, 'mg-carry'); } catch (e) {}
+      if (carry && carry === user.email.toLowerCase() && !Object.keys(data || {}).length) {
+        rawSet.call(ls, 'mg-session', JSON.stringify(user));
+        return Promise.all(KEYS.filter(function (k) { return rawGet(k) != null; }).map(push)).then(reload);
+      }
       var t = rawGet(TOKEN); clearLocal(); if (t) rawSet.call(ls, TOKEN, t);
       rawSet.call(ls, 'mg-session', JSON.stringify(user)); load(data || {}); reload();
     },
-    // New account: what was already made on this device goes into it
-    signedUp: function (user) {
-      rawSet.call(ls, 'mg-session', JSON.stringify(user));
-      return Promise.all(KEYS.filter(function (k) { return rawGet(k) != null; }).map(push));
-    },
+    // New account, email not confirmed yet: remember that what is on this device goes into it
+    signedUp: function (email) { try { rawSet.call(ls, 'mg-carry', email.toLowerCase()); } catch (e) {} },
     logout: function () { return api('POST', '/api/logout').catch(function () {}).then(signedOut); }
   };
 
@@ -484,6 +487,7 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
 .eye.on svg{stroke:var(--ink)}
 .auth-link{align-self:flex-end;background:none;border:0;padding:2px 0;font:inherit;font-size:13px;font-weight:700;color:var(--ink);text-decoration:underline}
 .auth-link[hidden]{display:none}
+.auth-link.resend{align-self:center}
 .auth-go{min-height:52px;font-size:16px;margin-top:2px}
 .auth-or{display:flex;align-items:center;gap:12px;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--taupe);margin:6px 0}
 .auth-or::before,.auth-or::after{content:"";flex:1;height:1px;background:var(--border)}
@@ -799,6 +803,7 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
         </label>
         <button type="button" class="auth-link forgot" id="auForgot" data-t="auth.forgot">Forgot password?</button>
         <p class="pw-msg" id="auMsg" role="alert" hidden></p>
+        <button type="button" class="auth-link resend" id="auResend" data-t="auth.resend" hidden>Send the email again</button>
         <button type="submit" class="btn auth-go" id="auGo" data-t="auth.login">Log in</button>
       </form>
       <div class="auth-or"><span data-t="auth.or">or</span></div>
@@ -3423,9 +3428,9 @@ var GR_SCENE = (function () {
   var $ = function (id) { return document.getElementById(id); };
   var box = $('auth'), form = $('authForm'), msg = $('auMsg'), mode = 'in';
   function session() { try { return JSON.parse(localStorage.getItem('mg-session') || 'null'); } catch (e) { return null; } }
-  function say(key, ok) { msg.textContent = MG.t(key); msg.className = 'pw-msg' + (ok ? ' ok' : ''); msg.hidden = false; }
+  function say(key, ok, vars) { msg.textContent = MG.t(key, vars); msg.className = 'pw-msg' + (ok ? ' ok' : ''); msg.hidden = false; }
   function setMode(m) {
-    mode = m; msg.hidden = true;
+    mode = m; msg.hidden = true; $('auResend').hidden = true;
     box.querySelectorAll('.auth-tabs button').forEach(function (b) { b.classList.toggle('on', b.dataset.mode === m); b.setAttribute('aria-selected', b.dataset.mode === m); });
     $('afName').hidden = m !== 'up'; $('auHint').hidden = m !== 'up'; $('auTerms').hidden = m !== 'up'; $('auForgot').hidden = m !== 'in';
     $('auPw').autocomplete = m === 'up' ? 'new-password' : 'current-password';
@@ -3438,7 +3443,7 @@ var GR_SCENE = (function () {
     box.classList.add('leaving');
     setTimeout(function () { box.hidden = true; box.classList.remove('leaving'); window.mgShow && window.mgShow('home'); }, 400);
   }
-  var ERR = { name: 'auth.errName', email: 'auth.errEmail', 'short': 'auth.errShort', taken: 'auth.errTaken', login: 'auth.errLogin', wait: 'auth.errWait' };
+  var ERR = { name: 'auth.errName', email: 'auth.errEmail', 'short': 'auth.errShort', taken: 'auth.errTaken', login: 'auth.errLogin', wait: 'auth.errWait', unverified: 'auth.errUnverified', mail: 'auth.errMail' };
   box.querySelector('.auth-tabs').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) setMode(b.dataset.mode); });
   $('auEye').addEventListener('click', function () { var on = $('auPw').type === 'password'; $('auPw').type = on ? 'text' : 'password'; this.classList.toggle('on', on); });
   $('auForgot').addEventListener('click', function () {
@@ -3455,13 +3460,26 @@ var GR_SCENE = (function () {
     if (!pw) return say('auth.errPw');
     if (mode === 'up' && pw.length < 8) return say('auth.errShort');
     var up = mode === 'up', go = $('auGo'); go.disabled = true; msg.hidden = true;
-    window.mgAccount.api('POST', up ? '/api/signup' : '/api/login', JSON.stringify(up ? { name: name, email: em, password: pw } : { email: em, password: pw }))
+    window.mgAccount.api('POST', up ? '/api/signup' : '/api/login', JSON.stringify(up ? { name: name, email: em, password: pw, lang: MG.lang() } : { email: em, password: pw }))
       .then(function (r) {
-        if (!r.user) { go.disabled = false; return say(ERR[r.error] || 'auth.errServer'); }
-        // a new account keeps what is on this device; signing in loads the account's own wardrobe (and reloads)
-        if (up) return window.mgAccount.signedUp(r.user).then(function () { go.disabled = false; leave(); });
-        window.mgAccount.signedIn(r.user, r.data);
+        go.disabled = false;
+        // signed up: the server emailed a confirm link; once it is tapped they log in here with the same email and password
+        if (up && r.verify) {
+          window.mgAccount.signedUp(r.email);
+          setMode('in'); $('auEmail').value = r.email; $('auPw').value = '';
+          say('auth.checkMail', true, { email: r.email }); $('auResend').hidden = false;
+          return;
+        }
+        if (!r.user) { say(ERR[r.error] || 'auth.errServer'); $('auResend').hidden = r.error !== 'unverified'; return; }
+        // logging in loads the account's own wardrobe (and reloads)
+        go.disabled = true; window.mgAccount.signedIn(r.user, r.data);
       }, function () { go.disabled = false; say('auth.errServer'); });
+  });
+  $('auResend').addEventListener('click', function () {
+    var em = $('auEmail').value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) return say('auth.errEmail');
+    window.mgAccount.api('POST', '/api/verify/resend', JSON.stringify({ email: em, lang: MG.lang() }))
+      .then(function () { say('auth.resent', true, { email: em }); }, function () { say('auth.errServer'); });
   });
   $('setLogout').addEventListener('click', function () {
     var st = $('settings'); if (st) st.hidden = true;
@@ -3473,6 +3491,12 @@ var GR_SCENE = (function () {
 
   // shown under the intro, so the doors open onto the sign-in page
   if (!session()) show();
+  // back from the link in the confirm email
+  var ver = /[?&]verified=([01])/.exec(location.search);
+  if (ver) {
+    try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) {}
+    if (!session()) say(ver[1] === '1' ? 'auth.verified' : 'auth.verifyBad', ver[1] === '1');
+  }
 })();
 </script>
 <script>

@@ -9,11 +9,13 @@ const crypto = require('node:crypto');
 const { DatabaseSync } = require('node:sqlite');
 const { lookup } = require('./lookup');
 const { classify, Anthropic } = require('./classify');
+const { sendVerify } = require('./mail');
 
 const PORT = +process.argv[2] || +process.env.PORT || 8000;
 const ROOT = path.join(__dirname, '..');
 const DB_FILE = process.env.DB_FILE || path.join(__dirname, 'data', 'gardrobe.db');
 const SESSION_DAYS = 60;
+const VERIFY_HOURS = 24;
 const MAX_BODY = 25 * 1024 * 1024;   // photos are stored as JPEG data URLs inside the items
 // What the app keeps per person; device preferences (theme, units, language) stay in the browser
 // The Android app (Capacitor) loads the app from this origin and signs in with a bearer token instead of the cookie
@@ -44,13 +46,26 @@ db.exec(`
     updated_at INTEGER NOT NULL,
     PRIMARY KEY (user_id, key)
   );
+  CREATE TABLE IF NOT EXISTS verify_tokens (
+    token_hash TEXT PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    expires_at INTEGER NOT NULL
+  );
 `);
+// New accounts must confirm their email before they can log in; accounts made before this count as confirmed
+if (!db.prepare('PRAGMA table_info(users)').all().some((c) => c.name === 'verified')) db.exec('ALTER TABLE users ADD COLUMN verified INTEGER NOT NULL DEFAULT 1');
+db.prepare('DELETE FROM verify_tokens WHERE expires_at < ?').run(Date.now());
 db.prepare('DELETE FROM sessions WHERE expires_at < ?').run(Date.now());
 
 const q = {
   userByEmail: db.prepare('SELECT * FROM users WHERE email = ?'),
   userById: db.prepare('SELECT * FROM users WHERE id = ?'),
-  addUser: db.prepare('INSERT INTO users (email, name, pw_hash, created_at) VALUES (?, ?, ?, ?)'),
+  addUser: db.prepare('INSERT INTO users (email, name, pw_hash, created_at, verified) VALUES (?, ?, ?, ?, 0)'),
+  redoUser: db.prepare('UPDATE users SET name = ?, pw_hash = ? WHERE id = ?'),
+  setVerified: db.prepare('UPDATE users SET verified = 1 WHERE id = ?'),
+  addVerify: db.prepare('INSERT INTO verify_tokens (token_hash, user_id, expires_at) VALUES (?, ?, ?)'),
+  verifyToken: db.prepare('SELECT user_id FROM verify_tokens WHERE token_hash = ? AND expires_at > ?'),
+  dropVerify: db.prepare('DELETE FROM verify_tokens WHERE user_id = ?'),
   setPw: db.prepare('UPDATE users SET pw_hash = ? WHERE id = ?'),
   addSession: db.prepare('INSERT INTO sessions (token_hash, user_id, expires_at) VALUES (?, ?, ?)'),
   session: db.prepare('SELECT user_id FROM sessions WHERE token_hash = ? AND expires_at > ?'),
@@ -98,6 +113,19 @@ function currentUser(req) {
 }
 const publicUser = (u) => ({ name: u.name, email: u.email });
 
+// ---- confirming the email address: a one-time link, only its hash is stored.
+// PUBLIC_URL is the server's address as people's phones reach it (falls back to the address this request came to).
+const lastMail = new Map();
+async function mailVerify(req, u, lang) {
+  if (Date.now() - (lastMail.get(u.id) || 0) < 60e3) return;   // at most one email a minute per account
+  lastMail.set(u.id, Date.now());
+  const token = crypto.randomBytes(32).toString('base64url');
+  q.dropVerify.run(u.id);
+  q.addVerify.run(sha(token), u.id, Date.now() + VERIFY_HOURS * 36e5);
+  const base = (process.env.PUBLIC_URL || 'http://' + req.headers.host).replace(/\/$/, '');
+  try { await sendVerify(u.email, u.name, base + '/api/verify?t=' + token, lang); } catch (e) { console.error('verify email:', e.message); throw Object.assign(new Error('mail'), { status: 502 }); }
+}
+
 // ---- small helpers
 function send(res, status, body) {
   res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' });
@@ -136,14 +164,31 @@ async function api(req, res, url) {
   } else if (req.method !== 'GET' && req.headers.origin && new URL(req.headers.origin).host !== req.headers.host) return send(res, 403, { error: 'origin' });
 
   if (route === 'POST /api/signup') {
-    const { name, email, password } = await readJson(req);
+    const { name, email, password, lang } = await readJson(req);
     if (!String(name || '').trim()) return send(res, 400, { error: 'name' });
     if (!EMAIL.test(email || '')) return send(res, 400, { error: 'email' });
     if (String(password || '').length < 8) return send(res, 400, { error: 'short' });
-    if (q.userByEmail.get(email.trim())) return send(res, 409, { error: 'taken' });
-    const r = q.addUser.run(email.trim(), String(name).trim().slice(0, 80), hashPw(password), Date.now());
-    const token = startSession(req, res, Number(r.lastInsertRowid));
-    return send(res, 201, { user: { name: String(name).trim(), email: email.trim() }, data: {}, token });
+    const nm = String(name).trim().slice(0, 80), old = q.userByEmail.get(email.trim());
+    if (old && old.verified) return send(res, 409, { error: 'taken' });
+    // Not confirmed yet: signing up again with the same email starts over (new name, password and link)
+    if (old) q.redoUser.run(nm, hashPw(password), old.id);
+    else q.addUser.run(email.trim(), nm, hashPw(password), Date.now());
+    await mailVerify(req, q.userByEmail.get(email.trim()), lang);
+    // No session yet: they log in once the email is confirmed
+    return send(res, 201, { verify: true, email: email.trim() });
+  }
+  if (route === 'POST /api/verify/resend') {
+    const { email, lang } = await readJson(req);
+    const u = q.userByEmail.get(String(email || '').trim());
+    if (u && !u.verified) await mailVerify(req, u, lang);
+    return send(res, 200, { ok: true });   // the same answer either way, so it doesn't tell who has an account
+  }
+  // The link in the email: confirm, then open the app's log-in page
+  if (route === 'GET /api/verify') {
+    const v = q.verifyToken.get(sha(url.searchParams.get('t') || ''), Date.now());
+    if (v) { q.setVerified.run(v.user_id); q.dropVerify.run(v.user_id); }
+    res.writeHead(302, { Location: '/app.html?verified=' + (v ? '1' : '0'), 'Cache-Control': 'no-store' });
+    return res.end();
   }
   if (route === 'POST /api/login') {
     const { email, password } = await readJson(req);
@@ -152,6 +197,7 @@ async function api(req, res, url) {
     const u = q.userByEmail.get(String(email || '').trim());
     if (!u || !checkPw(String(password || ''), u.pw_hash)) { noteFail(key); return send(res, 401, { error: 'login' }); }
     fails.delete(key);
+    if (!u.verified) return send(res, 403, { error: 'unverified' });
     const token = startSession(req, res, u.id);
     return send(res, 200, { user: publicUser(u), data: dataOf(u.id), token });
   }
