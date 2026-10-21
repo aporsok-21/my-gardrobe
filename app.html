@@ -507,6 +507,8 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
 .sheet-wrap[hidden]{display:none}
 .sheet-bg{position:absolute;inset:0;background:rgba(17,17,17,.35);animation:fade .25s ease-out}
 .sheet{position:relative;width:100%;max-height:88%;overflow-y:auto;background:var(--bg);border-radius:26px 26px 0 0;padding:18px 20px calc(22px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:14px;animation:up .3s cubic-bezier(.2,.8,.2,1)}
+/* Adding a piece, an inspiration or a wish: Save stays at the bottom of the sheet, even when the form is taller than the screen */
+#addForm>.btn[type=submit],#stForm>.btn[type=submit],#wlForm>.btn[type=submit]{position:sticky;bottom:0;z-index:2;flex:0 0 auto;box-shadow:0 0 0 12px var(--bg),0 24px 0 12px var(--bg),0 -14px 14px 6px var(--bg)}
 @keyframes fade{from{opacity:0}}
 @keyframes up{from{transform:translateY(100%)}}
 .sheet-head{display:flex;align-items:center;justify-content:space-between}
@@ -661,7 +663,7 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
 .st-prev figure{position:relative;margin:0;aspect-ratio:3/4;border-radius:14px;overflow:hidden;background:var(--soft)}
 .st-prev img{display:block;width:100%;height:100%;object-fit:cover}
 .wl-prev{grid-template-columns:1fr}
-.wl-prev figure{aspect-ratio:auto;height:200px}
+.wl-prev figure{aspect-ratio:auto;height:clamp(100px,15vh,200px)}   /* small enough that Save stays in view */
 .wl-prev img{object-fit:contain}
 .st-pick{width:100%;cursor:pointer;min-height:46px;padding:0 12px;font-size:14px}
 .st-folders{flex-wrap:wrap}
@@ -1217,7 +1219,7 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
         <button type="button" class="btn ghost st-pick" id="wlGoogle"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><span data-t="wl.google">Find on Google</span></button>
         <button type="button" class="btn ghost st-pick" data-paste="wl"><svg viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9.5 4V3h5v1"/><path d="M9.5 11h5M9.5 15h3"/></svg><span data-t="paste.btn">Paste image</span></button>
       </div>
-      <label class="field"><span data-t="wl.img">Image link</span><input type="url" id="wlImg" placeholder="https://…" inputmode="url" autocomplete="off"></label>
+      <input type="hidden" id="wlImg">   <!-- filled by Link or product number, a paste, or a found page's picture -->
       <label class="field"><span data-t="wl.name">What is it?</span><input type="text" id="wlName" maxlength="80" autocomplete="off" placeholder="Black leather boots" data-t-ph="wl.namePh"></label>
       <label class="field"><span data-t="wl.shop">Where you found it</span><input type="text" id="wlShop" maxlength="80" autocomplete="off" placeholder="Zara, Mariahilfer Straße" data-t-ph="wl.shopPh"></label>
       <div class="field-row">
@@ -4172,7 +4174,7 @@ var GR_SCENE = (function () {
     $('wlPrev').hidden = !src && !wl.linkBusy;
   }
   $('wlAdd').addEventListener('click', function () {
-    $('wlForm').reset(); $('wlLink').value = ''; wl = { photo: '', linkImg: '', linkBusy: false, linkP: null }; wlPreview(); $('wlErr').hidden = true; wlMsg(''); $('wlSheet').hidden = false;
+    $('wlForm').reset(); $('wlLink').value = ''; $('wlImg').value = ''; wl = { photo: '', linkImg: '', linkBusy: false, linkP: null }; wlPreview(); $('wlErr').hidden = true; wlMsg(''); $('wlSheet').hidden = false;
   });
   // Link or product number: the server reads the shop's page (or first finds it by the number) and fills the form in
   function wlMsg(key, bad, found) {
