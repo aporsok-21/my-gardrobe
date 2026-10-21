@@ -457,6 +457,10 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
 .tile .fav{position:absolute;inset-inline-end:8px;bottom:8px;z-index:1;width:30px;height:30px;padding:0;border-radius:50%;border:1px solid var(--border);background:var(--glass);display:flex;align-items:center;justify-content:center;cursor:pointer}
 .tile .fav svg{width:16px;height:16px;fill:none;stroke:var(--muted);stroke-width:1.8;stroke-linejoin:round;transition:transform .2s}
 .tile .fav[aria-pressed="true"] svg{fill:var(--heart);stroke:var(--heart)}
+/* pencil on your own pieces and on wishes: change what was saved */
+.tile .edit-it,.wl-img .edit-it{position:absolute;inset-inline-start:8px;bottom:8px;z-index:1;width:30px;height:30px;padding:0;border-radius:50%;border:1px solid var(--border);background:var(--glass);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.tile .edit-it svg,.wl-img .edit-it svg{width:15px;height:15px;fill:none;stroke:var(--ink);stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round}
+#category .tile .edit-it{inset-inline-start:6px;bottom:6px;width:26px;height:26px}
 .tile .fav:active svg{transform:scale(1.25)}
 #category .tile .fav{inset-inline-end:6px;bottom:6px;width:26px;height:26px}
 #category .tile .fav svg{width:14px;height:14px}
@@ -688,7 +692,7 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
 .field textarea:focus{outline:2px solid var(--focus);outline-offset:1px}
 .wl-list{display:flex;flex-direction:column;gap:12px}
 .wl-card{display:flex;gap:12px;padding:10px;border-radius:20px;border:1px solid var(--border);background:var(--surface)}
-.wl-img{flex:0 0 108px;height:136px;border-radius:14px;overflow:hidden;background:var(--soft);display:flex;align-items:center;justify-content:center}
+.wl-img{position:relative;flex:0 0 108px;height:136px;border-radius:14px;overflow:hidden;background:var(--soft);display:flex;align-items:center;justify-content:center}
 .wl-img img{width:100%;height:100%;object-fit:contain}
 .wl-ph{width:40%;height:auto;fill:none;stroke:var(--hover);stroke-width:1.6;stroke-linejoin:round}
 .wl-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
@@ -1612,7 +1616,7 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
     var badge = washing ? '<span class="badge wash-badge">' + esc(MG.t('wash.badge')) + '</span>' : worn ? '<span class="badge">' + esc(MG.t('wearing')) + '</span>' : '';
     return '<div class="tile item' + (worn ? ' wearing' : '') + (washing ? ' washing' : '') + '" data-i="' + items.indexOf(it) + '">' + badge +
       '<button type="button" class="wash" aria-pressed="' + washing + '" aria-label="' + esc(MG.t(washing ? 'wash.off' : 'wash.on')) + '" title="' + esc(MG.t(washing ? 'wash.off' : 'wash.on')) + '">' + WASH_ICON + '</button>' +
-      '<div class="art" style="background:#EFE9DF">' + art + '<button type="button" class="fav" aria-pressed="' + W8.isFav(it) + '" aria-label="' + esc(MG.t(W8.isFav(it) ? 'fav.off' : 'fav.on')) + '" title="' + esc(MG.t(W8.isFav(it) ? 'fav.off' : 'fav.on')) + '">' + HEART + '</button></div>' +
+      '<div class="art" style="background:#EFE9DF">' + art + (it.mine ? '<button type="button" class="edit-it" aria-label="' + esc(MG.t('editPiece')) + '" title="' + esc(MG.t('editPiece')) + '"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg></button>' : '') + '<button type="button" class="fav" aria-pressed="' + W8.isFav(it) + '" aria-label="' + esc(MG.t(W8.isFav(it) ? 'fav.off' : 'fav.on')) + '" title="' + esc(MG.t(W8.isFav(it) ? 'fav.off' : 'fav.on')) + '">' + HEART + '</button></div>' +
       '<div class="meta"><b>' + esc(shownName(it)) + '</b><span>' + esc([it.brand, it.size, colorName(col[0])].filter(Boolean).join(' · ')) + '</span>' +
       '<em>' + esc(n ? MG.t('worn.n', { n: n }) : MG.t('worn.never')) + '</em></div></div>';
   }
@@ -1667,6 +1671,8 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
   }
   // the basket on a tile puts that piece in the wash (or takes it out) instead of wearing it
   function washClick(e) {
+    var ed = e.target.closest('.tile.item .edit-it');
+    if (ed) { openEdit(items[+ed.closest('.tile.item').dataset.i]); return true; }
     var h = e.target.closest('.tile.item .fav');
     if (h) { var fi = items[+h.closest('.tile.item').dataset.i]; W8.setFav(fi, !W8.isFav(fi)); return true; }
     var w = e.target.closest('.tile.item .wash'); if (!w) return false;
@@ -2084,7 +2090,9 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
     };
     r.readAsDataURL(f);
   }
+  var editing = null;   // the piece being changed, or null when adding a new one
   function openSheet(catId, sub) {
+    editing = null;
     form.reset(); setPhoto(''); linkMsg(''); setColor('black'); openPick(''); found = null;
     fCat.value = catId || 'coats';
     fillSizes();
@@ -2093,6 +2101,22 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
     sheet.hidden = false;
   }
   function closeSheet() { closeCamera(); sheet.hidden = true; }
+  // Edit one of your own pieces: the same sheet, filled in; Save changes it instead of adding a new one
+  function openEdit(it) {
+    openSheet(it.cat, it.sub);
+    editing = it;
+    document.getElementById('sheetTitle').textContent = MG.t('editPiece');
+    document.getElementById('fBrand').value = it.brand || '';
+    if (it.size) {
+      var chip = document.querySelector('#fSizeChips button[data-v="' + String(it.size).replace(/"/g, '') + '"]');
+      document.getElementById('fSize').value = it.size; document.getElementById('fSizeVal').textContent = it.size;
+      if (chip) { chip.classList.add('on'); chip.setAttribute('aria-checked', 'true'); }
+    }
+    if (it.hex) setCustom(it.hex); else setColor(it.color || 'black');
+    if (it.photo) { pick.photo = it.photo; fPreview.src = it.photo; document.getElementById('fPhotoBtn').hidden = false; showWays(true); }
+    document.getElementById('fCapsule').checked = !!(W8.inCapsule && W8.inCapsule(it));
+  }
+  W8.openEdit = openEdit;
 
   // ---------- Camera ----------
   var cam = document.getElementById('cam'), camVideo = document.getElementById('camVideo'), camStream = null, facing = 'environment';
@@ -2150,6 +2174,22 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
     var c = catById(fCat.value);
     // No name to type: a new piece is called by its type ("Heels", "Fur coats"), and gets its own id
     var sub = c.subs.length ? fSub.value : '';
+    if (editing) {
+      var ed = editing;
+      // older pieces have no id: keep the key they had, so wash, favourites, wear counts and the photo stay with them
+      if (!ed.id) ed.id = keyOf(ed);
+      ed.cat = c.id; ed.sub = sub;
+      if (ed.autoName) ed.name = sub ? subName(sub) : catName(c);
+      ed.brand = document.getElementById('fBrand').value.trim();
+      ed.size = document.getElementById('fSize').value.trim();
+      ed.color = pick.color; ed.hex = pick.hex || ''; ed.photo = pick.photo;
+      if (W8.setCapsule) W8.setCapsule(ed, document.getElementById('fCapsule').checked);
+      editing = null;
+      saveItems(); closeSheet();
+      if (document.getElementById('category').classList.contains('active') && cur) { if (cur.id === c.id) renderPages(); else openCat(c.id, c.subs.indexOf(sub) + 1); }
+      renderMain(); if (W8.refresh) W8.refresh();
+      return;
+    }
     var it = { id: 'u' + Date.now().toString(36), autoName: !(found && found.name), cat: c.id, sub: sub, name: found && found.name ? found.name : sub ? subName(sub) : catName(c), link: found ? found.link : '', brand: document.getElementById('fBrand').value.trim(),
       size: document.getElementById('fSize').value.trim(), color: pick.color, hex: pick.hex || '', photo: pick.photo, mine: true };
     items.push(it);
@@ -4281,7 +4321,8 @@ var GR_SCENE = (function () {
     $('wlList').innerHTML = list.length ? list.map(function (w) {
       var img = w.photo || safeUrl(w.img), link = safeUrl(w.link);
       var meta = [w.shop, w.size && MG.t('wl.size') + ' ' + w.size].filter(Boolean).join(' · ');
-      return '<article class="wl-card"><div class="wl-img">' + (img ? '<img src="' + esc(img) + '" alt="" referrerpolicy="no-referrer">' : WISH_SVG) + '</div>' +
+      return '<article class="wl-card"><div class="wl-img">' + (img ? '<img src="' + esc(img) + '" alt="" referrerpolicy="no-referrer">' : WISH_SVG) +
+        '<button type="button" class="edit-it" data-wedit="' + esc(w.id) + '" aria-label="' + esc(MG.t('wl.edit')) + '" title="' + esc(MG.t('wl.edit')) + '"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg></button></div>' +
         '<div class="wl-body"><b>' + esc(w.name || MG.t('wl.noName')) + '</b>' + (meta ? '<span>' + esc(meta) + '</span>' : '') +
         (w.price ? '<strong>' + esc(w.price) + '</strong>' : '') + (w.note ? '<p>' + esc(w.note) + '</p>' : '') +
         '<div class="wl-acts"><a class="btn wl-buy" href="' + esc(link || 'https://www.google.com/search?tbm=shop&q=' + encodeURIComponent([w.name, w.shop].filter(Boolean).join(' '))) +
@@ -4289,6 +4330,8 @@ var GR_SCENE = (function () {
     }).join('') : '<p class="empty">' + esc(q ? MG.t('noMatchAll', { q: q }) : MG.t('wl.empty')) + '</p>';
   }
   $('wlList').addEventListener('click', function (e) {
+    var ed = e.target.closest('[data-wedit]');
+    if (ed) { var w0 = data.wish.filter(function (w) { return w.id === ed.dataset.wedit; })[0]; if (w0) openWishEdit(w0); return; }
     var b = e.target.closest('[data-wdel]'); if (!b) return;
     // the app's own dialog: the browser's confirm() is ugly in the installed app and blocked in some in-app browsers
     var id = b.dataset.wdel, gone = function () { data.wish = data.wish.filter(function (w) { return w.id !== id; }); save('wish'); renderWish(); };
@@ -4300,7 +4343,18 @@ var GR_SCENE = (function () {
     $('wlPrev').innerHTML = src ? '<figure><img src="' + esc(src) + '" alt="" referrerpolicy="no-referrer"></figure>' : wl.linkBusy ? loadingFig() : '';
     $('wlPrev').hidden = !src && !wl.linkBusy;
   }
+  var wlEditing = null;   // the wish being changed, or null when adding one
+  function openWishEdit(w) {
+    $('wlAdd').click();
+    wlEditing = w.id;
+    $('wlTitle').textContent = MG.t('wl.edit');
+    $('wlName').value = w.name || ''; $('wlShop').value = w.shop || ''; $('wlPrice').value = w.price || '';
+    $('wlSize').value = w.size || ''; $('wlNote').value = w.note || '';
+    $('wlLink').value = w.link || ''; $('wlImg').value = w.img || ''; wl.photo = w.photo || '';
+    wlPreview();
+  }
   $('wlAdd').addEventListener('click', function () {
+    wlEditing = null; $('wlTitle').textContent = MG.t('wl.add');
     $('wlForm').reset(); $('wlLink').value = ''; $('wlImg').value = ''; $('wlPage').hidden = true; wl = { photo: '', linkImg: '', linkBusy: false, linkP: null }; wlPreview(); $('wlErr').hidden = true; wlMsg(''); $('wlSheet').hidden = false;
   });
   // Link or product number: the server reads the shop's page (or first finds it by the number) and fills the form in
@@ -4391,16 +4445,18 @@ var GR_SCENE = (function () {
     // Buy goes back to the page the link was copied from, even when it was pasted but not looked up yet
     var typed = $('wlFind').value.trim();
     if (!/^https?:\/\//i.test(typed) && /^[\w.-]+\.[a-z]{2,}\/\S*$/i.test(typed)) typed = 'https://' + typed;
-    var w = { id: uid(), photo: wl.photo, img: safeUrl($('wlImg').value), name: $('wlName').value.trim(), shop: $('wlShop').value.trim(),
+    var old = wlEditing && data.wish.filter(function (x) { return x.id === wlEditing; })[0];
+    var w = { id: old ? old.id : uid(), photo: wl.photo, img: safeUrl($('wlImg').value), name: $('wlName').value.trim(), shop: $('wlShop').value.trim(),
       price: $('wlPrice').value.trim(), size: $('wlSize').value.trim(), link: safeUrl($('wlLink').value) || (isImageAddr(typed) ? '' : safeUrl(typed)),
-      note: $('wlNote').value.trim(), at: Date.now() };
+      note: $('wlNote').value.trim(), at: old ? old.at : Date.now() };
     // no picture of its own: take the one behind the shop link
     var pic = w.photo || w.img || !w.link ? Promise.resolve('') : (wl.linkP && !wl.linkBusy ? Promise.resolve(wl.linkImg) : wl.linkP || linkImage(w.link));
     if (!w.photo && !w.img && !w.name && !w.link) { $('wlErr').textContent = MG.t('wl.need'); $('wlErr').hidden = false; return; }
     if (!w.photo && !w.img && w.link) { $('wlErr').textContent = MG.t('st.loadingImg'); $('wlErr').hidden = false; }
     pic.then(function (src) {
       if (src) { if (src.indexOf('data:') === 0) w.photo = src; else w.img = src; }
-      data.wish.unshift(w);
+      if (old) data.wish[data.wish.indexOf(old)] = w; else data.wish.unshift(w);
+      wlEditing = null;
       return save('wish').then(function () { $('wlSheet').hidden = true; renderWish(); });
     })['catch'](function () {});
   });
