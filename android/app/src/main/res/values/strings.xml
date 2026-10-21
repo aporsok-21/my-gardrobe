@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">My Gardrobe</string>
+    <string name="title_activity_main">My Gardrobe</string>
+    <string name="package_name">com.mygardrobe.app</string>
+    <string name="custom_url_scheme">com.mygardrobe.app</string>
+</resources>
