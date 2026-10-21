@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" width="160" height="120">
+<!-- Capsule closet card (My style): an open wardrobe with a few pieces that all go together, in the Colour match palette -->
+<g stroke="#5E554B" stroke-width="1.3" stroke-linejoin="round" stroke-linecap="round">
+<!-- open doors -->
+<path d="M40 9 21 15v90l19 6z" fill="#EADFCC"/>
+<path d="M120 9l19 6v90l-19 6z" fill="#EADFCC"/>
+<path d="M26 22l9-3v70l-9 3z" fill="#DCE6EA"/>
+<path d="M30 60v8M130 60v8" stroke-width="2"/>
+<!-- body and inside -->
+<rect x="40" y="8" width="80" height="104" rx="2" fill="#FBF8F2"/>
+<rect x="44" y="13" width="72" height="95" rx="1" fill="#F1E6D4"/>
+<path d="M44 86h72"/>
+<path d="M45 112v4M115 112v4"/>
+<!-- rail -->
+<path d="M45 21h70" stroke="#8E857A" stroke-width="2"/>
+<!-- hangers -->
+<g fill="none">
+<path d="M54 21v3M54 24l-7 4h14z"/>
+<path d="M69 21v3M69 24l-6 4h12z"/>
+<path d="M85 21v3M85 24l-7 4h14z"/>
+<path d="M104 21v3M104 24l-8 4h16z"/>
+</g>
+<!-- sage coat -->
+<path d="M47 28h14l1 50H46z" fill="#9DB08F"/>
+<path d="M54 30v48M50 28l4 8 4-8" fill="none"/>
+<circle cx="56" cy="44" r=".9" fill="#5E554B"/>
+<circle cx="56" cy="52" r=".9" fill="#5E554B"/>
+<!-- mustard top -->
+<path d="M63 28h12l2 6-2 1v20H63V35l-2-1z" fill="#E2BE6E"/>
+<!-- terracotta dress -->
+<path d="M79 28h12l-1 12 6 34H74l6-34z" fill="#D08C74"/>
+<path d="M80 40h10" fill="none"/>
+<!-- blue blouse -->
+<path d="M96 28h16l3 10-3 1v22H96V39l-3-1z" fill="#8DA5BE"/>
+<path d="M104 28v33" fill="none"/>
+<!-- folded jumpers -->
+<rect x="48" y="96" width="22" height="5" rx="1.5" fill="#9DB08F"/>
+<rect x="48" y="101" width="22" height="5" rx="1.5" fill="#8DA5BE"/>
+<rect x="49" y="91" width="20" height="5" rx="1.5" fill="#E2BE6E"/>
+<!-- bag -->
+<path d="M76 106l1-12h14l1 12z" fill="#D08C74"/>
+<path d="M80 94c0-5 8-5 8 0" fill="none"/>
+<!-- shoes -->
+<path d="M96 106v-4c0-2 2-3 4-2l6 4v2z" fill="#B48C6E"/>
+<path d="M104 106v-4c0-2 2-3 4-2l6 4v2z" fill="#B48C6E"/>
+</g>
+<!-- sparkles, as on the Colour match card -->
+<g fill="none" stroke="#2B2B2B" stroke-width="1.1" stroke-linecap="round">
+<path d="M148 30c0 3 3 6 6 6-3 0-6 3-6 6 0-3-3-6-6-6 3 0 6-3 6-6z"/>
+<path d="M12 74c0 2 2 4 4 4-2 0-4 2-4 4 0-2-2-4-4-4 2 0 4-2 4-4z"/>
+</g>
+</svg>

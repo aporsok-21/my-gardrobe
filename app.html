@@ -573,10 +573,8 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
 .photo-menu{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 /* Paste: an image copied in another app (e.g. Pinterest → Copy image), or its address */
 .st-picks{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.st-picks3{grid-template-columns:repeat(3,1fr)}
-.st-picks3 .st-pick{padding:0 8px;font-size:13px}
-.paste-hint{margin:-6px 0 0;font-size:12px;color:var(--muted);text-align:center}
-.paste-hint[hidden]{display:none}
+.field-row.st-picks3{grid-template-columns:repeat(3,1fr);gap:8px}
+.st-picks3 .st-pick{padding:0 6px;gap:6px;font-size:13px;line-height:1.2;text-align:center}
 .photo-menu[hidden],.g-panel[hidden]{display:none}
 .photo-menu button{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 4px;border-radius:16px;border:1px solid var(--border);background:var(--surface);font:inherit;font-size:12px;font-weight:700;color:var(--ink);line-height:1.2;text-align:center}
 .photo-menu button.on{border-color:var(--ink)}
@@ -611,6 +609,14 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
 .opt-chips button{min-width:44px;height:36px;padding:0 12px;border-radius:999px;border:1px solid var(--border);background:var(--surface);font:inherit;font-size:13px;font-weight:600;color:var(--ink);transition:background .15s,color .15s,border-color .15s}
 .opt-chips button.on{background:var(--ink);border-color:var(--ink);color:var(--on-ink)}
 .c-name{color:var(--ink)}
+.pick-btn{display:flex;align-items:center;gap:8px;width:100%;height:48px;padding:0 12px 0 14px;border-radius:14px;border:1px solid var(--border);background:var(--surface);font:inherit;font-size:15px;font-weight:500;color:var(--ink);text-align:start;cursor:pointer}
+.pick-btn>span,.pick-btn>b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500}
+.pick-btn>svg{flex:0 0 auto;width:18px;height:18px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s}
+.pick-btn[aria-expanded="true"]{border-color:var(--ink)}
+.pick-btn[aria-expanded="true"]>svg{transform:rotate(180deg)}
+.pick-dot{flex:0 0 auto;width:20px;height:20px;border-radius:50%;border:1px solid rgba(43,43,43,.25)}
+.pick-panel{padding:12px;border:1px solid var(--border);border-radius:14px;background:var(--surface)}
+.pick-panel[hidden]{display:none}
 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .field-row>.field{min-width:0}
 .field-row input{width:100%;min-width:0}
@@ -880,7 +886,7 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
     <div class="section">
       <div class="grid st-grid" id="msGrid">
         <div class="tile open-tile tint-rose" role="button" tabindex="0" data-open="colorMatch"><div class="art"><img src="assets/swatches-colour.svg" alt=""></div><div class="meta"><b data-t="colourMatch">Colour match</b><span data-t="tip">Tip</span></div></div>
-        <div class="tile open-tile tint-sage" role="button" tabindex="0" data-open="capsule"><div class="art"><img src="assets/wardrobe.svg" alt=""></div><div class="meta"><b data-t="capsule">Capsule closet</b><span data-t="guide">Guide</span></div></div>
+        <div class="tile open-tile tint-sage" role="button" tabindex="0" data-open="capsule"><div class="art"><img src="assets/capsule-closet.svg" alt=""></div><div class="meta"><b data-t="capsule">Capsule closet</b><span data-t="guide">Guide</span></div></div>
       </div>
     </div>
   </main>
@@ -1029,8 +1035,13 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
       <label class="field" id="fCatWrap"><span data-t="category">Category</span><select id="fCat"></select></label>
       <label class="field" id="fSubWrap"><span data-t="type">Type</span><select id="fSub"></select></label>
       <label class="field"><span data-t="brand">Brand</span><input id="fBrand" placeholder="e.g. Guess" autocomplete="off"></label>
-      <div class="field"><span data-t="add2.size">Size</span><div class="opt-chips" id="fSizeChips" role="radiogroup"></div><input type="hidden" id="fSize"></div>
-      <div class="field"><span><span data-t="colour">Colour</span> · <b class="c-name" id="fColorName"></b></span><div class="swatches" id="fColor"></div></div>
+      <!-- Size and colour side by side; each opens its choices below, so Save stays in view -->
+      <div class="field-row pick-row">
+        <div class="field"><span data-t="add2.size">Size</span><button type="button" class="pick-btn" id="fSizeBtn" aria-expanded="false" aria-controls="fSizePanel"><span id="fSizeVal">–</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button></div>
+        <div class="field"><span data-t="colour">Colour</span><button type="button" class="pick-btn" id="fColorBtn" aria-expanded="false" aria-controls="fColorPanel"><i class="pick-dot" id="fColorDot"></i><b class="c-name" id="fColorName"></b><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button></div>
+      </div>
+      <div class="pick-panel" id="fSizePanel" hidden><div class="opt-chips" id="fSizeChips" role="radiogroup"></div><input type="hidden" id="fSize"></div>
+      <div class="pick-panel" id="fColorPanel" hidden><div class="swatches" id="fColor"></div></div>
       <label class="set-row cap-row"><span><b data-t="cap.toggle">Capsule closet</b><small data-t="cap.toggleSub">Add this piece to my capsule closet</small></span><input type="checkbox" class="switch" id="fCapsule"></label>
       <button class="btn" type="submit" data-t="save">Save</button>
     </form>
@@ -1185,7 +1196,6 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
         <label class="btn ghost st-pick"><input type="file" id="stFile" accept="image/*" multiple hidden><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span data-t="st.pickPhotos">Choose photos</span></label>
         <button type="button" class="btn ghost st-pick" data-paste="st"><svg viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9.5 4V3h5v1"/><path d="M9.5 11h5M9.5 15h3"/></svg><span data-t="paste.btn">Paste image</span></button>
       </div>
-      <p class="paste-hint" data-paste-hint data-t="paste.hint">Copied an image? Press Ctrl+V or ⌘V.</p>
       <label class="field" id="stLinkF"><span data-t="st.link">Link (optional)</span><input type="url" id="stLink" placeholder="https://" inputmode="url" autocomplete="off"></label>
       <div class="field"><span data-t="st.chooseFolder">Choose a category</span><div class="opt-row st-folders" id="stFolders" role="radiogroup"></div></div>
       <label class="field" id="stNewF" hidden><span data-t="st.newName">Name of the new category</span><input type="text" id="stNew" maxlength="40" autocomplete="off"></label>
@@ -1214,8 +1224,8 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
         <label class="field"><span data-t="wl.price">Price</span><input type="text" id="wlPrice" maxlength="20" autocomplete="off" placeholder="€ 89"></label>
         <label class="field"><span data-t="wl.size">Size</span><input type="text" id="wlSize" maxlength="20" autocomplete="off" placeholder="38"></label>
       </div>
-      <label class="field"><span data-t="wl.link">Link to buy it</span><input type="url" id="wlLink" placeholder="https://" inputmode="url" autocomplete="off"></label>
-      <label class="field"><span data-t="wl.note">Personal note</span><textarea id="wlNote" rows="3" maxlength="300" placeholder="Fits well, a little long in the sleeves" data-t-ph="wl.notePh"></textarea></label>
+      <input type="hidden" id="wlLink">
+      <label class="field"><span data-t="wl.note">Personal note</span><textarea id="wlNote" rows="2" maxlength="300" placeholder="Fits well, a little long in the sleeves" data-t-ph="wl.notePh"></textarea></label>
       <p class="cap-msg" id="wlErr" role="alert" hidden></p>
       <button type="submit" class="btn" data-t="st.save">Save</button>
     </form>
@@ -1816,8 +1826,24 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
       '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6v12M6 12h12"/></svg></label>';
     paintMore();
     document.getElementById('fBrand').placeholder = MG.t('eg', { x: 'Guess' });
+    paintColorBtn();
+  }
+  // the closed Colour button shows the chosen shade and its name
+  function paintColorBtn() {
+    var c = COLORS.filter(function (x) { return x[0] === pick.color; })[0];
+    document.getElementById('fColorDot').style.background = pick.hex || (c ? c[2] : '');
     document.getElementById('fColorName').textContent = colorName(pick.color);
   }
+  // Size and Colour open one at a time
+  function openPick(which) {
+    [['fSizeBtn', 'fSizePanel'], ['fColorBtn', 'fColorPanel']].forEach(function (p) {
+      var on = p[0] === which && document.getElementById(p[1]).hidden;
+      document.getElementById(p[1]).hidden = !on;
+      document.getElementById(p[0]).setAttribute('aria-expanded', on);
+    });
+  }
+  document.getElementById('fSizeBtn').addEventListener('click', function () { openPick('fSizeBtn'); });
+  document.getElementById('fColorBtn').addEventListener('click', function () { openPick('fColorBtn'); });
   labelForm();
   function fillSubs(sub) {
     var c = catById(fCat.value);
@@ -1850,8 +1876,7 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
   function setCustom(hex) {
     pick.hex = hex; pick.color = nearestColor(hex);
     fColor.querySelectorAll('button').forEach(function (b) { b.classList.remove('on'); b.setAttribute('aria-pressed', 'false'); });
-    paintMore();
-    document.getElementById('fColorName').textContent = colorName(pick.color);
+    paintMore(); paintColorBtn();
   }
   fColor.addEventListener('input', function (e) { if (e.target.id === 'fHex') setCustom(e.target.value); });
   fColor.addEventListener('change', function (e) { if (e.target.id === 'fHex') setCustom(e.target.value); });
@@ -1859,7 +1884,7 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
     pick.color = id; pick.hex = '';
     paintMore();
     fColor.querySelectorAll('button').forEach(function (b) { b.classList.toggle('on', b.dataset.color === id); b.setAttribute('aria-pressed', b.dataset.color === id); });
-    document.getElementById('fColorName').textContent = colorName(id);
+    paintColorBtn();
   }
   function fillSizes() {
     // tappable chips instead of a datalist, which phones show unreliably
@@ -1867,7 +1892,7 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
   }
   function chips(boxId, inputId, list) {
     var input = document.getElementById(inputId);
-    input.value = '';
+    input.value = ''; if (inputId === 'fSize') document.getElementById('fSizeVal').textContent = '–';
     var rows = Array.isArray(list[0]) ? list : [list];
     document.getElementById(boxId).innerHTML = rows.map(function (row) {
       // short rows (letters, 32–48) share one line evenly; longer ones (waist sizes) wrap
@@ -1879,10 +1904,12 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
     var input = document.getElementById('fSize'), on = input.value !== b.dataset.v;   // tap again to clear
     input.value = on ? b.dataset.v : '';
     this.querySelectorAll('button').forEach(function (x) { var sel = on && x === b; x.classList.toggle('on', sel); x.setAttribute('aria-checked', sel); });
+    document.getElementById('fSizeVal').textContent = input.value || '–';
+    if (on) openPick('');   // chosen: fold the sizes away again
   });
   fCat.addEventListener('change', function () { fillSubs(''); fillSizes(); });
   fSub.addEventListener('change', function () { fillSubs(fSub.value); });
-  fColor.addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) setColor(b.dataset.color); });
+  fColor.addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) { setColor(b.dataset.color); openPick(''); } });
   function setPhoto(src, fromLink) {
     pick.photo = src;
     if (src) fPreview.src = src; else fPreview.removeAttribute('src');
@@ -2028,7 +2055,7 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
     r.readAsDataURL(f);
   }
   function openSheet(catId, sub) {
-    form.reset(); setPhoto(''); linkMsg(''); setColor('black'); found = null;
+    form.reset(); setPhoto(''); linkMsg(''); setColor('black'); openPick(''); found = null;
     fCat.value = catId || 'coats';
     fillSizes();
     document.getElementById('sheetTitle').textContent = catId ? MG.t('addTo', { cat: catName(catById(catId)) }) : MG.t('addAnItem');
@@ -4060,8 +4087,12 @@ var GR_SCENE = (function () {
     mine.linkP.then(function (src) {
       if (sheet !== mine || safeUrl($('stLink').value) !== u) return;
       mine.linkImg = src; mine.linkBusy = false; paintSheet();
+      // some shops (Zara, …) block other sites from reading their pages: say how to add the picture instead
+      if (!src && u && !isPinShort(u)) stMsg(MG.t('st.noLinkPic', { shop: shopName(u) }));
     });
   }
+  function shopName(u) { return u.replace(/^https?:\/\/(www\d?\.)?/i, '').split(/[\/?#]/)[0]; }
+  window.mgShopName = shopName;
   $('stLink').addEventListener('input', debounce(fetchLinkImg, 600));
   function closeSheet() { $('stSheet').hidden = true; }
   $('stSheet').addEventListener('click', function (e) {
@@ -4141,7 +4172,7 @@ var GR_SCENE = (function () {
     $('wlPrev').hidden = !src && !wl.linkBusy;
   }
   $('wlAdd').addEventListener('click', function () {
-    $('wlForm').reset(); wl = { photo: '', linkImg: '', linkBusy: false, linkP: null }; wlPreview(); $('wlErr').hidden = true; wlMsg(''); $('wlSheet').hidden = false;
+    $('wlForm').reset(); $('wlLink').value = ''; wl = { photo: '', linkImg: '', linkBusy: false, linkP: null }; wlPreview(); $('wlErr').hidden = true; wlMsg(''); $('wlSheet').hidden = false;
   });
   // Link or product number: the server reads the shop's page (or first finds it by the number) and fills the form in
   function wlMsg(key, bad, found) {
@@ -4197,9 +4228,14 @@ var GR_SCENE = (function () {
     if (u) wl.photo = '';
     if (u && !isImageAddr(u)) {
       // a page (a pin, a shop), not a picture: fetch the picture behind it
+      if (!$('wlLink').value) $('wlLink').value = u;   // the page is also where to buy it
       this.value = ''; mine.linkImg = ''; mine.linkBusy = true; mine.linkP = linkImage(u); wlPreview();
       if (isPinShort(u)) { $('wlErr').textContent = MG.t('st.pinShort'); $('wlErr').hidden = false; }
-      mine.linkP.then(function (src) { if (wl !== mine) return; mine.linkBusy = false; if (src) { if (src.indexOf('data:') === 0) wl.photo = src; else $('wlImg').value = src; } wlPreview(); });
+      mine.linkP.then(function (src) {
+        if (wl !== mine) return; mine.linkBusy = false; if (src) { if (src.indexOf('data:') === 0) wl.photo = src; else $('wlImg').value = src; }
+        else if (!isPinShort(u)) { $('wlErr').textContent = MG.t('st.noLinkPic', { shop: window.mgShopName(u) }); $('wlErr').hidden = false; }
+        wlPreview();
+      });
       return;
     }
     wlPreview();
@@ -4304,18 +4340,15 @@ var GR_SCENE = (function () {
     var sh = openOne(); if (!sh) return;
     e.preventDefault();
     var cb = navigator.clipboard;
-    if (!cb) { say(sh, 'paste.keys'); return; }
+    if (!cb) return;   // no clipboard access: the button just does nothing (no message)
     var read = cb.read ? cb.read().then(function (items) {
       var types = [];
       items.forEach(function (it) { it.types.forEach(function (t) { if (/^image\//.test(t)) types.push(it.getType(t).then(function (bl) { return new File([bl], 'pasted.' + (t.split('/')[1] || 'png'), { type: t }); })); }); });
       if (types.length) return Promise.all(types).then(function (files) { feed(sh, files); return true; });
       return cb.readText ? cb.readText().then(function (t) { return useText(sh, t); }) : false;
     }) : cb.readText().then(function (t) { return useText(sh, t); });
-    read.then(function (ok) { if (!ok) say(sh, 'paste.none'); }, function () { say(sh, 'paste.keys'); });
+    read.then(function (ok) { if (!ok) say(sh, 'paste.none'); }, function () {});   // refused by the browser: stay quiet
   });
-
-  // the keyboard hint only where there is a keyboard
-  if (window.matchMedia && matchMedia('(pointer: coarse)').matches) document.querySelectorAll('[data-paste-hint]').forEach(function (p) { p.hidden = true; });
 })();
 </script>
 </body>
