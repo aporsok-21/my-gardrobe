@@ -9,7 +9,11 @@ const { z } = require('zod');
 // Must match CATS and COLORS in app.html
 const CATS = {
   coats: ['Jackets', 'Trench coats', 'Elegant coats', 'Fur coats', 'Leather coats', 'Winter coats', 'Ponchos', 'Rain coats'],
-  sweaters: [], tshirts: [],
+  blazers: ['Everyday blazers', 'Elegant blazers', 'Linen blazers', 'Double-breasted blazers'],
+  suits: ['Two-piece suits', 'Three-piece suits', 'Tuxedos', 'Trouser suits', 'Skirt suits'],
+  sweaters: [],
+  shirts: ['Linen shirts', 'Everyday shirts', 'Elegant shirts', 'Patterned shirts', 'Short-sleeve shirts'],
+  tshirts: [],
   dresses: ['Everyday dresses', 'Evening dresses', 'Maxi dresses', 'Mini dresses'],
   skirts: ['Mini skirts', 'Midi skirts', 'Maxi skirts', 'Pleated skirts', 'Denim skirts'],
   trousers: ['Elegant trousers', 'Everyday trousers', 'Comfy trousers'],
@@ -31,7 +35,8 @@ const Piece = z.object({
 const PROMPT = `This photo shows one piece of clothing or an accessory that someone wants to add to their wardrobe app.
 Pick its category and type from these (type "none" for a category without types):
 ${Object.entries(CATS).map(([c, s]) => `- ${c}: ${s.length ? s.join(', ') : 'none'}`).join('\n')}
-T-shirts, shirts, blouses and tops are "tshirts"; knitwear, hoodies and sweatshirts are "sweaters"; blazers and jackets are "coats"; any shoe with a raised heel is "heels".
+Button-up shirts with a collar are "shirts"; T-shirts, blouses and tops are "tshirts"; knitwear, hoodies and sweatshirts are "sweaters".
+Blazers and suit jackets on their own are "blazers"; a whole suit (jacket with matching trousers or skirt) is "suits"; other jackets are "coats". Any shoe with a raised heel is "heels".
 Pick the main colour of the piece itself, not the background or the person wearing it.
 Brand: only if a label, logo or name is readable in the photo, otherwise an empty string.`;
 
