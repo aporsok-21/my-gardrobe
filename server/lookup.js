@@ -140,9 +140,18 @@ function fromLink(link) {
   const kind = guess([slug, words]);
   if (!slug && !kind.cat) return null;
   return { name: slug ? slug.charAt(0).toUpperCase() + slug.slice(1) : '', brand: MARKETPLACES.test(host + '.') ? '' : SHOPS[site] || site.charAt(0).toUpperCase() + site.slice(1),
-    cat: kind.cat, sub: kind.sub, color: colourOf(slug) || colourOf(words), number: '', photo: '', partial: true };
+    cat: kind.cat, sub: kind.sub, color: colourOf(slug) || colourOf(words), number: '', price: '', photo: '', partial: true };
 }
 const cleanBrand = (b) => b.split(/\s[|–—:-]\s/)[0].trim();   // "Gymshark | We Do Gym" -> "Gymshark"
+// "€ 49.95" from the shop's numbers; most shops give the amount and the currency code separately
+const MONEY = { EUR: '€', USD: '$', GBP: '£', CHF: 'CHF', HUF: 'Ft', PLN: 'zł', CZK: 'Kč', SEK: 'kr', DKK: 'kr', NOK: 'kr', RON: 'lei' };
+function priceOf(offer, meta) {
+  const amount = decode(first(offer.price ?? offer.lowPrice ?? (offer.priceSpecification || {}).price) || meta['product:price:amount'] || meta['og:price:amount'] || '');
+  if (!amount || !/\d/.test(amount)) return '';
+  const cur = decode(first(offer.priceCurrency ?? (offer.priceSpecification || {}).priceCurrency) || meta['product:price:currency'] || meta['og:price:currency'] || '').toUpperCase();
+  const sym = MONEY[cur] || cur;
+  return (sym === 'Ft' || sym === 'zł' || sym === 'Kč' || sym === 'kr' || sym === 'lei' ? amount + ' ' + sym : (sym ? sym + ' ' : '') + amount).trim().slice(0, 20);
+}
 
 async function lookup(link) {
   link = String(link || '').trim();
@@ -155,7 +164,7 @@ async function lookup(link) {
   }
   // A link straight to a photo (copied from Google Images): just the photo
   const type = (page.res.headers.get('content-type') || '').split(';')[0];
-  if (/^image\/(jpeg|png|webp|gif|avif)$/.test(type)) return { name: '', brand: '', cat: '', sub: '', color: '', number: '', photo: `data:${type};base64,${page.body.toString('base64')}` };
+  if (/^image\/(jpeg|png|webp|gif|avif)$/.test(type)) return { name: '', brand: '', cat: '', sub: '', color: '', number: '', price: '', photo: `data:${type};base64,${page.body.toString('base64')}` };
   const html = page.body.toString('utf8');
   const meta = metaTags(html), p = jsonLdProduct(html) || {};
   const offer = [].concat(p.offers || [])[0] || {};
@@ -168,7 +177,7 @@ async function lookup(link) {
   const path = decodeURIComponent(new URL(page.url).pathname).replace(/[-_/]+/g, ' ');
   const kind = guess([name, category, meta['og:description'], path]);
   const out = { name, brand, cat: kind.cat, sub: kind.sub, color: colourOf(colourText) || colourOf(name) || colourOf(path),
-    number: decode(first(p.sku) || first(p.mpn) || offer.sku || ''), photo: '' };
+    number: decode(first(p.sku) || first(p.mpn) || offer.sku || ''), price: priceOf(offer, meta), photo: '' };
 
   // The main photo, sent back as a data URL so the app can shrink it like a photo from the phone
   const img = first(p.image) || meta['og:image'] || meta['og:image:url'] || meta['twitter:image'];

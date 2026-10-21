@@ -1199,6 +1199,8 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
     <div class="sheet-bg" data-close></div>
     <form class="sheet" id="wlForm" role="dialog" aria-modal="true" aria-labelledby="wlTitle" novalidate>
       <div class="sheet-head"><h2 id="wlTitle" data-t="wl.add">Add to wishlist</h2><button type="button" class="round" data-close aria-label="Close" data-t-aria="close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+      <div class="g-row"><input id="wlFind" type="text" inputmode="url" placeholder="Link or product number" data-t-ph="add2.findPh" aria-label="Link or product number" data-t-aria="add2.findPh" autocomplete="off"><button type="button" class="btn" id="wlFindGo" data-t="add2.findGo">Find</button></div>
+      <p class="g-msg photo-msg" id="wlFindMsg" hidden></p>
       <div class="st-prev wl-prev" id="wlPrev"></div>
       <div class="field-row st-picks3">
         <label class="btn ghost st-pick"><input type="file" id="wlFile" accept="image/*" hidden><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="9.5" cy="9.5" r="1.6"/><path d="M5 17l4.5-4.5 3 3 2.5-2.5L20 18"/></svg><span data-t="wl.upload">Upload photo</span></label>
@@ -1937,7 +1939,7 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
     var v = fLink.value.trim(); if (!v) return fLink.focus();
     if (!/^https?:\/\//i.test(v)) {
       if (/^[\w.-]+\.[a-z]{2,}\/\S*$/i.test(v)) v = 'https://' + v;   // "zara.com/…" without https://
-      else { googleLink(); return linkMsg('add2.autoNumber', true); }
+      else return findByNumber(v);
     }
     if (/\.(jpe?g|png|webp|gif|avif)(\?|#|$)/i.test(v)) return photoLink(v);   // a photo's own address (Google Images): show it as it is
     linkMsg('add2.autoWait'); fLinkUse.disabled = true;
@@ -1948,6 +1950,15 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
       if (r.status === 401) return pageImage(v);
       linkMsg(r.error === 'blocked' ? 'add2.autoBlocked' : r.error === 'nothing' ? 'add2.autoNothing' : r.error === 'link' ? 'add2.autoLink' : 'add2.autoReach', true);
     }, function () { fLinkUse.disabled = false; pageImage(v); });
+  }
+  // a product number: the server searches the web for the shop's page; without that, a Google search to find it by hand
+  function findByNumber(v) {
+    linkMsg('add2.autoWait'); fLinkUse.disabled = true;
+    var byHand = function (r) { fLinkUse.disabled = false; googleLink(); linkMsg(r && r.status === 401 ? 'add2.autoSignin' : 'add2.autoNumber', true); };
+    window.mgAccount.api('POST', '/api/lookup', JSON.stringify({ code: v })).then(function (r) {
+      if (r.status !== 200) return byHand(r);
+      fLinkUse.disabled = false; usePiece(r, r.link);
+    }, byHand);
   }
   // without the server: a page (Pinterest pin, shop) is searched for its picture, a picture is used as it is
   function pageImage(v) {
@@ -3207,7 +3218,11 @@ var GR_SCENE = (function () {
     $('wxd-yes').textContent = opts.yes || W('wearAnyway');
     $('wxd-no').textContent = opts.no || W('pickElse');
     $('wxd-text').textContent = text; onYes = yes; back = document.activeElement;
-    dlg.hidden = false; $('wxd-no').focus();
+    // deleting: the black Delete goes on top, the light Cancel under it; warnings keep the safe choice on top
+    var yesB = $('wxd-yes'), noB = $('wxd-no');
+    yesB.classList.toggle('ghost', !opts.del); noB.classList.toggle('ghost', !!opts.del);
+    if (opts.del) noB.before(yesB); else yesB.before(noB);
+    dlg.hidden = false; noB.focus();
   };
   function closeDlg(ok) {
     dlg.hidden = true; var f = onYes; onYes = null;
@@ -3914,7 +3929,7 @@ var GR_SCENE = (function () {
       save(here.kind); renderAll();
       if (!data[here.kind].some(function (x) { return x.folder === here.f; })) window.mgShow(here.kind === 'mine' ? 'inspo' : 'inspoBoard');
     }
-    if (window.mgConfirm) window.mgConfirm(MG.t('st.delConfirm'), gone, { title: MG.t('cap.del'), yes: MG.t('cap.del'), no: MG.t('cancel') });
+    if (window.mgConfirm) window.mgConfirm(MG.t('st.delConfirm'), gone, { title: MG.t('cap.del'), yes: MG.t('cap.del'), no: MG.t('cancel'), del: true });
     else if (confirm(MG.t('st.delConfirm'))) gone();
   });
   document.addEventListener('click', function (e) {
@@ -4117,7 +4132,7 @@ var GR_SCENE = (function () {
     var b = e.target.closest('[data-wdel]'); if (!b) return;
     // the app's own dialog: the browser's confirm() is ugly in the installed app and blocked in some in-app browsers
     var id = b.dataset.wdel, gone = function () { data.wish = data.wish.filter(function (w) { return w.id !== id; }); save('wish'); renderWish(); };
-    if (window.mgConfirm) window.mgConfirm(MG.t('wl.delConfirm'), gone, { title: MG.t('wl.delete'), yes: MG.t('wl.delete'), no: MG.t('cancel') });
+    if (window.mgConfirm) window.mgConfirm(MG.t('wl.delConfirm'), gone, { title: MG.t('wl.delete'), yes: MG.t('wl.delete'), no: MG.t('cancel'), del: true });
     else if (confirm(MG.t('wl.delConfirm'))) gone();
   });
   function wlPreview() {
@@ -4126,8 +4141,52 @@ var GR_SCENE = (function () {
     $('wlPrev').hidden = !src && !wl.linkBusy;
   }
   $('wlAdd').addEventListener('click', function () {
-    $('wlForm').reset(); wl = { photo: '', linkImg: '', linkBusy: false, linkP: null }; wlPreview(); $('wlErr').hidden = true; $('wlSheet').hidden = false;
+    $('wlForm').reset(); wl = { photo: '', linkImg: '', linkBusy: false, linkP: null }; wlPreview(); $('wlErr').hidden = true; wlMsg(''); $('wlSheet').hidden = false;
   });
+  // Link or product number: the server reads the shop's page (or first finds it by the number) and fills the form in
+  function wlMsg(key, bad, found) {
+    var m = $('wlFindMsg'); m.hidden = !key;
+    m.className = 'g-msg photo-msg' + (bad ? ' g-bad' : '');
+    m.innerHTML = !key ? '' : found ? '<b>' + esc(MG.t('add2.autoFound')) + '</b> ' + esc(found) + '<br>' + esc(MG.t(key)) : esc(MG.t(key));
+  }
+  function wlSetLink(u) { $('wlLink').value = u; $('wlLink').dispatchEvent(new Event('input')); }
+  function wlFind() {
+    var v = $('wlFind').value.trim(), mine = wl, go = $('wlFindGo');
+    if (!v) return $('wlFind').focus();
+    if (!/^https?:\/\//i.test(v) && /^[\w.-]+\.[a-z]{2,}\/\S*$/i.test(v)) v = 'https://' + v;   // "zara.com/…" without https://
+    var isLink = /^https?:\/\//i.test(v);
+    if (isLink && isImageAddr(v)) { $('wlImg').value = v; $('wlImg').dispatchEvent(new Event('input')); $('wlFind').value = ''; return wlMsg(''); }
+    wlMsg('add2.autoWait'); go.disabled = true;
+    var asked = window.mgAccount ? window.mgAccount.api('POST', '/api/lookup', JSON.stringify(isLink ? { url: v } : { code: v })) : Promise.reject();
+    asked.then(function (r) {
+      go.disabled = false; if (wl !== mine) return;
+      if (r.status === 200) return wlUse(r, isLink ? v : r.link);
+      if (!isLink) return wlMsg(r.status === 401 ? 'add2.autoSignin' : 'wl.codeNo', true);
+      // not signed in: the picture behind the link still comes in
+      if (r.status === 401) { wlSetLink(v); $('wlFind').value = ''; return wlMsg(''); }
+      wlSetLink(v);
+      wlMsg(r.error === 'blocked' ? 'add2.autoBlocked' : r.error === 'nothing' ? 'add2.autoNothing' : r.error === 'link' ? 'add2.autoLink' : 'add2.autoReach', true);
+    }, function () {
+      go.disabled = false; if (wl !== mine) return;
+      if (isLink) { wlSetLink(v); $('wlFind').value = ''; wlMsg(''); } else wlMsg('wl.codeNo', true);
+    });
+  }
+  function wlUse(r, link) {
+    var name = (r.name || '').slice(0, 80);
+    if (name) $('wlName').value = name;
+    if (r.brand) $('wlShop').value = r.brand.slice(0, 80);
+    if (r.price) $('wlPrice').value = r.price.slice(0, 20);
+    $('wlFind').value = '';
+    wlMsg(r.partial ? 'add2.autoPartial' : 'add2.autoCheck', false, [name, r.number].filter(Boolean).join(' · '));
+    if (!r.photo) { if (link) wlSetLink(link); return; }   // the picture comes from the link, as when it is pasted there
+    $('wlLink').value = link || '';
+    var mine = wl;
+    fetch(r.photo).then(function (x) { return x.blob(); }).then(function (b) {
+      shrink(new File([b], 'shop', { type: b.type || 'image/jpeg' }), function (src) { if (wl !== mine || !src) return; wl.photo = src; $('wlImg').value = ''; wlPreview(); });
+    })['catch'](function () { if (link && wl === mine) wlSetLink(link); });
+  }
+  $('wlFindGo').addEventListener('click', wlFind);
+  $('wlFind').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); wlFind(); } });
   $('wlSheet').addEventListener('click', function (e) { if (e.target.closest('[data-close]')) $('wlSheet').hidden = true; });
   $('wlFile').addEventListener('change', function () {
     var f = this.files && this.files[0]; this.value = '';

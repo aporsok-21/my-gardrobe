@@ -9,7 +9,8 @@ const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
 const { DatabaseSync } = require('node:sqlite');
-const { lookup } = require('./lookup');
+const { lookup, guess, colourOf } = require('./lookup');
+const { findByCode } = require('./find');
 const { classify, Anthropic } = require('./classify');
 const { sendVerify } = require('./mail');
 
@@ -223,8 +224,23 @@ async function api(req, res, url) {
     return send(res, 200, { ok: true });
   }
   // "Add automatically": what a shop's product page says about the piece (signed in only, so it isn't an open proxy)
+  // With a product number instead of a link, Claude finds the shop's page first (server/find.js); 'notfound' when it can't.
   if (route === 'POST /api/lookup') {
-    const { url: link } = await readJson(req);
+    const { url: link, code } = await readJson(req);
+    if (code && !link) {
+      let hit;
+      try { hit = await findByCode(code); } catch (e) { return aiFailed(res, e, 'find'); }
+      if (!hit) return send(res, 422, { error: 'notfound' });
+      try {
+        const piece = await lookup(hit.url);
+        return send(res, 200, { ...piece, name: piece.name || hit.name, brand: piece.brand || hit.brand, price: piece.price || hit.price, number: piece.number || code, link: hit.url });
+      } catch (e) {
+        if (!e.code) throw e;
+        // the shop won't show us its page: what the search found is still worth filling in
+        const kind = guess([hit.name]);
+        return send(res, 200, { name: hit.name, brand: hit.brand, price: hit.price, cat: kind.cat, sub: kind.sub, color: colourOf(hit.name), number: code, photo: '', link: hit.url, partial: true });
+      }
+    }
     try { return send(res, 200, await lookup(link)); } catch (e) { if (e.code) return send(res, 422, { error: e.code }); throw e; }
   }
   // A new piece's photo: what it is (server/classify.js). 'off' when the server has no Claude API credentials.
@@ -235,12 +251,7 @@ async function api(req, res, url) {
       return send(res, piece ? 200 : 422, piece || { error: 'unsure' });
     } catch (e) {
       if (e.code === 'photo') return send(res, 400, { error: 'photo' });
-      if (e instanceof Anthropic.AuthenticationError) return send(res, 503, { error: 'off' });
-      if (e instanceof Anthropic.RateLimitError) return send(res, 503, { error: 'busy' });
-      if (e instanceof Anthropic.APIError) { console.error('classify:', e.status, e.message); return send(res, 502, { error: 'ai' }); }
-      // anything else is set-up (the SDK reports missing credentials with a plain Error): log it, the app carries on without
-      console.error('classify unavailable:', e.message);
-      return send(res, 503, { error: 'off' });
+      return aiFailed(res, e, 'classify');
     }
   }
   // One stored value per key, exactly the text the app keeps in localStorage
@@ -250,6 +261,15 @@ async function api(req, res, url) {
     if (req.method === 'DELETE') { q.dropData.run(me.user.id, m[1]); return send(res, 200, { ok: true }); }
   }
   return send(res, 404, { error: 'not found' });
+}
+// A failed Claude request: 'off' without credentials, 'busy' when rate limited, 'ai' otherwise
+function aiFailed(res, e, what) {
+  if (e instanceof Anthropic.AuthenticationError) return send(res, 503, { error: 'off' });
+  if (e instanceof Anthropic.RateLimitError) return send(res, 503, { error: 'busy' });
+  if (e instanceof Anthropic.APIError) { console.error(what + ':', e.status, e.message); return send(res, 502, { error: 'ai' }); }
+  // anything else is set-up (the SDK reports missing credentials with a plain Error): log it, the app carries on without
+  console.error(what + ' unavailable:', e.message);
+  return send(res, 503, { error: 'off' });
 }
 function dataOf(userId) {
   const out = {};
