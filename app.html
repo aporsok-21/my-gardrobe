@@ -1158,7 +1158,7 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
       <div class="set-group"><div class="set-label" data-t="appearance">Appearance</div><div class="seg seg3" id="themeSeg"><button type="button" data-th="auto" data-t="themeAuto">Automatic</button><button type="button" data-th="light" data-t="themeLight">Light</button><button type="button" data-th="dark" data-t="themeDark">Dark</button></div></div>
       <label class="set-row"><span><b data-t="intro">Opening animation</b><small data-t="introSub">Play the walk-in closet when the app opens</small></span><input type="checkbox" class="switch" id="introToggle"></label>
       <button type="button" class="set-row" id="setColours"><span><b data-t="cp.title">Your colours</b><small data-t="cp.rowSub">Skin, hair and eye colour</small></span><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
-      <div class="set-row"><span><b data-t="iAm">I am</b><small data-t="iAmSub">Shows the matching categories in My Gardrobe</small></span><div class="seg set-seg" id="setGender"><button type="button" data-g="woman" data-t="woman">Woman</button><button type="button" data-g="man" data-t="man">Man</button></div></div>
+      <div class="set-row"><span><b data-t="iAm">I am</b><small data-t="iAmSub">Your figure follows it</small></span><div class="seg set-seg" id="setGender"><button type="button" data-g="woman" data-t="woman">Woman</button><button type="button" data-g="man" data-t="man">Man</button></div></div>
       <button type="button" class="set-row" id="setFigure"><span><b data-t="yourFigure">Your figure</b><small data-t="figureRowSub">Height, shape, skin and hair</small></span><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
       <button type="button" class="set-row" id="setBackup"><span><b data-t="bk.save">Back up my wardrobe</b><small data-t="bk.saveSub">Save everything to a file you can keep or move to another phone</small></span><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
       <button type="button" class="set-row" id="setPassword"><span><b data-t="pw.row">Change password</b><small data-t="pw.rowSub">Update the password you sign in with</small></span><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
@@ -1450,14 +1450,17 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
   // ---------- My Gardrobe data ----------
   var CATS = [
     { id: 'coats', name: 'Coats', one: 'coat', many: 'coats', icon: 'coat', subs: ['Jackets', 'Trench coats', 'Elegant coats', 'Fur coats', 'Leather coats', 'Winter coats', 'Ponchos', 'Rain coats'] },
+    { id: 'blazers', name: 'Blazers', one: 'blazer', many: 'blazers', icon: 'blazer', subs: ['Everyday blazers', 'Elegant blazers', 'Linen blazers', 'Double-breasted blazers'] },
+    { id: 'suits', name: 'Suits', one: 'suit', many: 'suits', icon: 'suit', subs: ['Two-piece suits', 'Three-piece suits', 'Tuxedos', 'Trouser suits', 'Skirt suits'] },
     { id: 'sweaters', name: 'Sweaters', one: 'sweater', many: 'sweaters', icon: 'sweater', subs: [] },
+    { id: 'shirts', name: 'Shirts', one: 'shirt', many: 'shirts', icon: 'shirt', subs: ['Linen shirts', 'Everyday shirts', 'Elegant shirts', 'Patterned shirts', 'Short-sleeve shirts'] },
     { id: 'tshirts', name: 'T-shirts', one: 'T-shirt', many: 'T-shirts', icon: 'tshirt', subs: [] },
-    { id: 'dresses', name: 'Dresses', one: 'dress', many: 'dresses', icon: 'dress', women: true, subs: ['Everyday dresses', 'Evening dresses', 'Maxi dresses', 'Mini dresses'] },
-    { id: 'skirts', name: 'Skirts', one: 'skirt', many: 'skirts', icon: 'skirt', women: true, subs: ['Mini skirts', 'Midi skirts', 'Maxi skirts', 'Pleated skirts', 'Denim skirts'] },
+    { id: 'dresses', name: 'Dresses', one: 'dress', many: 'dresses', icon: 'dress', subs: ['Everyday dresses', 'Evening dresses', 'Maxi dresses', 'Mini dresses'] },
+    { id: 'skirts', name: 'Skirts', one: 'skirt', many: 'skirts', icon: 'skirt', subs: ['Mini skirts', 'Midi skirts', 'Maxi skirts', 'Pleated skirts', 'Denim skirts'] },
     { id: 'trousers', name: 'Trousers', one: 'pair of trousers', many: 'pairs of trousers', icon: 'trousers', subs: ['Elegant trousers', 'Everyday trousers', 'Comfy trousers'] },
     { id: 'jeans', name: 'Jeans', one: 'pair of jeans', many: 'pairs of jeans', icon: 'jeans', subs: ['Skinny jeans', 'Straight jeans', 'Wide-leg jeans', 'Mom jeans'] },
     { id: 'shoes', name: 'Shoes', one: 'pair of shoes', many: 'pairs of shoes', icon: 'shoe', subs: ['Sneakers', 'Boots', 'Sandals', 'Slippers', 'Loafers'] },
-    { id: 'heels', name: 'Heels', one: 'pair of heels', many: 'pairs of heels', icon: 'heel', women: true, subs: ['Pumps', 'Stilettos', 'Kitten heels', 'Block heels', 'Wedges', 'Mules'] },
+    { id: 'heels', name: 'Heels', one: 'pair of heels', many: 'pairs of heels', icon: 'heel', subs: ['Pumps', 'Stilettos', 'Kitten heels', 'Block heels', 'Wedges', 'Mules'] },
     { id: 'jewellery', name: 'Jewellery', one: 'piece of jewellery', many: 'pieces of jewellery', icon: 'necklace', subs: ['Necklaces', 'Bracelets', 'Rings', 'Earrings'] },
     { id: 'bags', name: 'Bags', one: 'bag', many: 'bags', icon: 'bag', subs: ['Backpacks', 'Crossbody bags', 'Tote bags', 'Clutches', 'Purses'] },
     { id: 'accessories', name: 'Accessories', one: 'accessory', many: 'accessories', icon: 'hat', subs: ['Hats', 'Baseball caps', 'Scarves', 'Sunglasses', 'Key charms'] }
@@ -1472,6 +1475,9 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
     coat: ['M22 8L14 12L9 22L10 50H16L17 30L18 58H46L47 30L48 50H54L55 22L50 12L42 8L32 18Z', 'M32 18V58M28.5 30h0M28.5 38h0M28.5 46h0M22 8L27 22M42 8L37 22'],
     sweater: ['M22 10Q32 16 42 10L52 14L58 38L51 40L47 26V54H17V26L13 40L6 38L12 14Z', 'M17 49H47M51.5 35.5L57 34M12.5 35.5L7 34M24 11Q32 17 40 11'],
     tshirt: ['M22 10Q32 17 42 10L56 17L51 27L45 24V54H19V24L13 27L8 17Z', 'M24 11Q32 18 40 11'],
+    shirt: ['M23 8L32 13L41 8L54 14L57 40L50 41L46 26V56H18V26L14 41L7 40L10 14Z', 'M32 13V56M23 8L27 17L32 13L37 17L41 8M35 24h0M35 32h0M35 40h0M35 48h0M14 36L8 35.5M50 36L56 35.5'],
+    blazer: ['M23 8L32 30L41 8L52 12L57 26L56 50H49L48 34V54H16V34L15 50H8L7 26L12 12Z', 'M32 30V54M23 8L27 24L32 30L37 24L41 8M28.5 38h0M28.5 45h0M19 42h7M38 42h7'],
+    suit: ['M23 6L32 24L41 6L52 10L56 22L55 40H49L48 30V36H44L46 58H35L32 40L29 58H18L20 36H16V30L15 40H9L8 22L12 10Z', 'M23 6L27 19L32 24L37 19L41 6M30.5 22L32 20L33.5 22L33 31L32 33L31 31ZM16 36H48M32 36V40'],
     dress: ['M24 6L26 14Q32 18 38 14L40 6L44 8L42 24L40 28L52 58H12L24 28L22 24L20 8Z', 'M22 24Q32 28 42 24M26 14Q32 20 38 14'],
     skirt: ['M21 10H43L53 54Q32 59 11 54Z', 'M21 16H43M27 17L22 55M37 17L42 55M32 17V57'],
     trousers: ['M18 8H46L50 58H36L32 24L28 58H14Z', 'M18 14H46M32 14V24M40 18V22'],
@@ -1492,6 +1498,10 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
     ['coats', 'Ponchos', 'Wool poncho', 'Zara', 'grey'], ['coats', 'Rain coats', 'Yellow raincoat', 'Rains', 'yellow'], ['coats', 'Rain coats', 'Packable rain jacket', 'Patagonia', 'blue'],
     ['sweaters', '', 'Cashmere crew neck', 'Uniqlo', 'beige'], ['sweaters', '', 'Cable knit', 'Ralph Lauren', 'white'], ['sweaters', '', 'Turtleneck', 'COS', 'black'],
     ['sweaters', '', 'Oversized cardigan', 'H&M', 'grey'], ['sweaters', '', 'V-neck sweater', 'Zara', 'red'], ['sweaters', '', 'Mohair sweater', '& Other Stories', 'pink'], ['sweaters', '', 'Merino knit', 'Arket', 'blue'],
+    ['shirts', 'Linen shirts', 'Linen shirt', 'Arket', 'white'], ['shirts', 'Elegant shirts', 'Oxford shirt', 'Ralph Lauren', 'blue'], ['shirts', 'Patterned shirts', 'Striped shirt', 'COS', 'blue'],
+    ['shirts', 'Short-sleeve shirts', 'Short-sleeve shirt', 'Uniqlo', 'beige'], ['shirts', 'Everyday shirts', 'Denim shirt', "Levi's", 'blue'],
+    ['blazers', 'Elegant blazers', 'Navy blazer', 'Hugo Boss', 'blue'], ['blazers', 'Linen blazers', 'Linen blazer', 'Massimo Dutti', 'beige'], ['blazers', 'Double-breasted blazers', 'Double-breasted blazer', 'Zara', 'black'],
+    ['suits', 'Two-piece suits', 'Grey wool suit', 'Hugo Boss', 'grey'], ['suits', 'Tuxedos', 'Black tuxedo', 'Tom Ford', 'black'], ['suits', 'Trouser suits', 'Beige trouser suit', 'Mango', 'beige'],
     ['tshirts', '', 'Basic tee', 'Uniqlo', 'white'], ['tshirts', '', 'Logo tee', 'Guess', 'black'], ['tshirts', '', 'Striped tee', 'Petit Bateau', 'blue'], ['tshirts', '', 'Linen tee', 'Arket', 'beige'],
     ['tshirts', '', 'Graphic tee', 'Zara', 'grey'], ['tshirts', '', 'Polo shirt', 'Lacoste', 'green'], ['tshirts', '', 'Crop tee', 'H&M', 'pink'],
     ['trousers', 'Elegant trousers', 'Pleated trousers', 'Max Mara', 'beige'], ['trousers', 'Elegant trousers', 'Tailored trousers', 'Hugo Boss', 'black'], ['trousers', 'Elegant trousers', 'Wide-leg trousers', 'Mango', 'white'],
@@ -1527,19 +1537,57 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
     var mine = items.filter(function (x) { return x.mine; }), jobs = [];
     var slim = mine.map(function (x) {
       var o = Object.assign({}, x);
-      if (o.photo) { if (o.photo.indexOf('data:') === 0) jobs.push(MGStore.set(photoKey(x), o.photo)); o.photo = ''; o.hasPhoto = true; }
+      // a photo of its own sits in MGStore; a picture's web address is small, so it stays with the piece
+      if (o.photo && o.photo.indexOf('data:') === 0) { jobs.push(MGStore.set(photoKey(x), o.photo)); o.photo = ''; o.hasPhoto = true; }
       return o;
     });
     try { localStorage.setItem(STORE, JSON.stringify(slim)); } catch (err) { jobs.push(Promise.reject(err)); }
+    sendPhotos();
     return Promise.all(jobs)['catch'](function () { alert(MG.t('storageFull')); });
   }
+  // Signed in, the photos also go to the account, so each piece shows its own picture on every device
+  function account() { return window.mgAccount && localStorage.getItem('mg-session') ? window.mgAccount : null; }
+  function sentKey() { try { return 'mg-photo-sent:' + JSON.parse(localStorage.getItem('mg-session')).email; } catch (e) { return 'mg-photo-sent'; } }
+  function sentMap() { try { return JSON.parse(localStorage.getItem(sentKey()) || '{}') || {}; } catch (e) { return {}; } }
+  function markSent(k, photo) { var m = sentMap(); m[k] = photo.length; try { localStorage.setItem(sentKey(), JSON.stringify(m)); } catch (e) {} }
+  function sendPhotos() {
+    var acc = account(); if (!acc) return;
+    var sent = sentMap();
+    items.forEach(function (x) {
+      var k = photoKey(x), p = x.photo;
+      if (!x.mine || !p || p.indexOf('data:') !== 0 || sent[k] === p.length) return;
+      acc.api('POST', '/api/photo', JSON.stringify({ key: k, photo: p })).then(function (r) { if (r.status === 200) markSent(k, p); })['catch'](function () {});
+    });
+  }
+  // A piece without its photo on this device: take it from the account, or else again from the shop link it came from
+  function fetchPhotos() {
+    var need = items.filter(function (x) { return x.mine && !x.photo && (x.hasPhoto || x.link); });
+    if (!need.length) return;
+    var acc = account();
+    var asked = acc && need.some(function (x) { return x.hasPhoto; })
+      ? acc.api('POST', '/api/photos', JSON.stringify({ keys: need.map(photoKey) })).then(function (r) { return (r.status === 200 && r.photos) || {}; }, function () { return {}; })
+      : Promise.resolve({});
+    asked.then(function (got) {
+      var changed = false;
+      need.forEach(function (x) {
+        var p = got[photoKey(x)];
+        if (p) { x.photo = p; changed = true; MGStore.set(photoKey(x), p)['catch'](function () {}); markSent(photoKey(x), p); }
+      });
+      if (changed && W8.refresh) W8.refresh();
+      need.filter(function (x) { return !x.photo && safeLink(x.link) && window.mgLinkImage; }).forEach(function (x) {
+        window.mgLinkImage(x.link).then(function (src) { if (src && !x.photo) { x.photo = src; saveItems(); if (W8.refresh) W8.refresh(); } }, function () {});
+      });
+    });
+  }
+  function safeLink(u) { return /^https?:\/\/\S+$/i.test(String(u || '')); }
   // Load the photos, and move any still kept in localStorage (older versions) across
   (function () {
     var old = items.some(function (x) { return x.mine && x.photo && x.photo.indexOf('data:') === 0; });
     MGStore.all().then(function (kv) {
       items.forEach(function (x) { if (x.mine && x.hasPhoto && !x.photo && kv[photoKey(x)]) x.photo = kv[photoKey(x)]; });
-      if (old) saveItems();
+      if (old) saveItems(); else sendPhotos();
       if (W8.refresh) W8.refresh();
+      fetchPhotos();
     })['catch'](function () {});
   })();
 
@@ -1571,16 +1619,6 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
   var WASH_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h16l-1.6 10.2a1.5 1.5 0 0 1-1.5 1.3H7.1a1.5 1.5 0 0 1-1.5-1.3z"/><path d="M8 9V7.5a4 4 0 0 1 8 0V9"/><path d="M9 13.5c1 .8 2 .8 3 0s2-.8 3 0"/></svg>';
 
   function catById(id) { return CATS.filter(function (c) { return c.id === id; })[0]; }
-  // Heels, skirts and dresses are shown to women (the "I am" choice at sign-up, in Settings or on the figure);
-  // a man who already keeps pieces there still sees them
-  function gender() { try { return (JSON.parse(localStorage.getItem('mg-figure')) || {}).gender || 'woman'; } catch (e) { return 'woman'; } }
-  function catShown(c) {
-    c = typeof c === 'string' ? catById(c) : c;
-    return !!c && (!c.women || gender() !== 'man' || items.some(function (it) { return it.mine && it.cat === c.id; }));
-  }
-  function shownCats() { return CATS.filter(catShown); }
-  // a recognised category that is not shown (heels for a man): the closest one that is, or none
-  function catFor(id) { return catShown(id) ? id : id === 'heels' && catShown('shoes') ? 'shoes' : ''; }
   function catName(c) { return MG.t('cat.' + c.id); }
   function subName(s) { return s ? MG.t('sub.' + s) : MG.t('all'); }
   function colorName(id) { return MG.t('color.' + id); }
@@ -1638,7 +1676,7 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
   var wChips = document.getElementById('wChips');
   var favOnly = false;
   function renderChips() { wChips.innerHTML = '<button class="chip' + (favOnly ? '' : ' on') + '" data-all>' + esc(MG.t('all')) + '</button>' +
-    '<button class="chip fav-chip' + (favOnly ? ' on' : '') + '" data-fav aria-pressed="' + favOnly + '">' + HEART + esc(MG.t('fav.chip')) + '</button>' + shownCats().map(function (c) { return '<button class="chip" data-cat="' + c.id + '">' + esc(catName(c)) + '</button>'; }).join(''); }
+    '<button class="chip fav-chip' + (favOnly ? ' on' : '') + '" data-fav aria-pressed="' + favOnly + '">' + HEART + esc(MG.t('fav.chip')) + '</button>' + CATS.map(function (c) { return '<button class="chip" data-cat="' + c.id + '">' + esc(catName(c)) + '</button>'; }).join(''); }
   renderChips();
   wireSearch(document.getElementById('wSearch'), function (v) { wQ = v; renderMain(); });
 
@@ -1653,13 +1691,13 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
       var washing = items.filter(W8.inWash).sort(bySort);
       wBody.innerHTML = (washing.length ? '<div class="wash-head"><div class="label">' + esc(MG.t('wash.title')) + ' · ' + washing.length + '</div><button type="button" id="allClean">' + esc(MG.t('wash.allClean')) + '</button></div>' +
         '<div class="grid items3 wash-list">' + washing.map(itemTile).join('') + '</div>' : '') +
-        '<div class="grid">' + shownCats().map(function (c) { return catTile(c); }).join('') + '</div>';
+        '<div class="grid">' + CATS.map(function (c) { return catTile(c); }).join('') + '</div>';
       return;
     }
     var t = tokens(wQ), html = '';
     // Category or type names that match the search (e.g. "coats", "heels")
     var hits = [];
-    shownCats().forEach(function (c) {
+    CATS.forEach(function (c) {
       if (t.every(function (w) { return hasWord(c.name + ' ' + c.many + ' ' + catName(c), w); })) hits.push(catTile(c));
       c.subs.forEach(function (s, i) { if (t.every(function (w) { return hasWord(s + ' ' + subName(s), w); })) hits.push(catTile(c, i + 1, s)); });
     });
@@ -1847,13 +1885,13 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
   var fMenu = document.getElementById('fPhotoMenu'), fGoogle = document.getElementById('fGoogle'), fLink = document.getElementById('fLink'), fLinkMsg = document.getElementById('fLinkMsg');
   // Size chips by kind of piece; each inner list is one row: letters XXS–XXL, then numbers 32–48
   var LETTERS = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL'], EU = ['32', '34', '36', '38', '40', '42', '44', '46', '48'];
-  var SIZES = { coats: [LETTERS, EU], sweaters: [LETTERS, EU], tshirts: [LETTERS, EU],
+  var SIZES = { coats: [LETTERS, EU], blazers: [LETTERS, EU], suits: [LETTERS, EU], sweaters: [LETTERS, EU], shirts: [LETTERS, EU], tshirts: [LETTERS, EU],
     trousers: [LETTERS, EU], jeans: [LETTERS, EU], skirts: [LETTERS, EU],
     shoes: [['35', '36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46']], heels: [['35', '36', '37', '38', '39', '40', '41', '42', '43']] };
   var pick = { color: 'black', hex: '', photo: '' };
   function labelForm() {
     var keep = fCat.value;
-    fCat.innerHTML = shownCats().map(function (c) { return '<option value="' + c.id + '">' + esc(catName(c)) + '</option>'; }).join('');
+    fCat.innerHTML = CATS.map(function (c) { return '<option value="' + c.id + '">' + esc(catName(c)) + '</option>'; }).join('');
     if (keep) fCat.value = keep;
     fColor.innerHTML = COLORS.map(function (c) { return '<button type="button" data-color="' + c[0] + '" aria-label="' + esc(colorName(c[0])) + '" style="background:' + c[2] + '"' + (c[0] === pick.color && !pick.hex ? ' class="on"' : '') + '></button>'; }).join('') +
       '<label class="sw-more" title="' + esc(MG.t('moreColours')) + '"><input type="color" id="fHex" value="' + (pick.hex || '#8B7D6B') + '" aria-label="' + esc(MG.t('moreColours')) + '">' +
@@ -1960,9 +1998,8 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
     photoMsg(esc(MG.t('add2.aiWait')));
     window.mgAccount.api('POST', '/api/classify', JSON.stringify({ photo: src })).then(function (r) {
       if (ticket !== asked) return;   // another photo was picked meanwhile
-      var rc = r.status === 200 ? catFor(r.cat) : '';
-      if (!rc) return photoMsg(r.error === 'unsure' ? esc(MG.t('add2.aiUnsure')) : '');
-      fCat.value = rc; fillSizes(); fillSubs(rc === r.cat ? r.sub || '' : '');
+      if (r.status !== 200 || !catById(r.cat)) return photoMsg(r.error === 'unsure' ? esc(MG.t('add2.aiUnsure')) : '');
+      fCat.value = r.cat; fillSizes(); fillSubs(r.sub || '');
       if (r.color) setColor(r.color);
       var brand = document.getElementById('fBrand');
       if (r.brand && !brand.value.trim()) brand.value = r.brand;
@@ -2036,14 +2073,20 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
   }
   fLinkUse.addEventListener('click', findPiece);
   fLink.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); findPiece(); } });
+  // A pasted link is looked up straight away, without tapping Find (a product number still waits for Find)
+  var fLinkT;
+  fLink.addEventListener('input', function () {
+    clearTimeout(fLinkT);
+    var v = fLink.value.trim();
+    if (/^https?:\/\/\S+\.\S+$/i.test(v)) fLinkT = setTimeout(function () { if (fLink.value.trim() === v) findPiece(); }, 500);
+  });
   // Fill the form with what was found; the person checks it and saves
   function usePiece(r, link) {
     var name = (r.name || '').slice(0, 80);
     if (!name && !r.cat) { linkMsg(''); if (r.photo) shrinkPhoto(r.photo, true, true); return; }   // just a photo: recognise it
     found = { name: name, link: link };
-    var rc = r.cat ? catFor(r.cat) : '';
-    if (rc) { fCat.value = rc; fillSizes(); }
-    fillSubs(rc && rc === r.cat ? r.sub || '' : '');
+    if (r.cat && catById(r.cat)) { fCat.value = r.cat; fillSizes(); }
+    fillSubs(r.sub || '');
     document.getElementById('fBrand').value = (r.brand || '').slice(0, 40);
     if (r.color) setColor(r.color);
     if (!r.photo) setPhoto('', true);   // not the photo of an earlier find
@@ -2217,9 +2260,6 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
     try { localStorage.setItem(CAP_STORE, JSON.stringify(Object.keys(capsule))); } catch (e) {}
   };
   W8.refresh = function () { renderMain(); if (cur) renderPages(); };
-  W8.catShown = catShown;
-  // after the "I am" choice changes: the categories follow
-  W8.genderChanged = function () { renderChips(); labelForm(); W8.refresh(); };
   // outline-only version of a category icon
   W8.lineIcon = function (name) {
     var ic = ICONS[name];
@@ -2748,19 +2788,21 @@ var GR_SCENE = (function () {
         var waist = 'M' + f1(X(-bodyX(waistY) - 1)) + ' ' + f1(waistY) + 'Q60 ' + f1(waistY + 1.6) + ' ' + f1(X(bodyX(waistY) + 1)) + ' ' + f1(waistY);
         return paint(d, c, '<path d="' + waist + '" fill="none" stroke="' + shade(c, -0.3) + '" stroke-width=".55"/>');
       },
+      // coats reach the knee with a belt; a blazer stops below the hip, and a suit adds its trousers in the same cloth
       outer: function (it) {
-        var c = it.color, hemY = 158;
-        var d = torsoPiece(2.6, [P(0, 38.4), P(neck + 2, 36.8)], hemY, 4.5);
+        var c = it.color, tailored = it.style === 'blazer' || it.style === 'suit', hemY = tailored ? hipY + 14 : 158;
+        var d = torsoPiece(2.6, [P(0, 38.4), P(neck + 2, 36.8)], hemY, tailored ? 1.5 : 4.5);
         var lap = function (s) { var x = function (v) { return f1(60 + s * v); }; return 'M' + x(neck + 0.8) + ' 37.6L' + x(S * 0.48) + ' 44.2L' + x(S * 0.36) + ' 49.6L' + x(3.2) + ' ' + f1(bustY + 6) + 'L' + x(0.6) + ' ' + f1(bustY + 4) + 'Z'; };
         var v = 'M' + f1(X(-neck - 0.8)) + ' 37.6L60 ' + f1(bustY + 5) + 'L' + f1(X(neck + 0.8)) + ' 37.6Z';
         var belt = 'M' + f1(X(-bodyX(waistY) - 2.8)) + ' ' + f1(waistY - 1.6) + 'H' + f1(X(bodyX(waistY) + 2.8)) + 'V' + f1(waistY + 2.4) + 'H' + f1(X(-bodyX(waistY) - 2.8)) + 'Z';
         var dots = [-4.2, 4.2].map(function (x) { return [bustY + 11, bustY + 17.5].map(function (y) { return '<circle cx="' + f1(X(x)) + '" cy="' + f1(y) + '" r=".9" fill="' + shade(c, -0.45) + '"/>'; }).join(''); }).join('');
         var seam = 'M60 ' + f1(bustY + 5) + 'V' + hemY;
         var sl = [1, -1].map(function (s) { return paint(sleeve(s, 2.3, 116), c, '<path d="M' + f1(60 + s * (wc + 3.4 * a + 2)) + ' 108l' + f1(-s * (6.4 * a + 3.6)) + ' .8" fill="none" stroke="' + shade(c, -0.3) + '" stroke-width=".55"/>'); }).join('');
-        return paint(d, c) + '<path d="' + v + '" fill="' + (topColor || skinC) + '"/>' +
+        return (it.style === 'suit' ? G.bottom({ color: c, name: '' }) : '') +
+          paint(d, c) + '<path d="' + v + '" fill="' + (topColor || (tailored ? '#F4F0E8' : skinC)) + '"/>' +
           paint(lap(1), shade(c, -0.06)) + paint(lap(-1), shade(c, -0.06)) +
           '<path d="' + seam + '" fill="none" stroke="' + shade(c, -0.3) + '" stroke-width=".55"/>' + dots +
-          paint(belt, shade(c, -0.08)) + '<rect x="' + f1(X(-2.2)) + '" y="' + f1(waistY - 2.2) + '" width="4.4" height="5.2" rx=".8" fill="none" stroke="' + shade(c, -0.5) + '" stroke-width=".7"/>' + sl;
+          (tailored ? '' : paint(belt, shade(c, -0.08)) + '<rect x="' + f1(X(-2.2)) + '" y="' + f1(waistY - 2.2) + '" width="4.4" height="5.2" rx=".8" fill="none" stroke="' + shade(c, -0.5) + '" stroke-width=".7"/>') + sl;
       },
       shoes: function (it) {
         var c = it.color;
@@ -2919,15 +2961,14 @@ var GR_SCENE = (function () {
     try { localStorage.setItem('mg-figure', JSON.stringify(fig)); } catch (e) {}
     close();
     setTimeout(showCard, 200);
-    renderCombo(); W8.genderChanged();
   });
-  // "I am" from sign-up or Settings: the figure and the My Gardrobe categories follow
+  // "I am" from sign-up or Settings: the figure follows
   window.mgGender = function (g) {
     if (!g) return fig.gender;
     if (g === fig.gender) return g;
     fig.gender = draft.gender = g;
     try { localStorage.setItem('mg-figure', JSON.stringify(fig)); } catch (e) {}
-    thumbsFor = null; renderCombo(); showCard(); W8.genderChanged();
+    thumbsFor = null; showCard();
     return g;
   };
   $('genderSeg').addEventListener('click', function (e) {
@@ -2962,11 +3003,14 @@ var GR_SCENE = (function () {
   // ---- Dressing the figure from My Gardrobe (window.mgWardrobe comes from the wardrobe script)
   var W8 = window.mgWardrobe;
   // which figure slot each wardrobe category fills, and the category a slot opens
-  var SLOT_OF = { coats: 'outer', sweaters: 'top', tshirts: 'top', dresses: 'dress', skirts: 'bottom', trousers: 'bottom', jeans: 'bottom', shoes: 'shoes', heels: 'shoes', bags: 'bag', accessories: 'hat', jewellery: 'jewelry' };
+  var SLOT_OF = { coats: 'outer', blazers: 'outer', suits: 'outer', sweaters: 'top', shirts: 'top', tshirts: 'top', dresses: 'dress', skirts: 'bottom', trousers: 'bottom', jeans: 'bottom', shoes: 'shoes', heels: 'shoes', bags: 'bag', accessories: 'hat', jewellery: 'jewelry' };
   // one tile per My Gardrobe category, in the same order as there
   var SLOTS = [
     { slot: 'outer', cat: 'coats', bg: '#E2DACD' },
+    { slot: 'outer', cat: 'blazers', bg: '#E6DFD4' },
+    { slot: 'outer', cat: 'suits', bg: '#DCD3C6' },
     { slot: 'top', cat: 'sweaters', bg: '#EFE9DF' },
+    { slot: 'top', cat: 'shirts', bg: '#E9E2D6' },
     { slot: 'top', cat: 'tshirts', bg: '#E6DFD4' },
     { slot: 'dress', cat: 'dresses', bg: '#E9E2D6' },
     { slot: 'bottom', cat: 'skirts', bg: '#E6DFD4' },
@@ -2989,6 +3033,7 @@ var GR_SCENE = (function () {
     var n = (it.name + ' ' + (it.sub || '')).toLowerCase(), style = '';
     if (it.cat === 'tshirts') style = 'tee';
     else if (it.cat === 'skirts') style = 'skirt';
+    else if (it.cat === 'blazers' || it.cat === 'suits') style = it.cat === 'suits' ? 'suit' : 'blazer';
     else if (it.cat === 'accessories') style = /cap/.test(n) ? 'cap' : /bucket/.test(n) ? 'bucket' : 'fedora';
     else if (it.cat === 'jewellery') style = /pearl/.test(n) && /neck/.test(n) ? 'pearls' : /hoop/.test(n) ? 'hoops' : /stud|earring/.test(n) ? 'studs' : /bangle|bracelet/.test(n) ? 'bangle' : /ring/.test(n) ? 'ring' : 'chain';
     return { type: SLOT_OF[it.cat], style: style, name: it.name, color: it.hex || W8.colorOf(it.color)[2], key: keyOf(it) };
@@ -3019,7 +3064,7 @@ var GR_SCENE = (function () {
   function isCombo() { return !outfit.dress && SLOTS.every(function (s) { return !COMBO[s.slot] || (outfit[s.slot] && outfit[s.slot].name === COMBO[s.slot]); }); }
 
   function renderCombo() {
-    $('flatlay').innerHTML = SLOTS.filter(function (s) { return W8.catShown(s.cat); }).map(function (s) {
+    $('flatlay').innerHTML = SLOTS.map(function (s) {
       // the dot only shows on the tile of the category the worn piece comes from
       var w = s.slot === 'jewelry' ? outfit.jewelry || outfit.jewelry2 || outfit.jewelry3 || outfit.jewelry4 : outfit[s.slot], cat = W8.catById(s.cat);
       if (w && w.key.indexOf(s.cat + '|') !== 0) w = null;
@@ -3102,7 +3147,7 @@ var GR_SCENE = (function () {
   }
   function dressForWeather() {
     var t = (window.mgToday && window.mgToday()) || { max: 16 }, temp = t.max;
-    var pool = W8.items.filter(function (it) { return W8.catShown(it.cat) && !W8.inWash(it) && !(window.mgWeatherCheck && window.mgWeatherCheck(it)); });
+    var pool = W8.items.filter(function (it) { return !W8.inWash(it) && !(window.mgWeatherCheck && window.mgWeatherCheck(it)); });
     function by(cat, test) { return pool.filter(function (it) { return it.cat === cat && (!test || test(it)); }); }
     function first() { for (var i = 0; i < arguments.length; i++) if (arguments[i].length) return arguments[i]; return []; }
     var look = {};
@@ -4419,6 +4464,13 @@ var GR_SCENE = (function () {
   }
   $('wlFindGo').addEventListener('click', wlFind);
   $('wlFind').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); wlFind(); } });
+  // A pasted link is looked up straight away, without tapping Find (a product number still waits for Find)
+  var wlAutoT;
+  $('wlFind').addEventListener('input', function () {
+    clearTimeout(wlAutoT);
+    var v = this.value.trim();
+    if (/^https?:\/\/\S+\.\S+$/i.test(v)) wlAutoT = setTimeout(function () { if ($('wlFind').value.trim() === v) wlFind(); }, 500);
+  });
   $('wlSheet').addEventListener('click', function (e) { if (e.target.closest('[data-close]')) $('wlSheet').hidden = true; });
   $('wlFile').addEventListener('change', function () {
     var f = this.files && this.files[0]; this.value = '';

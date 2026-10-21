@@ -100,16 +100,25 @@ const KINDS = [
     ['Denim skirts', /denim|jeans|farmer/], ['Pleated skirts', /pleat|rakott|falten|plissee/], ['Mini skirts', /mini/], ['Maxi skirts', /maxi/], ['Midi skirts', /./]]],
   ['dresses', /\b(dress|dresses|gown)\b|ruha\b|ruhák|kleid/, [
     ['Maxi dresses', /maxi/], ['Mini dresses', /mini/], ['Evening dresses', /evening|party|gown|cocktail|estélyi|alkalmi|abend|cocktail/], ['Everyday dresses', /./]]],
-  ['coats', /\b(coats?|jackets?|blazers?|parkas?|puffers?|trench|anoraks?|gilets?|ponchos?|bombers?)\b|kabát|dzseki|mellény|mantel|jacke|sakko/, [
+  ['suits', /\b(suits?|tuxedos?)\b(?!\s*(trousers|pants|jacket|blazer|vest|waistcoat))|öltöny|kosztüm|szmoking|\banzug\b|anzüge|hosenanzug|smoking/, [
+    ['Tuxedos', /tuxedo|szmoking|smoking/], ['Three-piece suits', /three[- ]piece|3[- ]piece|háromrészes|dreiteilig/], ['Skirt suits', /skirt|szoknyás|kostüm|rock/],
+    ['Trouser suits', /trouser suit|pantsuit|pant suit|nadrágkosztüm|hosenanzug|women|női|damen/], ['Two-piece suits', /./]]],
+  ['blazers', /\b(blazers?|sport ?coats?|suit jackets?)\b|zakó|sakko/, [
+    ['Double-breasted blazers', /double[- ]breasted|kétsoros|zweireih/], ['Linen blazers', /linen|lenvászon|leinen/], ['Elegant blazers', /wool|tailored|elegant|elegáns|gyapjú|business|suit/], ['Everyday blazers', /./]]],
+  ['coats', /\b(coats?|jackets?|parkas?|puffers?|trench|anoraks?|gilets?|ponchos?|bombers?)\b|kabát|dzseki|mellény|mantel|jacke/, [
     ['Trench coats', /trench/], ['Rain coats', /\brain|regen|eső/], ['Ponchos', /poncho/], ['Fur coats', /\bfur\b|faux fur|shearling|teddy|szőrme|bunda|pelz/],
     ['Leather coats', /leather|bőr|leder/], ['Winter coats', /puffer|parka|down|winter|padded|quilted|tél|pehely|daunen|stepp/],
-    ['Jackets', /jacket|blazer|bomber|dzseki|jacke|sakko|gilet|mellény/], ['Elegant coats', /./]]],
+    ['Jackets', /jacket|bomber|dzseki|jacke|gilet|mellény/], ['Elegant coats', /./]]],
   ['jeans', /\b(jeans|denim)\b|farmer/, [
     ['Skinny jeans', /skinny|slim/], ['Wide-leg jeans', /wide|flare|bootcut|baggy|bő szárú/], ['Mom jeans', /\bmom\b/], ['Straight jeans', /./]]],
   ['trousers', /\b(trousers|pants|chinos?|joggers?|leggings|sweatpants|culottes|slacks)\b|nadrág|melegítő|hose\b|hosen/, [
     ['Comfy trousers', /jogger|sweat|legging|jogging|melegítő|lounge/], ['Elegant trousers', /tailored|suit|pleat|smart|elegáns|anzug|bundfalten|bügelfalte/], ['Everyday trousers', /./]]],
   ['sweaters', /\b(sweaters?|jumpers?|pullovers?|cardigans?|knit|knitted|hoodies?|sweatshirts?|turtlenecks?)\b|pulóver|kardigán|kötött|garbó|strick/, []],
-  ['tshirts', /\b(t-?shirts?|tees?|tops?|tanks?|shirts?|blouses?|polos?|camis?|bodysuits?)\b|póló|blúz|\bing\b|felső|hemd|bluse|oberteil/, []]
+  ['shirts', /(?<!\bt-?|\btee |\bpolo |sweat|over)\bshirts?\b|\boxford\b|button[- ]?(down|up)|\bing\b|\bingek\b|hemd(?!chen)/, [
+    ['Short-sleeve shirts', /short[- ]sleeve|rövid ujjú|kurzarm/], ['Linen shirts', /linen|lenvászon|leinen/],
+    ['Patterned shirts', /print|pattern|stripe|check|plaid|floral|hawaii|minta|csíkos|kockás|virágos|gemustert|kariert|gestreift|geblümt/],
+    ['Elegant shirts', /dress shirt|formal|oxford|poplin|business|elegáns|businesshemd|smokinghemd/], ['Everyday shirts', /./]]],
+  ['tshirts', /\b(t-?shirts?|tees?|tops?|tanks?|blouses?|polos?|camis?|bodysuits?)\b|póló|blúz|felső|bluse|oberteil|shirt/, []]
 ];
 const COLOURS = [
   ['gold', /\bgold|arany/], ['silver', /silver|ezüst|silber/],
@@ -171,7 +180,9 @@ async function lookup(link) {
   if (/^image\/(jpeg|png|webp|gif|avif)$/.test(type)) return { name: '', brand: '', cat: '', sub: '', color: '', number: '', price: '', photo: `data:${type};base64,${page.body.toString('base64')}` };
   const html = page.body.toString('utf8');
   const meta = metaTags(html), p = jsonLdProduct(html) || {};
-  const offer = [].concat(p.offers || [])[0] || {};
+  // a ProductGroup keeps its price (and words like "Schuhgröße") on its variants
+  const variant = [].concat(p.hasVariant || [])[0] || {};
+  const offer = [].concat(p.offers || variant.offers || [])[0] || {};
   const name = decode(first(p.name) || meta['og:title'] || meta['twitter:title'] || (/<title[^>]*>([^<]*)/i.exec(html) || [])[1]);
   const brand = cleanBrand(decode(first(p.brand) || meta['product:brand'] || meta['og:brand'] || meta.brand || meta['og:site_name'] || ''));
   const colourText = decode(first(p.color) || meta['product:color'] || meta.color || '');
@@ -179,7 +190,9 @@ async function lookup(link) {
   if (!name && !p.image && !meta['og:image']) { const guessed = fromLink(page.url); if (guessed) return guessed; throw fail('nothing'); }
 
   const path = decodeURIComponent(new URL(page.url).pathname).replace(/[-_/]+/g, ' ');
-  const kind = guess([name, category, meta['og:description'], path]);
+  let kind = guess([name, category, meta['og:description'], path, decode(first(variant.name)), decode(first(variant.size))]);
+  // nothing in the words: a shop that sells only one kind says it in its name (sneakerdistrict.de)
+  if (!kind.cat) { const host = new URL(page.url).hostname; kind = guess([/sneaker/.test(host) ? 'sneakers' : /shoe|schuh|cipo/.test(host) ? 'shoes' : '']); }
   const out = { name, brand, cat: kind.cat, sub: kind.sub, color: colourOf(colourText) || colourOf(name) || colourOf(path),
     number: decode(first(p.sku) || first(p.mpn) || offer.sku || ''), price: priceOf(offer, meta), photo: '' };
 

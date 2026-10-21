@@ -74,7 +74,8 @@ const q = {
   session: db.prepare('SELECT user_id FROM sessions WHERE token_hash = ? AND expires_at > ?'),
   dropSession: db.prepare('DELETE FROM sessions WHERE token_hash = ?'),
   dropOtherSessions: db.prepare('DELETE FROM sessions WHERE user_id = ? AND token_hash != ?'),
-  data: db.prepare('SELECT key, value FROM user_data WHERE user_id = ?'),
+  data: db.prepare("SELECT key, value FROM user_data WHERE user_id = ? AND key NOT LIKE 'photo:%'"),
+  one: db.prepare('SELECT value FROM user_data WHERE user_id = ? AND key = ?'),
   putData: db.prepare(`INSERT INTO user_data (user_id, key, value, updated_at) VALUES (?, ?, ?, ?)
     ON CONFLICT (user_id, key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at`),
   dropData: db.prepare('DELETE FROM user_data WHERE user_id = ? AND key = ?')
@@ -253,6 +254,25 @@ async function api(req, res, url) {
       if (e.code === 'photo') return send(res, 400, { error: 'photo' });
       return aiFailed(res, e, 'classify');
     }
+  }
+  // Wardrobe photos, one per piece, so a piece shows its own picture on every device (the list itself is mg-items).
+  // Kept apart from the other data so signing in doesn't download every photo at once.
+  if (route === 'POST /api/photo') {
+    const { key, photo } = await readJson(req);
+    if (typeof key !== 'string' || !key || key.length > 200) return send(res, 400, { error: 'key' });
+    if (!photo) { q.dropData.run(me.user.id, 'photo:' + key); return send(res, 200, { ok: true }); }
+    if (!/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(photo) || photo.length > 3 * 1024 * 1024) return send(res, 400, { error: 'photo' });
+    q.putData.run(me.user.id, 'photo:' + key, photo, Date.now());
+    return send(res, 200, { ok: true });
+  }
+  if (route === 'POST /api/photos') {
+    const { keys } = await readJson(req);
+    const photos = {};
+    [].concat(keys || []).slice(0, 500).forEach((k) => {
+      const row = typeof k === 'string' && q.one.get(me.user.id, 'photo:' + k);
+      if (row) photos[k] = row.value;
+    });
+    return send(res, 200, { photos });
   }
   // One stored value per key, exactly the text the app keeps in localStorage
   const m = url.pathname.match(/^\/api\/data\/([a-z-]+)$/);
