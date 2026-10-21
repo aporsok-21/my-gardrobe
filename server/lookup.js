@@ -171,7 +171,9 @@ async function lookup(link) {
   if (/^image\/(jpeg|png|webp|gif|avif)$/.test(type)) return { name: '', brand: '', cat: '', sub: '', color: '', number: '', price: '', photo: `data:${type};base64,${page.body.toString('base64')}` };
   const html = page.body.toString('utf8');
   const meta = metaTags(html), p = jsonLdProduct(html) || {};
-  const offer = [].concat(p.offers || [])[0] || {};
+  // a ProductGroup keeps its price (and words like "Schuhgröße") on its variants
+  const variant = [].concat(p.hasVariant || [])[0] || {};
+  const offer = [].concat(p.offers || variant.offers || [])[0] || {};
   const name = decode(first(p.name) || meta['og:title'] || meta['twitter:title'] || (/<title[^>]*>([^<]*)/i.exec(html) || [])[1]);
   const brand = cleanBrand(decode(first(p.brand) || meta['product:brand'] || meta['og:brand'] || meta.brand || meta['og:site_name'] || ''));
   const colourText = decode(first(p.color) || meta['product:color'] || meta.color || '');
@@ -179,7 +181,9 @@ async function lookup(link) {
   if (!name && !p.image && !meta['og:image']) { const guessed = fromLink(page.url); if (guessed) return guessed; throw fail('nothing'); }
 
   const path = decodeURIComponent(new URL(page.url).pathname).replace(/[-_/]+/g, ' ');
-  const kind = guess([name, category, meta['og:description'], path]);
+  let kind = guess([name, category, meta['og:description'], path, decode(first(variant.name)), decode(first(variant.size))]);
+  // nothing in the words: a shop that sells only one kind says it in its name (sneakerdistrict.de)
+  if (!kind.cat) { const host = new URL(page.url).hostname; kind = guess([/sneaker/.test(host) ? 'sneakers' : /shoe|schuh|cipo/.test(host) ? 'shoes' : '']); }
   const out = { name, brand, cat: kind.cat, sub: kind.sub, color: colourOf(colourText) || colourOf(name) || colourOf(path),
     number: decode(first(p.sku) || first(p.mpn) || offer.sku || ''), price: priceOf(offer, meta), photo: '' };
 

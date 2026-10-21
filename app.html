@@ -1527,19 +1527,57 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
     var mine = items.filter(function (x) { return x.mine; }), jobs = [];
     var slim = mine.map(function (x) {
       var o = Object.assign({}, x);
-      if (o.photo) { if (o.photo.indexOf('data:') === 0) jobs.push(MGStore.set(photoKey(x), o.photo)); o.photo = ''; o.hasPhoto = true; }
+      // a photo of its own sits in MGStore; a picture's web address is small, so it stays with the piece
+      if (o.photo && o.photo.indexOf('data:') === 0) { jobs.push(MGStore.set(photoKey(x), o.photo)); o.photo = ''; o.hasPhoto = true; }
       return o;
     });
     try { localStorage.setItem(STORE, JSON.stringify(slim)); } catch (err) { jobs.push(Promise.reject(err)); }
+    sendPhotos();
     return Promise.all(jobs)['catch'](function () { alert(MG.t('storageFull')); });
   }
+  // Signed in, the photos also go to the account, so each piece shows its own picture on every device
+  function account() { return window.mgAccount && localStorage.getItem('mg-session') ? window.mgAccount : null; }
+  function sentKey() { try { return 'mg-photo-sent:' + JSON.parse(localStorage.getItem('mg-session')).email; } catch (e) { return 'mg-photo-sent'; } }
+  function sentMap() { try { return JSON.parse(localStorage.getItem(sentKey()) || '{}') || {}; } catch (e) { return {}; } }
+  function markSent(k, photo) { var m = sentMap(); m[k] = photo.length; try { localStorage.setItem(sentKey(), JSON.stringify(m)); } catch (e) {} }
+  function sendPhotos() {
+    var acc = account(); if (!acc) return;
+    var sent = sentMap();
+    items.forEach(function (x) {
+      var k = photoKey(x), p = x.photo;
+      if (!x.mine || !p || p.indexOf('data:') !== 0 || sent[k] === p.length) return;
+      acc.api('POST', '/api/photo', JSON.stringify({ key: k, photo: p })).then(function (r) { if (r.status === 200) markSent(k, p); })['catch'](function () {});
+    });
+  }
+  // A piece without its photo on this device: take it from the account, or else again from the shop link it came from
+  function fetchPhotos() {
+    var need = items.filter(function (x) { return x.mine && !x.photo && (x.hasPhoto || x.link); });
+    if (!need.length) return;
+    var acc = account();
+    var asked = acc && need.some(function (x) { return x.hasPhoto; })
+      ? acc.api('POST', '/api/photos', JSON.stringify({ keys: need.map(photoKey) })).then(function (r) { return (r.status === 200 && r.photos) || {}; }, function () { return {}; })
+      : Promise.resolve({});
+    asked.then(function (got) {
+      var changed = false;
+      need.forEach(function (x) {
+        var p = got[photoKey(x)];
+        if (p) { x.photo = p; changed = true; MGStore.set(photoKey(x), p)['catch'](function () {}); markSent(photoKey(x), p); }
+      });
+      if (changed && W8.refresh) W8.refresh();
+      need.filter(function (x) { return !x.photo && safeLink(x.link) && window.mgLinkImage; }).forEach(function (x) {
+        window.mgLinkImage(x.link).then(function (src) { if (src && !x.photo) { x.photo = src; saveItems(); if (W8.refresh) W8.refresh(); } }, function () {});
+      });
+    });
+  }
+  function safeLink(u) { return /^https?:\/\/\S+$/i.test(String(u || '')); }
   // Load the photos, and move any still kept in localStorage (older versions) across
   (function () {
     var old = items.some(function (x) { return x.mine && x.photo && x.photo.indexOf('data:') === 0; });
     MGStore.all().then(function (kv) {
       items.forEach(function (x) { if (x.mine && x.hasPhoto && !x.photo && kv[photoKey(x)]) x.photo = kv[photoKey(x)]; });
-      if (old) saveItems();
+      if (old) saveItems(); else sendPhotos();
       if (W8.refresh) W8.refresh();
+      fetchPhotos();
     })['catch'](function () {});
   })();
 
@@ -2036,6 +2074,13 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
   }
   fLinkUse.addEventListener('click', findPiece);
   fLink.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); findPiece(); } });
+  // A pasted link is looked up straight away, without tapping Find (a product number still waits for Find)
+  var fLinkT;
+  fLink.addEventListener('input', function () {
+    clearTimeout(fLinkT);
+    var v = fLink.value.trim();
+    if (/^https?:\/\/\S+\.\S+$/i.test(v)) fLinkT = setTimeout(function () { if (fLink.value.trim() === v) findPiece(); }, 500);
+  });
   // Fill the form with what was found; the person checks it and saves
   function usePiece(r, link) {
     var name = (r.name || '').slice(0, 80);
@@ -4401,6 +4446,13 @@ var GR_SCENE = (function () {
   }
   $('wlFindGo').addEventListener('click', wlFind);
   $('wlFind').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); wlFind(); } });
+  // A pasted link is looked up straight away, without tapping Find (a product number still waits for Find)
+  var wlAutoT;
+  $('wlFind').addEventListener('input', function () {
+    clearTimeout(wlAutoT);
+    var v = this.value.trim();
+    if (/^https?:\/\/\S+\.\S+$/i.test(v)) wlAutoT = setTimeout(function () { if ($('wlFind').value.trim() === v) wlFind(); }, 500);
+  });
   $('wlSheet').addEventListener('click', function (e) { if (e.target.closest('[data-close]')) $('wlSheet').hidden = true; });
   $('wlFile').addEventListener('change', function () {
     var f = this.files && this.files[0]; this.value = '';
