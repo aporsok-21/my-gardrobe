@@ -2546,17 +2546,15 @@ var GR_SCENE = (function () {
     if (document.visibilityState === 'visible') try { localStorage.removeItem('mg-out'); } catch (e) {}
   });
 
-  // The intro plays when the app is first opened (unless it is switched off in Settings), not again while it stays open;
-  // a link to a tab (app.html#inspo) still lands there afterwards
-  // (not after signing in or out, which reloads the page, nor when resuming where you left off)
+  // With Opening animation on in Settings, the intro plays every time the app is opened; afterwards a link to a tab
+  // (app.html#inspo) or the page you were on still shows. Not when the app only reloads itself (signing in or out),
+  // nor when coming back from a shop or link the app opened.
   var quiet = false;
   try {
-    quiet = sessionStorage.getItem('mg-no-intro') === '1' || sessionStorage.getItem('mg-intro-seen') === '1' ||
-      Date.now() - (+localStorage.getItem('mg-out') || 0) < 2 * 3600 * 1000;
+    quiet = sessionStorage.getItem('mg-no-intro') === '1' || Date.now() - (+localStorage.getItem('mg-out') || 0) < 2 * 3600 * 1000;
     sessionStorage.removeItem('mg-no-intro'); localStorage.removeItem('mg-out');
-    sessionStorage.setItem('mg-intro-seen', '1');
   } catch (e) {}
-  if (quiet || window.mgResume || MG.get('intro', 'on') === 'off') { stage.hidden = true; return; }
+  if (quiet || MG.get('intro', 'on') === 'off') { stage.hidden = true; return; }
   buildStage();
   setTimeout(function () {
     stage.classList.add('leaving');
