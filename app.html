@@ -176,6 +176,7 @@ h2{margin:0 0 12px;font-size:19px;font-weight:700;letter-spacing:-.02em}
 .chip.on{background:var(--ink);border-color:var(--ink);color:var(--on-ink)}
 .btn{display:flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:0 22px;border-radius:999px;border:0;background:var(--ink);color:var(--on-ink);font-size:15px;font-weight:700}
 .btn.ghost{background:var(--surface);color:var(--ink);border:1px solid var(--border)}
+.btn[hidden]{display:none}
 .btn svg{width:18px;height:18px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round}
 
 /* Home */
@@ -1202,6 +1203,7 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
       <div class="field"><span data-t="st.chooseFolder">Choose a category</span><div class="opt-row st-folders" id="stFolders" role="radiogroup"></div></div>
       <label class="field" id="stNewF" hidden><span data-t="st.newName">Name of the new category</span><input type="text" id="stNew" maxlength="40" autocomplete="off"></label>
       <p class="cap-msg" id="stMsg" role="alert" hidden></p>
+      <button type="button" class="btn ghost" id="stPage" hidden></button>
       <button type="submit" class="btn" data-t="st.save">Save</button>
     </form>
   </div>
@@ -1213,6 +1215,7 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
       <div class="sheet-head"><h2 id="wlTitle" data-t="wl.add">Add to wishlist</h2><button type="button" class="round" data-close aria-label="Close" data-t-aria="close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
       <div class="g-row"><input id="wlFind" type="text" inputmode="url" placeholder="Link or product number" data-t-ph="add2.findPh" aria-label="Link or product number" data-t-aria="add2.findPh" autocomplete="off"><button type="button" class="btn" id="wlFindGo" data-t="add2.findGo">Find</button></div>
       <p class="g-msg photo-msg" id="wlFindMsg" hidden></p>
+      <button type="button" class="btn ghost" id="wlPage" hidden></button>
       <div class="st-prev wl-prev" id="wlPrev"></div>
       <div class="field-row st-picks3">
         <label class="btn ghost st-pick"><input type="file" id="wlFile" accept="image/*" hidden><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="9.5" cy="9.5" r="1.6"/><path d="M5 17l4.5-4.5 3 3 2.5-2.5L20 18"/></svg><span data-t="wl.upload">Upload photo</span></label>
@@ -3993,13 +3996,18 @@ var GR_SCENE = (function () {
   }
   // The picture behind a link. A Pinterest pin (pinterest.com/pin/123…, any country) asks Pinterest's
   // public widget API for the pin's picture; a direct image address is used as it is; any other page
-  // (a shop) goes through microlink.io. images.weserv.nl then serves the picture so a copy can be kept
+  // (a shop) is read by our own server first (server/lookup.js, no daily limit), then by microlink.io. images.weserv.nl then serves the picture so a copy can be kept
   // on the phone; if that fails, the picture's address is kept.
   var linkCache = {};
   function pinId(url) { var m = /^https?:\/\/([a-z0-9-]+\.)*pinterest\.[a-z.]+\/pin\/(?:[^\/?#]*--)?(\d+)/i.exec(url); return m ? m[2] : ''; }
   function isPinShort(url) { return /^https?:\/\/(www\.)?pin\.it\//i.test(url); }
   function isImageAddr(url) { return /\.(jpe?g|png|webp|gif|avif)(\?\S*)?$/i.test(url) || /^https?:\/\/i\.pinimg\.com\//i.test(url); }
   function keepCopy(img) {
+    if (img.indexOf('data:') === 0) {   // the server already sent the picture itself
+      return fetch(img).then(function (r) { return r.blob(); })
+        .then(function (b) { return new Promise(function (ok) { shrink(new File([b], 'link', { type: b.type || 'image/jpeg' }), function (src) { ok(src || img); }); }); })
+        ['catch'](function () { return img; });
+    }
     return fetch('https://images.weserv.nl/?w=900&url=' + encodeURIComponent(img.replace(/^https?:\/\//, '')))
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.blob(); })
       .then(function (b) { return new Promise(function (ok) { shrink(new File([b], 'link', { type: b.type || 'image/jpeg' }), function (src) { ok(src || img); }); }); })
@@ -4018,6 +4026,15 @@ var GR_SCENE = (function () {
         }) : '';
       });
   }
+  function serverPicture(url) {
+    if (!window.mgAccount) return Promise.resolve('');
+    return window.mgAccount.api('POST', '/api/lookup', JSON.stringify({ url: url }))
+      .then(function (r) { return (r && r.status === 200 && r.photo) || ''; }, function () { return ''; });
+  }
+  function microlinkPicture(url) {
+    return fetch('https://api.microlink.io/?url=' + encodeURIComponent(url)).then(function (r) { return r.json(); })
+      .then(function (j) { return (j && j.status === 'success' && j.data && j.data.image && safeUrl(j.data.image.url)) || ''; }, function () { return ''; });
+  }
   function linkImage(url) {
     url = safeUrl(url);
     if (!url) return Promise.resolve('');
@@ -4026,13 +4043,37 @@ var GR_SCENE = (function () {
       var find = id ? pinPicture(id)
         : isImageAddr(url) ? Promise.resolve(url)
         : isPinShort(url) ? Promise.resolve('')
-        : fetch('https://api.microlink.io/?url=' + encodeURIComponent(url)).then(function (r) { return r.json(); })
-            .then(function (j) { return (j && j.status === 'success' && j.data && j.data.image && safeUrl(j.data.image.url)) || ''; });
+        : serverPicture(url).then(function (src) { return src || microlinkPicture(url); });
       linkCache[url] = find.then(function (img) { return img ? keepCopy(img) : ''; })['catch'](function () { delete linkCache[url]; return ''; });
     }
     return linkCache[url];
   }
   window.mgLinkImage = linkImage;
+
+  // Shops that block servers (Zara, Mango, H&M, …): in the Android app, and only once the person agrees,
+  // the page opens in a browser window inside the app and the picture is taken from it
+  // (android/…/PagePicturePlugin.java). Agreeing once per shop is remembered.
+  function pagePlugin() { var C = window.Capacitor; return C && C.isNativePlatform && C.isNativePlatform() && C.Plugins && C.Plugins.PagePicture; }
+  function pageHosts() { try { return JSON.parse(localStorage.getItem('mg-page-ok') || '[]'); } catch (e) { return []; } }
+  function pageAllowed(u) { return pageHosts().indexOf(shopName(u)) >= 0; }
+  function pagePicture(url) {
+    var host = shopName(url), list = pageHosts();
+    if (list.indexOf(host) < 0) { list.push(host); try { localStorage.setItem('mg-page-ok', JSON.stringify(list)); } catch (e) {} }
+    return pagePlugin().get({ url: url, title: MG.t('st.pageTitle', { shop: host }) })
+      .then(function (r) { var img = (r && (r.photo || safeUrl(r.image))) || ''; return img ? keepCopy(img) : ''; }, function () { return ''; })
+      .then(function (src) { if (src) linkCache[url] = Promise.resolve(src); return src; });
+  }
+  // After a link brought no picture: offer to open the page (button + question), or open it straight away if already agreed
+  function offerPage(u, btn, say, use) {
+    var b = $(btn);
+    function go() { b.hidden = true; say(''); use(null); pagePicture(u).then(function (src) { use(src); if (!src) say(MG.t('st.noLinkPic', { shop: shopName(u) })); }); }
+    b.hidden = true;
+    if (!pagePlugin()) return say(MG.t('st.noLinkPic', { shop: shopName(u) }));
+    if (pageAllowed(u)) return go();
+    say(MG.t('st.askPage', { shop: shopName(u) }));
+    b.textContent = MG.t('st.openPage', { shop: shopName(u) });
+    b.onclick = go; b.hidden = false;
+  }
 
   // Open a saved link in a small window inside the app. Pinterest won't be framed, so a pin uses
   // Pinterest's own embed page; other sites load as they are (some shops refuse; the arrow opens the browser).
@@ -4083,14 +4124,17 @@ var GR_SCENE = (function () {
   }
   function fetchLinkImg() {
     var u = safeUrl($('stLink').value), mine = sheet;
-    stMsg(isPinShort(u) ? MG.t('st.pinShort') : '');
+    stMsg(isPinShort(u) ? MG.t('st.pinShort') : ''); $('stPage').hidden = true;
     mine.linkImg = ''; mine.linkBusy = !!u; mine.linkP = u ? linkImage(u) : Promise.resolve('');
     paintSheet();
     mine.linkP.then(function (src) {
       if (sheet !== mine || safeUrl($('stLink').value) !== u) return;
       mine.linkImg = src; mine.linkBusy = false; paintSheet();
-      // some shops (Zara, …) block other sites from reading their pages: say how to add the picture instead
-      if (!src && u && !isPinShort(u)) stMsg(MG.t('st.noLinkPic', { shop: shopName(u) }));
+      // some shops (Zara, …) block other sites from reading their pages
+      if (!src && u && !isPinShort(u)) offerPage(u, 'stPage', stMsg, function (pic) {
+        if (sheet !== mine || safeUrl($('stLink').value) !== u) return;
+        mine.linkBusy = pic === null; mine.linkImg = pic || ''; mine.linkP = Promise.resolve(pic || ''); paintSheet();
+      });
     });
   }
   function shopName(u) { return u.replace(/^https?:\/\/(www\d?\.)?/i, '').split(/[\/?#]/)[0]; }
@@ -4174,7 +4218,7 @@ var GR_SCENE = (function () {
     $('wlPrev').hidden = !src && !wl.linkBusy;
   }
   $('wlAdd').addEventListener('click', function () {
-    $('wlForm').reset(); $('wlLink').value = ''; $('wlImg').value = ''; wl = { photo: '', linkImg: '', linkBusy: false, linkP: null }; wlPreview(); $('wlErr').hidden = true; wlMsg(''); $('wlSheet').hidden = false;
+    $('wlForm').reset(); $('wlLink').value = ''; $('wlImg').value = ''; $('wlPage').hidden = true; wl = { photo: '', linkImg: '', linkBusy: false, linkP: null }; wlPreview(); $('wlErr').hidden = true; wlMsg(''); $('wlSheet').hidden = false;
   });
   // Link or product number: the server reads the shop's page (or first finds it by the number) and fills the form in
   function wlMsg(key, bad, found) {
@@ -4245,7 +4289,14 @@ var GR_SCENE = (function () {
   $('wlLink').addEventListener('input', debounce(function () {
     var u = safeUrl($('wlLink').value), mine = wl;
     mine.linkImg = ''; mine.linkBusy = !!u; mine.linkP = u ? linkImage(u) : null; wlPreview();
-    if (mine.linkP) mine.linkP.then(function (src) { if (wl !== mine || safeUrl($('wlLink').value) !== u) return; mine.linkImg = src; mine.linkBusy = false; wlPreview(); });
+    $('wlPage').hidden = true;
+    if (mine.linkP) mine.linkP.then(function (src) {
+      if (wl !== mine || safeUrl($('wlLink').value) !== u) return; mine.linkImg = src; mine.linkBusy = false; wlPreview();
+      if (!src && !isPinShort(u)) offerPage(u, 'wlPage', function (t) { var m = $('wlFindMsg'); m.textContent = t; m.className = 'g-msg photo-msg'; m.hidden = !t; }, function (pic) {
+        if (wl !== mine || safeUrl($('wlLink').value) !== u) return;
+        mine.linkBusy = pic === null; mine.linkImg = pic || ''; if (pic && pic.indexOf('data:') === 0) wl.photo = pic; wlPreview();
+      });
+    });
   }, 600));
   // Google Images in a new tab; long-press an image there, copy its address and paste it into Image link
   $('wlGoogle').addEventListener('click', function () {
