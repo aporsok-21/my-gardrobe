@@ -4254,8 +4254,12 @@ var GR_SCENE = (function () {
   });
   $('wlForm').addEventListener('submit', function (e) {
     e.preventDefault();
+    // Buy goes back to the page the link was copied from, even when it was pasted but not looked up yet
+    var typed = $('wlFind').value.trim();
+    if (!/^https?:\/\//i.test(typed) && /^[\w.-]+\.[a-z]{2,}\/\S*$/i.test(typed)) typed = 'https://' + typed;
     var w = { id: uid(), photo: wl.photo, img: safeUrl($('wlImg').value), name: $('wlName').value.trim(), shop: $('wlShop').value.trim(),
-      price: $('wlPrice').value.trim(), size: $('wlSize').value.trim(), link: safeUrl($('wlLink').value), note: $('wlNote').value.trim(), at: Date.now() };
+      price: $('wlPrice').value.trim(), size: $('wlSize').value.trim(), link: safeUrl($('wlLink').value) || (isImageAddr(typed) ? '' : safeUrl(typed)),
+      note: $('wlNote').value.trim(), at: Date.now() };
     // no picture of its own: take the one behind the shop link
     var pic = w.photo || w.img || !w.link ? Promise.resolve('') : (wl.linkP && !wl.linkBusy ? Promise.resolve(wl.linkImg) : wl.linkP || linkImage(w.link));
     if (!w.photo && !w.img && !w.name && !w.link) { $('wlErr').textContent = MG.t('wl.need'); $('wlErr').hidden = false; return; }
