@@ -11,9 +11,11 @@ const CATS = {
   coats: ['Jackets', 'Trench coats', 'Elegant coats', 'Fur coats', 'Leather coats', 'Winter coats', 'Ponchos', 'Rain coats'],
   sweaters: [], tshirts: [],
   dresses: ['Everyday dresses', 'Evening dresses', 'Maxi dresses', 'Mini dresses'],
+  skirts: ['Mini skirts', 'Midi skirts', 'Maxi skirts', 'Pleated skirts', 'Denim skirts'],
   trousers: ['Elegant trousers', 'Everyday trousers', 'Comfy trousers'],
   jeans: ['Skinny jeans', 'Straight jeans', 'Wide-leg jeans', 'Mom jeans'],
-  shoes: ['Sneakers', 'Boots', 'Sandals', 'Heels', 'Slippers', 'Loafers'],
+  shoes: ['Sneakers', 'Boots', 'Sandals', 'Slippers', 'Loafers'],
+  heels: ['Pumps', 'Stilettos', 'Kitten heels', 'Block heels', 'Wedges', 'Mules'],
   jewellery: ['Necklaces', 'Bracelets', 'Rings', 'Earrings'],
   bags: ['Backpacks', 'Crossbody bags', 'Tote bags', 'Clutches', 'Purses'],
   accessories: ['Hats', 'Baseball caps', 'Scarves', 'Sunglasses', 'Key charms']
@@ -29,7 +31,7 @@ const Piece = z.object({
 const PROMPT = `This photo shows one piece of clothing or an accessory that someone wants to add to their wardrobe app.
 Pick its category and type from these (type "none" for a category without types):
 ${Object.entries(CATS).map(([c, s]) => `- ${c}: ${s.length ? s.join(', ') : 'none'}`).join('\n')}
-T-shirts, shirts, blouses and tops are "tshirts"; knitwear, hoodies and sweatshirts are "sweaters"; blazers and jackets are "coats".
+T-shirts, shirts, blouses and tops are "tshirts"; knitwear, hoodies and sweatshirts are "sweaters"; blazers and jackets are "coats"; any shoe with a raised heel is "heels".
 Pick the main colour of the piece itself, not the background or the person wearing it.
 Brand: only if a label, logo or name is readable in the photo, otherwise an empty string.`;
 

@@ -83,9 +83,11 @@ const first = (v) => (Array.isArray(v) ? first(v[0]) : v && typeof v === 'object
 // ---- guessing what it is. Words in English, German and Hungarian (most shops here use one of them).
 // Order matters: shoes and bags before clothes ("dress shoes", "denim jacket" before "denim").
 const KINDS = [
-  ['shoes', /\b(sneakers?|trainers?|boots?|booties|sandals?|heels?|pumps?|stilettos?|loafers?|slippers?|mules?|espadrilles?|ballerinas?|shoes?)\b|cipő|csizm|bakancs|szandál|papucs|schuh|stiefel|sandale|pantolette/, [
+  ['heels', /\b(heels?|high-heels?|pumps|stilettos?|slingbacks?|wedges?|kitten)\b|magassarkú|tűsarkú|körömcipő|éksarkú|absatzschuh|high heels|pumps|keilabsatz/, [
+    ['Kitten heels', /kitten/], ['Stilettos', /stiletto|tűsarkú/], ['Wedges', /wedge|éksarkú|keilabsatz/], ['Mules', /\bmule/], ['Block heels', /block|telitalp|blockabsatz/], ['Pumps', /./]]],
+  ['shoes', /\b(sneakers?|trainers?|boots?|booties|sandals?|loafers?|slippers?|mules?|espadrilles?|ballerinas?|shoes?)\b|cipő|csizm|bakancs|szandál|papucs|schuh|stiefel|sandale|pantolette/, [
     ['Sneakers', /sneaker|trainer|sportcipő|turnschuh/], ['Boots', /\bboot|booties|csizm|bakancs|stiefel/], ['Sandals', /sandal|szandál|espadrille/],
-    ['Heels', /heel|pump|stiletto|magassarkú|absatz/], ['Slippers', /slipper|papucs|hausschuh|mule|pantolette/], ['Loafers', /loafer|mokaszin|moccasin|ballerina/]]],
+    ['Slippers', /slipper|papucs|hausschuh|mule|pantolette/], ['Loafers', /loafer|mokaszin|moccasin|ballerina/]]],
   ['bags', /\b(bags?|backpacks?|rucksacks?|totes?|shoppers?|clutch(es)?|purses?|wallets?|handbags?)\b|táska|hátizsák|pénztárca|tasche|geldbörse/, [
     ['Backpacks', /backpack|rucksack|hátizsák/], ['Crossbody bags', /crossbody|cross-body|shoulder|válltáska|umhänge/], ['Clutches', /clutch|estélyi táska/],
     ['Purses', /wallet|purse|pénztárca|geldbörse|card holder/], ['Tote bags', /tote|shopper/]]],
@@ -94,6 +96,8 @@ const KINDS = [
   ['accessories', /\b(caps?|hats?|beanies?|scarf|scarves|sunglasses|key ?rings?|charms?)\b|sapka|kalap|sál|napszemüveg|kulcstartó|mütze|hut\b|schal|sonnenbrille/, [
     ['Baseball caps', /\bcap|baseball|basecap/], ['Sunglasses', /sunglasses|napszemüveg|sonnenbrille/], ['Scarves', /scarf|scarves|sál|schal|tuch/],
     ['Key charms', /key|charm|kulcstartó/], ['Hats', /hat|beanie|sapka|kalap|mütze|hut/]]],
+  ['skirts', /\b(skirts?|skort)\b|szoknya|röcke|minirock|midirock|maxirock|jeansrock|faltenrock|plisseerock/, [
+    ['Denim skirts', /denim|jeans|farmer/], ['Pleated skirts', /pleat|rakott|falten|plissee/], ['Mini skirts', /mini/], ['Maxi skirts', /maxi/], ['Midi skirts', /./]]],
   ['dresses', /\b(dress|dresses|gown)\b|ruha\b|ruhák|kleid/, [
     ['Maxi dresses', /maxi/], ['Mini dresses', /mini/], ['Evening dresses', /evening|party|gown|cocktail|estélyi|alkalmi|abend|cocktail/], ['Everyday dresses', /./]]],
   ['coats', /\b(coats?|jackets?|blazers?|parkas?|puffers?|trench|anoraks?|gilets?|ponchos?|bombers?)\b|kabát|dzseki|mellény|mantel|jacke|sakko/, [

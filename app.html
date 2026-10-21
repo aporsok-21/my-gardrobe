@@ -535,6 +535,8 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
 .pw-msg{margin:0;padding:10px 14px;border-radius:12px;font-size:14px;font-weight:600;background:var(--err-bg);color:var(--err)}
 .pw-msg.ok{background:var(--okmsg-bg);color:var(--okmsg)}
 .set-row small{display:block;margin-top:2px;font-size:12px;font-weight:600;color:var(--muted)}
+.set-row .set-seg{flex:0 0 auto;cursor:default}
+.set-row .set-seg button{padding:0 14px}
 .set-row>svg{flex:0 0 auto;width:20px;height:20px;stroke:var(--ink);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .switch{appearance:none;-webkit-appearance:none;flex:0 0 auto;position:relative;width:50px;height:30px;margin:0;border-radius:999px;background:var(--feature);cursor:pointer;transition:background .2s}
 .switch::after{content:'';position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#FFFFFF;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .2s}
@@ -644,6 +646,10 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
 .st-grid .tile[hidden]{display:none}
 .st-grid .empty{grid-column:1/-1}
 .st-folder .art{background:var(--soft)}
+/* saved pictures are shown whole, never cropped or zoomed */
+.st-folder .art img.photo{object-fit:contain}
+#sfGrid .cap-look{background:var(--soft)}
+#sfGrid .cap-look img{object-fit:contain}
 .st-fold{width:46%!important;fill:#E3C98F;stroke:#B08D57;stroke-width:1.6;stroke-linejoin:round}
 /* My style: each tile gets one soft tint */
 .tint-rose .art{background:var(--tint-rose)}
@@ -662,7 +668,7 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
 .st-prev{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .st-prev[hidden]{display:none}
 .st-prev figure{position:relative;margin:0;aspect-ratio:3/4;border-radius:14px;overflow:hidden;background:var(--soft)}
-.st-prev img{display:block;width:100%;height:100%;object-fit:cover}
+.st-prev img{display:block;width:100%;height:100%;object-fit:contain}
 .wl-prev{grid-template-columns:1fr}
 .wl-prev figure{aspect-ratio:auto;height:clamp(100px,15vh,200px)}   /* small enough that Save stays in view */
 .wl-prev img{object-fit:contain}
@@ -683,7 +689,7 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
 .wl-list{display:flex;flex-direction:column;gap:12px}
 .wl-card{display:flex;gap:12px;padding:10px;border-radius:20px;border:1px solid var(--border);background:var(--surface)}
 .wl-img{flex:0 0 108px;height:136px;border-radius:14px;overflow:hidden;background:var(--soft);display:flex;align-items:center;justify-content:center}
-.wl-img img{width:100%;height:100%;object-fit:cover}
+.wl-img img{width:100%;height:100%;object-fit:contain}
 .wl-ph{width:40%;height:auto;fill:none;stroke:var(--hover);stroke-width:1.6;stroke-linejoin:round}
 .wl-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
 .wl-body b{font-size:15px;font-weight:800;overflow-wrap:anywhere}
@@ -818,6 +824,7 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
       </div>
       <form id="authForm" novalidate>
         <label class="af" id="afName" hidden><span data-t="auth.name">Name</span><input id="auName" autocomplete="name"></label>
+        <div class="af" id="afGender" hidden><span data-t="iAm">I am</span><div class="seg" id="auGender"><button type="button" data-g="woman" class="on" data-t="woman">Woman</button><button type="button" data-g="man" data-t="man">Man</button></div></div>
         <label class="af"><span data-t="auth.email">Email</span><input id="auEmail" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com"></label>
         <label class="af"><span data-t="auth.password">Password</span>
           <span class="pw-wrap"><input id="auPw" type="password" autocomplete="current-password"><button type="button" class="eye" id="auEye" aria-label="Show password" data-t-aria="pw.show"><svg viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></svg></button></span>
@@ -1147,6 +1154,7 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
       <div class="set-group"><div class="set-label" data-t="appearance">Appearance</div><div class="seg seg3" id="themeSeg"><button type="button" data-th="auto" data-t="themeAuto">Automatic</button><button type="button" data-th="light" data-t="themeLight">Light</button><button type="button" data-th="dark" data-t="themeDark">Dark</button></div></div>
       <label class="set-row"><span><b data-t="intro">Opening animation</b><small data-t="introSub">Play the walk-in closet when the app opens</small></span><input type="checkbox" class="switch" id="introToggle"></label>
       <button type="button" class="set-row" id="setColours"><span><b data-t="cp.title">Your colours</b><small data-t="cp.rowSub">Skin, hair and eye colour</small></span><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+      <div class="set-row"><span><b data-t="iAm">I am</b><small data-t="iAmSub">Shows the matching categories in My Gardrobe</small></span><div class="seg set-seg" id="setGender"><button type="button" data-g="woman" data-t="woman">Woman</button><button type="button" data-g="man" data-t="man">Man</button></div></div>
       <button type="button" class="set-row" id="setFigure"><span><b data-t="yourFigure">Your figure</b><small data-t="figureRowSub">Height, shape, skin and hair</small></span><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
       <button type="button" class="set-row" id="setBackup"><span><b data-t="bk.save">Back up my wardrobe</b><small data-t="bk.saveSub">Save everything to a file you can keep or move to another phone</small></span><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
       <button type="button" class="set-row" id="setPassword"><span><b data-t="pw.row">Change password</b><small data-t="pw.rowSub">Update the password you sign in with</small></span><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
@@ -1440,10 +1448,12 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
     { id: 'coats', name: 'Coats', one: 'coat', many: 'coats', icon: 'coat', subs: ['Jackets', 'Trench coats', 'Elegant coats', 'Fur coats', 'Leather coats', 'Winter coats', 'Ponchos', 'Rain coats'] },
     { id: 'sweaters', name: 'Sweaters', one: 'sweater', many: 'sweaters', icon: 'sweater', subs: [] },
     { id: 'tshirts', name: 'T-shirts', one: 'T-shirt', many: 'T-shirts', icon: 'tshirt', subs: [] },
-    { id: 'dresses', name: 'Dresses', one: 'dress', many: 'dresses', icon: 'dress', subs: ['Everyday dresses', 'Evening dresses', 'Maxi dresses', 'Mini dresses'] },
+    { id: 'dresses', name: 'Dresses', one: 'dress', many: 'dresses', icon: 'dress', women: true, subs: ['Everyday dresses', 'Evening dresses', 'Maxi dresses', 'Mini dresses'] },
+    { id: 'skirts', name: 'Skirts', one: 'skirt', many: 'skirts', icon: 'skirt', women: true, subs: ['Mini skirts', 'Midi skirts', 'Maxi skirts', 'Pleated skirts', 'Denim skirts'] },
     { id: 'trousers', name: 'Trousers', one: 'pair of trousers', many: 'pairs of trousers', icon: 'trousers', subs: ['Elegant trousers', 'Everyday trousers', 'Comfy trousers'] },
     { id: 'jeans', name: 'Jeans', one: 'pair of jeans', many: 'pairs of jeans', icon: 'jeans', subs: ['Skinny jeans', 'Straight jeans', 'Wide-leg jeans', 'Mom jeans'] },
-    { id: 'shoes', name: 'Shoes', one: 'pair of shoes', many: 'pairs of shoes', icon: 'shoe', subs: ['Sneakers', 'Boots', 'Sandals', 'Heels', 'Slippers', 'Loafers'] },
+    { id: 'shoes', name: 'Shoes', one: 'pair of shoes', many: 'pairs of shoes', icon: 'shoe', subs: ['Sneakers', 'Boots', 'Sandals', 'Slippers', 'Loafers'] },
+    { id: 'heels', name: 'Heels', one: 'pair of heels', many: 'pairs of heels', icon: 'heel', women: true, subs: ['Pumps', 'Stilettos', 'Kitten heels', 'Block heels', 'Wedges', 'Mules'] },
     { id: 'jewellery', name: 'Jewellery', one: 'piece of jewellery', many: 'pieces of jewellery', icon: 'necklace', subs: ['Necklaces', 'Bracelets', 'Rings', 'Earrings'] },
     { id: 'bags', name: 'Bags', one: 'bag', many: 'bags', icon: 'bag', subs: ['Backpacks', 'Crossbody bags', 'Tote bags', 'Clutches', 'Purses'] },
     { id: 'accessories', name: 'Accessories', one: 'accessory', many: 'accessories', icon: 'hat', subs: ['Hats', 'Baseball caps', 'Scarves', 'Sunglasses', 'Key charms'] }
@@ -1459,9 +1469,11 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
     sweater: ['M22 10Q32 16 42 10L52 14L58 38L51 40L47 26V54H17V26L13 40L6 38L12 14Z', 'M17 49H47M51.5 35.5L57 34M12.5 35.5L7 34M24 11Q32 17 40 11'],
     tshirt: ['M22 10Q32 17 42 10L56 17L51 27L45 24V54H19V24L13 27L8 17Z', 'M24 11Q32 18 40 11'],
     dress: ['M24 6L26 14Q32 18 38 14L40 6L44 8L42 24L40 28L52 58H12L24 28L22 24L20 8Z', 'M22 24Q32 28 42 24M26 14Q32 20 38 14'],
+    skirt: ['M21 10H43L53 54Q32 59 11 54Z', 'M21 16H43M27 17L22 55M37 17L42 55M32 17V57'],
     trousers: ['M18 8H46L50 58H36L32 24L28 58H14Z', 'M18 14H46M32 14V24M40 18V22'],
     jeans: ['M18 8H46L50 58H36L32 24L28 58H14Z', 'M18 14H46M32 14V24M22 14Q23 20 28 21M42 14Q41 20 36 21M15.5 51H27.5M36.5 51H48.5'],
     shoe: ['M8 44C8 36 12 30 16 28L26 26L32 32C38 36 48 38 54 40C58 41 58 48 54 48H10C8 48 8 46 8 44Z', 'M8 43.5H57M24 30L28 34M28 28L32 32'],
+    heel: ['M8 44C8 40 11 38 15 38C25 38 33 34 39 27L45 20C49 17 54 19 54 24V30L51 33V54H47V37L41 42C35 46 27 46 19 46H10C8.5 46 8 45 8 44Z', 'M15 38Q22 42 30 40M51 33Q46 32 41 42'],
     necklace: ['M32 45L37 51L32 58L27 51Z', 'M14 10C14 34 24 44 32 45C40 44 50 34 50 10'],
     bag: ['M14 26H50L54 56H10Z', 'M24 26C24 14 40 14 40 26M14 34H50M30 34V38H34V34'],
     hat: ['M6 44C6 40 20 38 32 38C44 38 58 40 58 44C58 48 44 49 32 49C20 49 6 48 6 44ZM20 39C20 24 24 16 32 16C40 16 44 24 44 39Z', 'M20 34Q32 37 44 34']
@@ -1482,13 +1494,14 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
     ['dresses', 'Everyday dresses', 'Linen shirt dress', 'Arket', 'white'], ['dresses', 'Everyday dresses', 'Wrap dress', 'Diane von Furstenberg', 'green'],
     ['dresses', 'Evening dresses', 'Little black dress', 'Zara', 'black'], ['dresses', 'Evening dresses', 'Satin slip dress', 'Reformation', 'red'],
     ['dresses', 'Maxi dresses', 'Floral maxi dress', 'Mango', 'pink'], ['dresses', 'Mini dresses', 'Knit mini dress', 'COS', 'beige'],
+    ['skirts', 'Pleated skirts', 'Pleated midi skirt', 'COS', 'beige'], ['skirts', 'Mini skirts', 'Leather mini skirt', 'Zara', 'black'], ['skirts', 'Denim skirts', 'Denim skirt', "Levi's", 'blue'],
     ['trousers', 'Everyday trousers', 'Chinos', 'Gap', 'beige'],
     ['trousers', 'Comfy trousers', 'Linen trousers', 'Zara', 'white'], ['trousers', 'Comfy trousers', 'Knit trousers', 'COS', 'grey'], ['trousers', 'Comfy trousers', 'Cargo trousers', 'Carhartt', 'green'],
     ['jeans', 'Skinny jeans', 'Slim jeans', 'Guess', 'blue'], ['jeans', 'Skinny jeans', 'Black skinny jeans', 'Levi\'s', 'black'], ['jeans', 'Straight jeans', 'Straight jeans', "Levi's", 'blue'],
     ['jeans', 'Straight jeans', 'Black jeans', 'Guess', 'black'], ['jeans', 'Wide-leg jeans', 'Wide-leg jeans', 'Mango', 'blue'], ['jeans', 'Wide-leg jeans', 'White wide jeans', 'Zara', 'white'],
     ['jeans', 'Mom jeans', 'Light wash mom jeans', 'Levi\'s', 'blue'], ['jeans', 'Mom jeans', 'Grey mom jeans', 'Weekday', 'grey'],
     ['shoes', 'Sneakers', 'White sneakers', 'Veja', 'white'], ['shoes', 'Sneakers', 'Running sneakers', 'Nike', 'black'], ['shoes', 'Boots', 'Chelsea boots', 'Dr. Martens', 'black'], ['shoes', 'Boots', 'Knee-high boots', 'Stuart Weitzman', 'brown'],
-    ['shoes', 'Sandals', 'Strappy sandals', 'Birkenstock', 'beige'], ['shoes', 'Heels', 'Black pumps', 'Jimmy Choo', 'black'], ['shoes', 'Heels', 'Red heels', 'Zara', 'red'],
+    ['shoes', 'Sandals', 'Strappy sandals', 'Birkenstock', 'beige'], ['heels', 'Pumps', 'Black pumps', 'Jimmy Choo', 'black'], ['heels', 'Block heels', 'Red heels', 'Zara', 'red'],
     ['shoes', 'Slippers', 'Shearling slippers', 'UGG', 'beige'], ['shoes', 'Loafers', 'Leather loafers', 'Gucci', 'black'], ['shoes', 'Loafers', 'Suede loafers', "Tod's", 'brown'],
     ['jewellery', 'Necklaces', 'Pearl necklace', 'Mikimoto', 'white'], ['jewellery', 'Necklaces', 'Gold chain', 'Pandora', 'gold'], ['jewellery', 'Bracelets', 'Tennis bracelet', 'Swarovski', 'silver'],
     ['jewellery', 'Bracelets', 'Gold bangle', 'Cartier', 'gold'], ['jewellery', 'Rings', 'Diamond ring', 'Tiffany & Co.', 'silver'], ['jewellery', 'Rings', 'Signet ring', 'Mejuri', 'gold'],
@@ -1503,7 +1516,7 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
   var W8 = window.mgWardrobe = {};
   var STORE = 'mg-items';
   var items = SAMPLE.map(function (r) { return { cat: r[0], sub: r[1], name: r[2], brand: r[3], color: r[4] }; });
-  try { items = items.concat(JSON.parse(localStorage.getItem(STORE) || '[]').map(function (it) { if (it.cat === 'sweatpants') { it.cat = 'trousers'; it.sub = 'Comfy trousers'; } return it; })); } catch (e) {}
+  try { items = items.concat(JSON.parse(localStorage.getItem(STORE) || '[]').map(function (it) { if (it.cat === 'sweatpants') { it.cat = 'trousers'; it.sub = 'Comfy trousers'; } if (it.cat === 'shoes' && it.sub === 'Heels' && it.id) { it.cat = 'heels'; it.sub = ''; } return it; })); } catch (e) {}
   // Your pieces are saved without their photos; each photo sits in MGStore under 'photo:' + key
   function photoKey(it) { return 'photo:' + (it.id || it.cat + '|' + it.name + '|' + (it.brand || '')); }
   function saveItems() {
@@ -1554,6 +1567,16 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
   var WASH_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h16l-1.6 10.2a1.5 1.5 0 0 1-1.5 1.3H7.1a1.5 1.5 0 0 1-1.5-1.3z"/><path d="M8 9V7.5a4 4 0 0 1 8 0V9"/><path d="M9 13.5c1 .8 2 .8 3 0s2-.8 3 0"/></svg>';
 
   function catById(id) { return CATS.filter(function (c) { return c.id === id; })[0]; }
+  // Heels, skirts and dresses are shown to women (the "I am" choice at sign-up, in Settings or on the figure);
+  // a man who already keeps pieces there still sees them
+  function gender() { try { return (JSON.parse(localStorage.getItem('mg-figure')) || {}).gender || 'woman'; } catch (e) { return 'woman'; } }
+  function catShown(c) {
+    c = typeof c === 'string' ? catById(c) : c;
+    return !!c && (!c.women || gender() !== 'man' || items.some(function (it) { return it.mine && it.cat === c.id; }));
+  }
+  function shownCats() { return CATS.filter(catShown); }
+  // a recognised category that is not shown (heels for a man): the closest one that is, or none
+  function catFor(id) { return catShown(id) ? id : id === 'heels' && catShown('shoes') ? 'shoes' : ''; }
   function catName(c) { return MG.t('cat.' + c.id); }
   function subName(s) { return s ? MG.t('sub.' + s) : MG.t('all'); }
   function colorName(id) { return MG.t('color.' + id); }
@@ -1611,7 +1634,7 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
   var wChips = document.getElementById('wChips');
   var favOnly = false;
   function renderChips() { wChips.innerHTML = '<button class="chip' + (favOnly ? '' : ' on') + '" data-all>' + esc(MG.t('all')) + '</button>' +
-    '<button class="chip fav-chip' + (favOnly ? ' on' : '') + '" data-fav aria-pressed="' + favOnly + '">' + HEART + esc(MG.t('fav.chip')) + '</button>' + CATS.map(function (c) { return '<button class="chip" data-cat="' + c.id + '">' + esc(catName(c)) + '</button>'; }).join(''); }
+    '<button class="chip fav-chip' + (favOnly ? ' on' : '') + '" data-fav aria-pressed="' + favOnly + '">' + HEART + esc(MG.t('fav.chip')) + '</button>' + shownCats().map(function (c) { return '<button class="chip" data-cat="' + c.id + '">' + esc(catName(c)) + '</button>'; }).join(''); }
   renderChips();
   wireSearch(document.getElementById('wSearch'), function (v) { wQ = v; renderMain(); });
 
@@ -1626,13 +1649,13 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
       var washing = items.filter(W8.inWash).sort(bySort);
       wBody.innerHTML = (washing.length ? '<div class="wash-head"><div class="label">' + esc(MG.t('wash.title')) + ' · ' + washing.length + '</div><button type="button" id="allClean">' + esc(MG.t('wash.allClean')) + '</button></div>' +
         '<div class="grid items3 wash-list">' + washing.map(itemTile).join('') + '</div>' : '') +
-        '<div class="grid">' + CATS.map(function (c) { return catTile(c); }).join('') + '</div>';
+        '<div class="grid">' + shownCats().map(function (c) { return catTile(c); }).join('') + '</div>';
       return;
     }
     var t = tokens(wQ), html = '';
     // Category or type names that match the search (e.g. "coats", "heels")
     var hits = [];
-    CATS.forEach(function (c) {
+    shownCats().forEach(function (c) {
       if (t.every(function (w) { return hasWord(c.name + ' ' + c.many + ' ' + catName(c), w); })) hits.push(catTile(c));
       c.subs.forEach(function (s, i) { if (t.every(function (w) { return hasWord(s + ' ' + subName(s), w); })) hits.push(catTile(c, i + 1, s)); });
     });
@@ -1819,12 +1842,12 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
   // Size chips by kind of piece; each inner list is one row: letters XXS–XXL, then numbers 32–48
   var LETTERS = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL'], EU = ['32', '34', '36', '38', '40', '42', '44', '46', '48'];
   var SIZES = { coats: [LETTERS, EU], sweaters: [LETTERS, EU], tshirts: [LETTERS, EU],
-    trousers: [LETTERS, EU], jeans: [LETTERS, EU],
-    shoes: [['35', '36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46']] };
+    trousers: [LETTERS, EU], jeans: [LETTERS, EU], skirts: [LETTERS, EU],
+    shoes: [['35', '36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46']], heels: [['35', '36', '37', '38', '39', '40', '41', '42', '43']] };
   var pick = { color: 'black', hex: '', photo: '' };
   function labelForm() {
     var keep = fCat.value;
-    fCat.innerHTML = CATS.map(function (c) { return '<option value="' + c.id + '">' + esc(catName(c)) + '</option>'; }).join('');
+    fCat.innerHTML = shownCats().map(function (c) { return '<option value="' + c.id + '">' + esc(catName(c)) + '</option>'; }).join('');
     if (keep) fCat.value = keep;
     fColor.innerHTML = COLORS.map(function (c) { return '<button type="button" data-color="' + c[0] + '" aria-label="' + esc(colorName(c[0])) + '" style="background:' + c[2] + '"' + (c[0] === pick.color && !pick.hex ? ' class="on"' : '') + '></button>'; }).join('') +
       '<label class="sw-more" title="' + esc(MG.t('moreColours')) + '"><input type="color" id="fHex" value="' + (pick.hex || '#8B7D6B') + '" aria-label="' + esc(MG.t('moreColours')) + '">' +
@@ -1931,8 +1954,9 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
     photoMsg(esc(MG.t('add2.aiWait')));
     window.mgAccount.api('POST', '/api/classify', JSON.stringify({ photo: src })).then(function (r) {
       if (ticket !== asked) return;   // another photo was picked meanwhile
-      if (r.status !== 200 || !catById(r.cat)) return photoMsg(r.error === 'unsure' ? esc(MG.t('add2.aiUnsure')) : '');
-      fCat.value = r.cat; fillSizes(); fillSubs(r.sub || '');
+      var rc = r.status === 200 ? catFor(r.cat) : '';
+      if (!rc) return photoMsg(r.error === 'unsure' ? esc(MG.t('add2.aiUnsure')) : '');
+      fCat.value = rc; fillSizes(); fillSubs(rc === r.cat ? r.sub || '' : '');
       if (r.color) setColor(r.color);
       var brand = document.getElementById('fBrand');
       if (r.brand && !brand.value.trim()) brand.value = r.brand;
@@ -2011,8 +2035,9 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
     var name = (r.name || '').slice(0, 80);
     if (!name && !r.cat) { linkMsg(''); if (r.photo) shrinkPhoto(r.photo, true, true); return; }   // just a photo: recognise it
     found = { name: name, link: link };
-    if (r.cat && catById(r.cat)) { fCat.value = r.cat; fillSizes(); }
-    fillSubs(r.sub || '');
+    var rc = r.cat ? catFor(r.cat) : '';
+    if (rc) { fCat.value = rc; fillSizes(); }
+    fillSubs(rc && rc === r.cat ? r.sub || '' : '');
     document.getElementById('fBrand').value = (r.brand || '').slice(0, 40);
     if (r.color) setColor(r.color);
     if (!r.photo) setPhoto('', true);   // not the photo of an earlier find
@@ -2152,6 +2177,9 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:0}
     try { localStorage.setItem(CAP_STORE, JSON.stringify(Object.keys(capsule))); } catch (e) {}
   };
   W8.refresh = function () { renderMain(); if (cur) renderPages(); };
+  W8.catShown = catShown;
+  // after the "I am" choice changes: the categories follow
+  W8.genderChanged = function () { renderChips(); labelForm(); W8.refresh(); };
   // outline-only version of a category icon
   W8.lineIcon = function (name) {
     var ic = ICONS[name];
@@ -2425,9 +2453,29 @@ var GR_SCENE = (function () {
       '<div class="gr-flash"></div>';
   }
 
-  // The intro plays every time the app opens (unless it is switched off in Settings); a link to a tab (app.html#inspo) still lands there afterwards
+  // Opening a shop or a saved link leaves the app; coming back from there must not replay the intro,
+  // even when the phone reloaded the app meanwhile. Back in the app, the mark is cleared again.
+  function markOut() { try { localStorage.setItem('mg-out', String(Date.now())); } catch (e) {} }
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href]');
+    if (a && a.host && a.host !== location.host) markOut();
+  }, true);
+  var openWin = window.open;
+  window.open = function () { markOut(); return openWin.apply(window, arguments); };
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'visible') try { localStorage.removeItem('mg-out'); } catch (e) {}
+  });
+
+  // The intro plays when the app is first opened (unless it is switched off in Settings), not again while it stays open;
+  // a link to a tab (app.html#inspo) still lands there afterwards
   // (not after signing in or out, which reloads the page, nor when resuming where you left off)
-  var quiet = false; try { quiet = sessionStorage.getItem('mg-no-intro') === '1'; sessionStorage.removeItem('mg-no-intro'); } catch (e) {}
+  var quiet = false;
+  try {
+    quiet = sessionStorage.getItem('mg-no-intro') === '1' || sessionStorage.getItem('mg-intro-seen') === '1' ||
+      Date.now() - (+localStorage.getItem('mg-out') || 0) < 2 * 3600 * 1000;
+    sessionStorage.removeItem('mg-no-intro'); localStorage.removeItem('mg-out');
+    sessionStorage.setItem('mg-intro-seen', '1');
+  } catch (e) {}
   if (quiet || window.mgResume || MG.get('intro', 'on') === 'off') { stage.hidden = true; return; }
   buildStage();
   setTimeout(function () {
@@ -2617,6 +2665,7 @@ var GR_SCENE = (function () {
 
     var G = {
       bottom: function (it) {
+        if (it.style === 'skirt') return G.skirt(it);
         var c = it.color, hemY = 194, hw = 5.2 * g * lw + 0.4, jc = lerp(6.4, 5.8, fem), jeans = /jean|denim/i.test(it.name || '');
         // a fuller calf or knee widens the leg outward, the inner seam stays put
         var need = Math.max(calfX, kneeX) + 0.9;
@@ -2629,6 +2678,17 @@ var GR_SCENE = (function () {
           ? 'M60 ' + f1(waistY + 7.4) + 'v11q0 2.6 2.6 3.4M' + f1(X(W * 0.5)) + ' ' + f1(waistY + 7.6) + 'q1.6 5.4 6.4 6.2M' + f1(X(-W * 0.5)) + ' ' + f1(waistY + 7.6) + 'q-1.6 5.4-6.4 6.2'
           : 'M60 ' + f1(waistY + 7.4) + 'v9M' + f1(X(jc)) + ' ' + f1(hipY + 4) + 'V' + (hemY - 1) + 'M' + f1(X(-jc)) + ' ' + f1(hipY + 4) + 'V' + (hemY - 1));
         return paint(d, c, '<path d="' + det + '" fill="none" stroke="' + shade(c, -0.3) + '" stroke-width=".55"/>');
+      },
+      // a skirt flares from the waist; mini above the knee, midi below it, maxi to the ankle, others to the knee
+      skirt: function (it) {
+        var c = it.color, nm = (it.name || '').toLowerCase();
+        var hemY = /maxi/.test(nm) ? 190 : /mini/.test(nm) ? yCr + 16 : /midi|pleat/.test(nm) ? yKn + 14 : yKn + 4;
+        var wW = bodyX(waistY) + 1, hW = H + 1.6, eW = hW + (hemY - hipY) * 0.17;
+        var d = 'M' + f1(X(-wW)) + ' ' + f1(waistY + 0.6) + 'L' + f1(X(wW)) + ' ' + f1(waistY + 0.6) + 'Q' + f1(X(hW + 0.4)) + ' ' + f1(hipY - 7) + ' ' + f1(X(hW)) + ' ' + f1(hipY) +
+          'L' + f1(X(eW)) + ' ' + f1(hemY) + 'Q60 ' + f1(hemY + 2) + ' ' + f1(X(-eW)) + ' ' + f1(hemY) + 'L' + f1(X(-hW)) + ' ' + f1(hipY) + 'Q' + f1(X(-hW - 0.4)) + ' ' + f1(hipY - 7) + ' ' + f1(X(-wW)) + ' ' + f1(waistY + 0.6) + 'Z';
+        var band = 'M' + f1(X(-wW)) + ' ' + f1(waistY + 3.6) + 'H' + f1(X(wW));
+        var folds = /pleat/.test(nm) ? [-0.6, -0.2, 0.2, 0.6].map(function (k) { return 'M' + f1(X(hW * k)) + ' ' + f1(hipY - 2) + 'L' + f1(X(eW * k * 1.08)) + ' ' + f1(hemY - 0.6); }).join('') : '';
+        return paint(d, c, '<path d="' + band + folds + '" fill="none" stroke="' + shade(c, -0.3) + '" stroke-width=".55"/>');
       },
       top: function (it) {
         var c = it.color, hemY = hipY + 4;
@@ -2819,7 +2879,17 @@ var GR_SCENE = (function () {
     try { localStorage.setItem('mg-figure', JSON.stringify(fig)); } catch (e) {}
     close();
     setTimeout(showCard, 200);
+    renderCombo(); W8.genderChanged();
   });
+  // "I am" from sign-up or Settings: the figure and the My Gardrobe categories follow
+  window.mgGender = function (g) {
+    if (!g) return fig.gender;
+    if (g === fig.gender) return g;
+    fig.gender = draft.gender = g;
+    try { localStorage.setItem('mg-figure', JSON.stringify(fig)); } catch (e) {}
+    thumbsFor = null; renderCombo(); showCard(); W8.genderChanged();
+    return g;
+  };
   $('genderSeg').addEventListener('click', function (e) {
     var b = e.target.closest('button'); if (!b || b.dataset.g === draft.gender) return;
     draft.gender = b.dataset.g; syncControls(); sheetFig.set(draft);
@@ -2852,16 +2922,18 @@ var GR_SCENE = (function () {
   // ---- Dressing the figure from My Gardrobe (window.mgWardrobe comes from the wardrobe script)
   var W8 = window.mgWardrobe;
   // which figure slot each wardrobe category fills, and the category a slot opens
-  var SLOT_OF = { coats: 'outer', sweaters: 'top', tshirts: 'top', dresses: 'dress', trousers: 'bottom', jeans: 'bottom', shoes: 'shoes', bags: 'bag', accessories: 'hat', jewellery: 'jewelry' };
+  var SLOT_OF = { coats: 'outer', sweaters: 'top', tshirts: 'top', dresses: 'dress', skirts: 'bottom', trousers: 'bottom', jeans: 'bottom', shoes: 'shoes', heels: 'shoes', bags: 'bag', accessories: 'hat', jewellery: 'jewelry' };
   // one tile per My Gardrobe category, in the same order as there
   var SLOTS = [
     { slot: 'outer', cat: 'coats', bg: '#E2DACD' },
     { slot: 'top', cat: 'sweaters', bg: '#EFE9DF' },
     { slot: 'top', cat: 'tshirts', bg: '#E6DFD4' },
     { slot: 'dress', cat: 'dresses', bg: '#E9E2D6' },
+    { slot: 'bottom', cat: 'skirts', bg: '#E6DFD4' },
     { slot: 'bottom', cat: 'trousers', bg: '#DCD3C6' },
     { slot: 'bottom', cat: 'jeans', bg: '#E2DACD' },
     { slot: 'shoes', cat: 'shoes', bg: '#EFE9DF' },
+    { slot: 'shoes', cat: 'heels', bg: '#E2DACD' },
     { slot: 'jewelry', cat: 'jewellery', bg: '#E6DFD4' },
     { slot: 'bag', cat: 'bags', bg: '#E9E2D6' },
     { slot: 'hat', cat: 'accessories', sub: 'Hats', bg: '#DCD3C6' }
@@ -2876,6 +2948,7 @@ var GR_SCENE = (function () {
   function garment(it) {
     var n = (it.name + ' ' + (it.sub || '')).toLowerCase(), style = '';
     if (it.cat === 'tshirts') style = 'tee';
+    else if (it.cat === 'skirts') style = 'skirt';
     else if (it.cat === 'accessories') style = /cap/.test(n) ? 'cap' : /bucket/.test(n) ? 'bucket' : 'fedora';
     else if (it.cat === 'jewellery') style = /pearl/.test(n) && /neck/.test(n) ? 'pearls' : /hoop/.test(n) ? 'hoops' : /stud|earring/.test(n) ? 'studs' : /bangle|bracelet/.test(n) ? 'bangle' : /ring/.test(n) ? 'ring' : 'chain';
     return { type: SLOT_OF[it.cat], style: style, name: it.name, color: it.hex || W8.colorOf(it.color)[2], key: keyOf(it) };
@@ -2906,7 +2979,7 @@ var GR_SCENE = (function () {
   function isCombo() { return !outfit.dress && SLOTS.every(function (s) { return !COMBO[s.slot] || (outfit[s.slot] && outfit[s.slot].name === COMBO[s.slot]); }); }
 
   function renderCombo() {
-    $('flatlay').innerHTML = SLOTS.map(function (s) {
+    $('flatlay').innerHTML = SLOTS.filter(function (s) { return W8.catShown(s.cat); }).map(function (s) {
       // the dot only shows on the tile of the category the worn piece comes from
       var w = s.slot === 'jewelry' ? outfit.jewelry || outfit.jewelry2 || outfit.jewelry3 || outfit.jewelry4 : outfit[s.slot], cat = W8.catById(s.cat);
       if (w && w.key.indexOf(s.cat + '|') !== 0) w = null;
@@ -2989,7 +3062,7 @@ var GR_SCENE = (function () {
   }
   function dressForWeather() {
     var t = (window.mgToday && window.mgToday()) || { max: 16 }, temp = t.max;
-    var pool = W8.items.filter(function (it) { return !W8.inWash(it) && !(window.mgWeatherCheck && window.mgWeatherCheck(it)); });
+    var pool = W8.items.filter(function (it) { return W8.catShown(it.cat) && !W8.inWash(it) && !(window.mgWeatherCheck && window.mgWeatherCheck(it)); });
     function by(cat, test) { return pool.filter(function (it) { return it.cat === cat && (!test || test(it)); }); }
     function first() { for (var i = 0; i < arguments.length; i++) if (arguments[i].length) return arguments[i]; return []; }
     var look = {};
@@ -3377,6 +3450,8 @@ var GR_SCENE = (function () {
     var u = MG.get('unit', 'c');
     $('unitSeg').querySelectorAll('button').forEach(function (b) { b.classList.toggle('on', b.dataset.u === u); });
     $('introToggle').checked = MG.get('intro', 'on') !== 'off';
+    var g = (window.mgGender ? window.mgGender() : ((function () { try { return JSON.parse(localStorage.getItem('mg-figure')).gender; } catch (e) {} })() || 'woman'));
+    $('setGender').querySelectorAll('button').forEach(function (b) { b.classList.toggle('on', b.dataset.g === g); });
     var th = MG.get('theme', 'auto');
     $('themeSeg').querySelectorAll('button').forEach(function (b) { b.classList.toggle('on', b.dataset.th === th); b.setAttribute('aria-pressed', b.dataset.th === th); });
   }
@@ -3438,6 +3513,11 @@ var GR_SCENE = (function () {
       setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
     });
   });
+  $('setGender').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b || !window.mgGender) return;
+    window.mgGender(b.dataset.g);
+    this.querySelectorAll('button').forEach(function (x) { x.classList.toggle('on', x === b); });
+  });
   $('introToggle').addEventListener('change', function () { MG.set('intro', this.checked ? 'on' : 'off'); });
   // Change password: checked here, then on the server (which also signs the other devices out)
   var pwBox = $('pwBox'), pwForm = $('pwForm'), pwMsg = $('pwMsg');
@@ -3480,13 +3560,15 @@ var GR_SCENE = (function () {
   function setMode(m) {
     mode = m; msg.hidden = true; $('auResend').hidden = true;
     box.querySelectorAll('.auth-tabs button').forEach(function (b) { b.classList.toggle('on', b.dataset.mode === m); b.setAttribute('aria-selected', b.dataset.mode === m); });
-    $('afName').hidden = m !== 'up'; $('auHint').hidden = m !== 'up'; $('auTerms').hidden = m !== 'up'; $('auForgot').hidden = m !== 'in';
+    $('afName').hidden = m !== 'up'; $('afGender').hidden = m !== 'up'; $('auHint').hidden = m !== 'up'; $('auTerms').hidden = m !== 'up'; $('auForgot').hidden = m !== 'in';
     $('auPw').autocomplete = m === 'up' ? 'new-password' : 'current-password';
     $('authTitle').textContent = MG.t(m === 'up' ? 'auth.create' : 'auth.welcome');
     $('authSub').textContent = MG.t(m === 'up' ? 'auth.subUp' : 'auth.sub');
     $('auGo').textContent = MG.t(m === 'up' ? 'auth.signup' : 'auth.login');
   }
-  function show() { form.reset(); setMode('in'); box.classList.remove('leaving'); box.hidden = false; box.scrollTop = 0; }
+  function markGender(seg, g) { seg.querySelectorAll('button').forEach(function (b) { b.classList.toggle('on', b.dataset.g === g); }); }
+  $('auGender').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) markGender(this, b.dataset.g); });
+  function show() { form.reset(); markGender($('auGender'), (window.mgGender ? window.mgGender() : ((function () { try { return JSON.parse(localStorage.getItem('mg-figure')).gender; } catch (e) {} })() || 'woman'))); setMode('in'); box.classList.remove('leaving'); box.hidden = false; box.scrollTop = 0; }
   function leave() {
     box.classList.add('leaving');
     setTimeout(function () { box.hidden = true; box.classList.remove('leaving'); window.mgShow && window.mgShow('home'); }, 400);
@@ -3514,6 +3596,7 @@ var GR_SCENE = (function () {
         // signed up: the server emailed a confirm link; once it is tapped they log in here with the same email and password
         if (up && r.verify) {
           window.mgAccount.signedUp(r.email);
+          var on = $('auGender').querySelector('.on'); if (on && window.mgGender) window.mgGender(on.dataset.g);
           setMode('in'); $('auEmail').value = r.email; $('auPw').value = '';
           say('auth.checkMail', true, { email: r.email }); $('auResend').hidden = false;
           return;

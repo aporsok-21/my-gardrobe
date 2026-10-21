@@ -96,6 +96,7 @@ MG_STRINGS["de"] = {
   yourFigure: "Deine Figur",
   figureSub: "Gestalte die Figur wie dich selbst. Du kannst sie jederzeit ändern.",
   iAm: "Ich bin",
+  iAmSub: "Zeigt in My Gardrobe die passenden Kategorien",
   woman: "Frau",
   man: "Mann",
   skin: "Hautton",
@@ -122,8 +123,8 @@ MG_STRINGS["de"] = {
   introSub: "Den begehbaren Kleiderschrank beim Öffnen abspielen",
   figureRowSub: "Größe, Form, Haut und Haare",
   done: "Fertig",
-  cat: {"coats":"Mäntel","sweaters":"Pullover","tshirts":"T-Shirts","trousers":"Hosen","sweatpants":"Jogginghosen","shoes":"Schuhe","jewellery":"Schmuck","bags":"Taschen","accessories":"Accessoires"},
-  n: {"coats":["Mantel","Mäntel"],"sweaters":["Pullover","Pullover"],"tshirts":["T-Shirt","T-Shirts"],"trousers":["Hose","Hosen"],"sweatpants":["Jogginghose","Jogginghosen"],"shoes":["Paar Schuhe","Paar Schuhe"],"jewellery":["Schmuckstück","Schmuckstücke"],"bags":["Tasche","Taschen"],"accessories":["Accessoire","Accessoires"]},
-  sub: {"Jackets":"Jacken","Trench coats":"Trenchcoats","Elegant coats":"Elegante Mäntel","Fur coats":"Pelzmäntel","Leather coats":"Ledermäntel","Winter coats":"Wintermäntel","Ponchos":"Ponchos","Rain coats":"Regenmäntel","Elegant trousers":"Elegante Hosen","Everyday trousers":"Alltagshosen","Comfy trousers":"Bequeme Hosen","Sneakers":"Sneaker","Boots":"Stiefel","Sandals":"Sandalen","Heels":"High Heels","Slippers":"Hausschuhe","Loafers":"Loafer","Necklaces":"Halsketten","Bracelets":"Armbänder","Rings":"Ringe","Earrings":"Ohrringe","Backpacks":"Rucksäcke","Crossbody bags":"Umhängetaschen","Tote bags":"Shopper","Clutches":"Clutches","Purses":"Geldbörsen","Hats":"Hüte","Baseball caps":"Baseballkappen","Scarves":"Schals","Sunglasses":"Sonnenbrillen","Key charms":"Schlüsselanhänger"},
+  cat: {"coats":"Mäntel","sweaters":"Pullover","tshirts":"T-Shirts","trousers":"Hosen","sweatpants":"Jogginghosen","shoes":"Schuhe","jewellery":"Schmuck","bags":"Taschen","accessories":"Accessoires","heels":"High Heels","skirts":"Röcke"},
+  n: {"coats":["Mantel","Mäntel"],"sweaters":["Pullover","Pullover"],"tshirts":["T-Shirt","T-Shirts"],"trousers":["Hose","Hosen"],"sweatpants":["Jogginghose","Jogginghosen"],"shoes":["Paar Schuhe","Paar Schuhe"],"jewellery":["Schmuckstück","Schmuckstücke"],"bags":["Tasche","Taschen"],"accessories":["Accessoire","Accessoires"],"heels":["Paar High Heels","Paar High Heels"],"skirts":["Rock","Röcke"]},
+  sub: {"Jackets":"Jacken","Trench coats":"Trenchcoats","Elegant coats":"Elegante Mäntel","Fur coats":"Pelzmäntel","Leather coats":"Ledermäntel","Winter coats":"Wintermäntel","Ponchos":"Ponchos","Rain coats":"Regenmäntel","Elegant trousers":"Elegante Hosen","Everyday trousers":"Alltagshosen","Comfy trousers":"Bequeme Hosen","Sneakers":"Sneaker","Boots":"Stiefel","Sandals":"Sandalen","Heels":"High Heels","Slippers":"Hausschuhe","Loafers":"Loafer","Necklaces":"Halsketten","Bracelets":"Armbänder","Rings":"Ringe","Earrings":"Ohrringe","Backpacks":"Rucksäcke","Crossbody bags":"Umhängetaschen","Tote bags":"Shopper","Clutches":"Clutches","Purses":"Geldbörsen","Hats":"Hüte","Baseball caps":"Baseballkappen","Scarves":"Schals","Sunglasses":"Sonnenbrillen","Key charms":"Schlüsselanhänger","Mini skirts":"Miniröcke","Midi skirts":"Midiröcke","Maxi skirts":"Maxiröcke","Pleated skirts":"Faltenröcke","Denim skirts":"Jeansröcke","Pumps":"Pumps","Stilettos":"Stilettos","Kitten heels":"Kitten Heels","Block heels":"Blockabsätze","Wedges":"Keilabsätze","Mules":"Mules"},
   color: {"white":"Weiß","black":"Schwarz","beige":"Beige","brown":"Braun","grey":"Grau","blue":"Blau","green":"Grün","red":"Rot","pink":"Rosa","yellow":"Gelb","gold":"Gold","silver":"Silber"}
 };
